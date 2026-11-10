@@ -586,6 +586,24 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 										<div onclick="selectPizzas('<?php echo $id_produto ?>')" class="subtitulo-item-menor mt-1" style="color:#6c757d; font-size: 12px;">
 											<?php echo $descricao ?>
 										</div>
+
+										<div onclick="selectPizzas('<?php echo $id_produto ?>')" class="mt-1">
+											<?php
+											$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and ativo = 'Sim' and empresa = '$id_empresa'");
+											$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+											$total_reg2 = @count($res2);
+											if ($total_reg2 > 0) {
+												for ($i2 = 0; $i2 < $total_reg2; $i2++) {
+													$sigla = $res2[$i2]['sigla'];
+													$valorvar = $res2[$i2]['valor'];
+													$valorvarF = number_format($valorvar, 2, ',', '.');
+													echo '<span class="preco-dinamico preco-dinamico-' . $sigla . ' text-success fw-bold" style="display: none; font-size: 13px;">R$ ' . $valorvarF . '</span>';
+												}
+											} else {
+												echo '<span class="preco-dinamico text-success fw-bold" style="display: none; font-size: 13px;">R$ ' . $valorF . '</span>';
+											}
+											?>
+										</div>
 									</div>
 								</div>
 
@@ -880,6 +898,10 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 		$('.card-variacao').removeClass('card-selecionado');
 		$('#card_var_' + sigla).addClass('card-selecionado');
+
+		// Troca em tempo real do preço dos sabores conforme a sigla do tamanho selecionado
+		$('.preco-dinamico').hide();
+		$('.preco-dinamico-' + sigla).fadeIn();
 
 		// Se trocou de tamanho, reseta os sabores marcados para respeitar o novo limite
 		if (variacaoAnterior !== "" && variacaoAnterior !== id) {
