@@ -234,10 +234,22 @@ $cartoes = @$res[0]['cartoes'];
 					$nome_produto = $res2[0]['nome'];
 					$foto_produto = $res2[0]['foto'];
 					$unidade = $res2[0]['unidade'];
+					if ($categoria == "" || $categoria == 0) {
+						$categoria = $res2[0]['categoria'];
+					}
 				} else {
 					$nome_produto = $nome_produto_tab;
 					$foto_produto = "";
 					$unidade = "";
+				}
+
+				$nome_categoria = '';
+				if ($categoria != "" && $categoria > 0) {
+					$query_cat = $pdo->query("SELECT nome FROM categorias where id = '$categoria' and empresa = '$id_empresa'");
+					$res_cat = $query_cat->fetchAll(PDO::FETCH_ASSOC);
+					if (@count($res_cat) > 0) {
+						$nome_categoria = $res_cat[0]['nome'];
+					}
 				}
 
 				$query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
@@ -271,6 +283,11 @@ $cartoes = @$res[0]['cartoes'];
 			?>
 				<div class="order-item-row">
 					<div style="flex: 1; min-width: 0;">
+						<?php if ($nome_categoria != "") { ?>
+						<div>
+							<span class="badge bg-light text-secondary border rounded-pill px-2 py-1 mb-1" style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><?php echo htmlspecialchars($nome_categoria) ?></span>
+						</div>
+						<?php } ?>
 						<div class="fw-bold text-dark" style="font-size: 14px;">
 							<span class="text-danger fw-bold"><?php echo $quantidadeF ?><?php echo $sigla_unidade ?>x</span> 
 							<?php echo $nome_produto ?> <small class="text-secondary"><?php echo $sigla_variacao ?> <?php echo $sigla_grade ?></small>
