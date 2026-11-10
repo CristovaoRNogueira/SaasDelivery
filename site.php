@@ -1064,7 +1064,14 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 
-<?php if ($id_mesa == "" and $sessão_balcao == "") { ?>
+<?php if ($id_mesa == "" and $sessão_balcao == "") { 
+  $whats_limpo = preg_replace('/[^0-9]/', '', (string)(@$whatsapp_sistema ?: @$telefone_sistema));
+  if (!empty($whats_limpo)) {
+    if (strlen($whats_limpo) == 10 || strlen($whats_limpo) == 11) {
+      $whats_limpo = '55' . $whats_limpo;
+    }
+  }
+?>
   <footer class="rodape">
     <div class="container">
       <div class="row align-items-center py-2">
@@ -1076,10 +1083,10 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           <?php } ?>
         </div>
         <div class="col-md-6 text-center text-md-end">
-          <?php if (!empty($tel_whats)) { ?>
+          <?php if (!empty($whats_limpo)) { ?>
           <span class="d-inline-block me-3"><a target="_blank"
-              href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" class="link-neutro"><i
-                class="bi bi-whatsapp text-success me-1"></i> <?php echo htmlspecialchars($telefone_sistema ?? ''); ?></a></span>
+              href="https://api.whatsapp.com/send?phone=<?php echo $whats_limpo; ?>" class="link-neutro"><i
+                class="bi bi-whatsapp text-success me-1"></i> <?php echo htmlspecialchars($telefone_sistema ?? $whatsapp_sistema ?? ''); ?></a></span>
           <?php } ?>
           <?php if (!empty($url_instagram)) { ?>
           <span class="d-inline-block"><a target="_blank" href="<?php echo $url_instagram ?>"
