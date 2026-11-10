@@ -23,12 +23,13 @@
         </ul>
       </div>
       <div class="tpcart__checkout">
-        <div class="tpcart__total-price d-flex justify-content-between align-items-center">
-          <span> Subtotal:</span>
-          <span class="heilight-price">R$ <span id="total-carrinho-icone"></span></span>
+        <div class="tpcart__total-price d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted" style="font-size: 13px; font-weight: 600;">Subtotal:</span>
+          <span class="heilight-price text-success fw-bold" style="font-size: 18px;">R$ <span id="total-carrinho-icone"></span></span>
         </div>
-        <div class="tpcart__checkout-btn">
+        <div class="tpcart__checkout-btn d-flex flex-column gap-2">
           <a class="tpcheck-btn link-neutro2" href="carrinho">VER CARRINHO</a>
+          <a class="tpcheck-btn tpcheck-btn-finalizar link-neutro2" href="finalizar">FINALIZAR COMPRA</a>
         </div>
       </div>
     </div>

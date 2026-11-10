@@ -91,10 +91,28 @@ if ($total_reg > 0) {
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 			$unidade = $res2[0]['unidade'];
+			if ($categoria == "" || $categoria == 0) {
+				$categoria = $res2[0]['categoria'];
+			}
 		} else {
 			$nome_produto = $nome_produto_tab;
 			$foto_produto = "";
 			$unidade = "";
+		}
+
+		$nome_categoria = '';
+		if ($categoria != "" && $categoria > 0) {
+			$query_cat = $pdo->query("SELECT nome FROM categorias where id = '$categoria' and empresa = '$id_empresa'");
+			$res_cat = $query_cat->fetchAll(PDO::FETCH_ASSOC);
+			if (@count($res_cat) > 0) {
+				$nome_categoria = $res_cat[0]['nome'];
+			}
+		}
+
+		if ($nome_categoria != "") {
+			$badge_categoria = '<span class="badge bg-light text-secondary border rounded-pill px-2 py-1 mb-1 d-inline-block" style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">' . htmlspecialchars($nome_categoria) . '</span>';
+		} else {
+			$badge_categoria = '';
 		}
 
 
@@ -156,39 +174,31 @@ if ($total_reg > 0) {
 
 		echo <<<HTML
 
-
-
-						<li>
+<li>
   <div class="tpcart__item" style="position:relative; padding-right:48px;">
     <div class="tpcart__img">
       <img src="sistema/painel/images/produtos/{$foto_produto}" alt="">
     </div>
 
-    <div class="tpcart__content">
-      <span class="tpcart__content-title"><b>{$nome_produto} {$sigla_variacao}</b></span>
-      <div class="tpcart__cart-price">
-        <span class="quantity"><span class="">{$quantidadeF} {$sigla_unidade}</span> x</span>
-        <span class="text-success">R$ {$total_itemF}</span>
+    <div class="tpcart__content" style="flex:1; min-width:0;">
+      {$badge_categoria}
+      <span class="tpcart__content-title d-block" style="font-size: 13px; font-weight: 700; color: #212529; line-height: 1.3;">
+        <b>{$nome_produto} {$sigla_variacao}</b>
+      </span>
+      <div class="tpcart__cart-price mt-1 d-flex align-items-baseline gap-2">
+        <span class="quantity text-secondary" style="font-size: 12px; font-weight: 600;">{$quantidadeF}{$sigla_unidade} x</span>
+        <span class="text-success fw-bold" style="font-size: 14px;">R$ {$total_itemF}</span>
       </div>
     </div>
 
-    <!-- agora ancorado ao próprio item -->
-    <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%);">
-      <a href="javascript:void(0)" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}">
-        <i class="icon-x-circle text-warning"></i>
+    <!-- botão de exclusão touch-friendly -->
+    <div style="position:absolute; right:10px; top:50%; transform:translateY(-50%);">
+      <a href="javascript:void(0)" onclick="excluirCarrinhoIcone('{$id}')" class="btn-excluir-mini-carrinho link-neutro {$ocultar_excluir}" title="Remover item">
+        <i class="bi bi-trash3"></i>
       </a>
     </div>
   </div>
 </li>
-
-
-
-						
-
-
-
-
-			</li>
 
 HTML;
 	}
