@@ -234,18 +234,18 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		justify-content: space-between;
 		align-items: center;
 		background: #ffffff;
-		padding: 10px 14px;
+		padding: 10px 10px;
 		border-radius: 14px;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 		margin-bottom: 16px;
-		gap: 8px;
+		gap: 6px;
 	}
 	.wizard-step-pill {
 		flex: 1;
 		text-align: center;
-		padding: 8px 6px;
+		padding: 7px 4px;
 		border-radius: 10px;
-		font-size: 12px;
+		font-size: 11px;
 		font-weight: 600;
 		color: #6c757d;
 		background: #f8f9fa;
@@ -253,6 +253,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		transition: all 0.25s ease;
 		user-select: none;
 		border: 1px solid transparent;
+		white-space: nowrap;
 	}
 	.wizard-step-pill.active {
 		background: #ea1d2c;
@@ -424,16 +425,19 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 	<ol class="list-group" style="margin-top: 68px; padding-bottom: 100px;">
 
-		<!-- Barra de Progresso Wizard (Stepper) -->
+		<!-- Barra de Progresso Wizard (Stepper 4 Etapas) -->
 		<div class="wizard-stepper">
 			<div id="step-pill-1" class="wizard-step-pill active" onclick="irParaEtapa(1)">
 				1. Tamanho
 			</div>
 			<div id="step-pill-2" class="wizard-step-pill" onclick="tentarIrParaEtapa(2)">
-				2. Borda
+				2. Sabores
 			</div>
 			<div id="step-pill-3" class="wizard-step-pill" onclick="tentarIrParaEtapa(3)">
-				3. Sabores
+				3. Borda
+			</div>
+			<div id="step-pill-4" class="wizard-step-pill" onclick="tentarIrParaEtapa(4)">
+				4. Adicionais
 			</div>
 		</div>
 
@@ -462,6 +466,12 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 					$sigla_var = $res[$i]['sigla'];
 					$descricao_var = $res[$i]['descricao'];
 					$sabores_var = $res[$i]['sabores'];
+
+					// Consulta o menor valor (A partir de) para esta sigla nos produtos ativos desta categoria
+					$query_min = $pdo->query("SELECT MIN(v.valor) AS menor_valor FROM variacoes v INNER JOIN produtos p ON v.produto = p.id WHERE p.categoria = '$id' AND p.ativo = 'Sim' AND v.sigla = '$sigla_var' AND v.ativo = 'Sim' AND v.valor > 0 AND v.empresa = '$id_empresa' AND p.empresa = '$id_empresa'");
+					$res_min = $query_min->fetch(PDO::FETCH_ASSOC);
+					$menor_valor = (float) (@$res_min['menor_valor'] ?? 0);
+					$menor_valorF = ($menor_valor > 0) ? number_format($menor_valor, 2, ',', '.') : '';
 				?>
 					<li onclick="selecVar('<?php echo $sigla_var ?>', '<?php echo $id_var ?>')"
 						id="card_var_<?php echo $sigla_var ?>"
@@ -470,9 +480,14 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 							<div class="fw-bold text-dark" style="font-size: 14px;">
 								(<?php echo $sigla_var ?>) <?php echo $nome_var ?>
 							</div>
-							<small class="text-muted">
+							<small class="text-muted d-block">
 								<?php echo $descricao_var ?> • Até <?php echo $sabores_var ?> <?php echo ($sabores_var > 1) ? 'Sabores' : 'Sabor' ?>
 							</small>
+							<?php if ($menor_valor > 0) { ?>
+								<div class="text-success fw-bold mt-1" style="font-size: 13px;">
+									A partir de R$ <?php echo $menor_valorF ?>
+								</div>
+							<?php } ?>
 						</div>
 						<input onchange="selecionarVar('<?php echo $sigla_var ?>', '<?php echo $id_var ?>')" class="form-check-input ms-2"
 							type="radio" value="<?php echo $sigla_var ?>" name="variacoes" id="variacoes_<?php echo $sigla_var ?>"
@@ -484,57 +499,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		</div>
 
 
-		<!-- ==================== ETAPA 2: ESCOLHA A BORDA ==================== -->
-		<?php
-		//VERIFICAR SE POSSUI VARIAÇÕES NA CATEGORIA
-		$query = $pdo->query("SELECT * FROM bordas where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' order by id asc");
-		$res = $query->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg_bordas = @count($res);
-		?>
+		<!-- ==================== ETAPA 2: ESCOLHA OS SABORES ==================== -->
 		<div id="etapa-2" class="wizard-section" style="display: none;">
-			<div class="wizard-header-box">
-				<div>
-					<h6 class="wizard-header-title">Escolha a borda</h6>
-					<p class="wizard-header-sub">Selecione a borda da sua pizza</p>
-				</div>
-				<button type="button" class="btn-voltar-etapa" onclick="irParaEtapa(1)">
-					<i class="bi bi-chevron-left"></i> Tamanho
-				</button>
-			</div>
-
-			<?php if ($total_reg_bordas > 0) { ?>
-				<ul class="list-group form-check ps-0" style="margin-bottom:15px">
-					<li onclick="selectBorda('0')" id="card_borda_0"
-						class="list-group-item d-flex justify-content-between align-items-center ifood-card-item card-borda">
-						<div class="fw-semibold text-dark" style="font-size: 14px;">
-							Borda Catupiry + <span class="text-success fw-bold">R$ 0,00</span>
-						</div>
-						<input onchange="selecionarBorda('0')" class="form-check-input ms-2" type="radio" name="borda" id="borda_0" checked
-							value="0" style="transform: scale(1.2);">
-					</li>
-
-					<?php
-					for ($i = 0; $i < $total_reg_bordas; $i++) {
-						$id_bor = $res[$i]['id'];
-						$nome_bor = $res[$i]['nome'];
-						$valor_bor = $res[$i]['valor'];
-					?>
-						<li onclick="selectBorda('<?php echo $id_bor ?>')" id="card_borda_<?php echo $id_bor ?>"
-							class="list-group-item d-flex justify-content-between align-items-center ifood-card-item card-borda">
-							<div class="fw-semibold text-dark" style="font-size: 14px;">
-								<?php echo $nome_bor ?> + <span class="text-success fw-bold">R$ <?php echo $valor_bor ?></span>
-							</div>
-							<input onchange="selecionarBorda('<?php echo $id_bor ?>')" class="form-check-input ms-2" type="radio" name="borda"
-								id="borda_<?php echo $id_bor ?>" value="<?php echo $id_bor ?>" style="transform: scale(1.2);">
-						</li>
-					<?php } ?>
-				</ul>
-			<?php } ?>
-		</div>
-
-
-		<!-- ==================== ETAPA 3: ESCOLHA OS SABORES ==================== -->
-		<div id="etapa-3" class="wizard-section" style="display: none;">
 			<div class="wizard-header-box">
 				<div>
 					<h6 class="wizard-header-title">Escolha <span id="quant_sabores">os</span> sabores</h6>
@@ -542,8 +508,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 				</div>
 				<div class="d-flex align-items-center gap-2">
 					<span id="badge_contador_sabores" class="badge bg-dark rounded-pill" style="font-size: 12px;">0 selecionados</span>
-					<button type="button" class="btn-voltar-etapa" onclick="voltarDeSabores()">
-						<i class="bi bi-chevron-left"></i> Voltar
+					<button type="button" class="btn-voltar-etapa" onclick="irParaEtapa(1)">
+						<i class="bi bi-chevron-left"></i> Tamanho
 					</button>
 				</div>
 			</div>
@@ -620,30 +586,6 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 										<div onclick="selectPizzas('<?php echo $id_produto ?>')" class="subtitulo-item-menor mt-1" style="color:#6c757d; font-size: 12px;">
 											<?php echo $descricao ?>
 										</div>
-										<span onclick="selectPizzas('<?php echo $id_produto ?>')" class="valor-item-maior d-block mt-1">
-											<?php
-											$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and ativo = 'Sim' and empresa = '$id_empresa'");
-											$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-											$total_reg2 = @count($res2);
-											if ($total_reg2 > 0) {
-												for ($i2 = 0; $i2 < $total_reg2; $i2++) {
-													foreach ($res2[$i2] as $key => $value) {
-													}
-													$sigla = $res2[$i2]['sigla'];
-													$valorvar = $res2[$i2]['valor'];
-													$valorvarF = number_format($valorvar, 2, ',', '.');
-
-													echo '<span class="preco-variacao-tag preco-var-' . $sigla . '" style="font-size:11px">(' . $sigla . ') R$ ' . $valorvarF;
-													if ($i2 < $total_reg2 - 1) {
-														echo ' / ';
-													}
-													echo '</span>';
-												}
-											} else {
-												echo 'R$ ' . $valorF;
-											}
-											?>
-										</span>
 									</div>
 								</div>
 
@@ -664,13 +606,84 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 				<p class="mt-2 mb-0" style="font-size: 14px;">Nenhum sabor encontrado para sua busca.</p>
 			</div>
 
+			<!-- Botão auxiliar caso o usuário queira avançar com menos sabores que o limite máximo -->
+			<div id="box_avancar_sabores" class="mt-3" style="display: none;">
+				<button type="button" onclick="avancarDeSabores()" class="btn-ifood-action">
+					<span id="texto_avancar_sabores">Sabores selecionados</span>
+					<span>Continuar <i class="bi bi-arrow-right-circle-fill ms-1"></i></span>
+				</button>
+			</div>
+		</div>
+
+
+		<!-- ==================== ETAPA 3: ESCOLHA A BORDA ==================== -->
+		<?php
+		//VERIFICAR SE POSSUI BORDAS NA CATEGORIA
+		$query = $pdo->query("SELECT * FROM bordas where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' order by id asc");
+		$res = $query->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg_bordas = @count($res);
+		?>
+		<div id="etapa-3" class="wizard-section" style="display: none;">
+			<div class="wizard-header-box">
+				<div>
+					<h6 class="wizard-header-title">Escolha a borda</h6>
+					<p class="wizard-header-sub">Selecione a borda da sua pizza</p>
+				</div>
+				<button type="button" class="btn-voltar-etapa" onclick="irParaEtapa(2)">
+					<i class="bi bi-chevron-left"></i> Sabores
+				</button>
+			</div>
+
+			<?php if ($total_reg_bordas > 0) { ?>
+				<ul class="list-group form-check ps-0" style="margin-bottom:15px">
+					<li onclick="selectBorda('0')" id="card_borda_0"
+						class="list-group-item d-flex justify-content-between align-items-center ifood-card-item card-borda">
+						<div class="fw-semibold text-dark" style="font-size: 14px;">
+							Borda Catupiry + <span class="text-success fw-bold">R$ 0,00</span>
+						</div>
+						<input onchange="selecionarBorda('0')" class="form-check-input ms-2" type="radio" name="borda" id="borda_0" checked
+							value="0" style="transform: scale(1.2);">
+					</li>
+
+					<?php
+					for ($i = 0; $i < $total_reg_bordas; $i++) {
+						$id_bor = $res[$i]['id'];
+						$nome_bor = $res[$i]['nome'];
+						$valor_bor = $res[$i]['valor'];
+					?>
+						<li onclick="selectBorda('<?php echo $id_bor ?>')" id="card_borda_<?php echo $id_bor ?>"
+							class="list-group-item d-flex justify-content-between align-items-center ifood-card-item card-borda">
+							<div class="fw-semibold text-dark" style="font-size: 14px;">
+								<?php echo $nome_bor ?> + <span class="text-success fw-bold">R$ <?php echo $valor_bor ?></span>
+							</div>
+							<input onchange="selecionarBorda('<?php echo $id_bor ?>')" class="form-check-input ms-2" type="radio" name="borda"
+								id="borda_<?php echo $id_bor ?>" value="<?php echo $id_bor ?>" style="transform: scale(1.2);">
+						</li>
+					<?php } ?>
+				</ul>
+			<?php } ?>
+		</div>
+
+
+		<!-- ==================== ETAPA 4: ADICIONAIS E OBSERVAÇÕES ==================== -->
+		<div id="etapa-4" class="wizard-section" style="display: none;">
+			<div class="wizard-header-box">
+				<div>
+					<h6 class="wizard-header-title">Adicionais e Observações</h6>
+					<p class="wizard-header-sub">Personalize os detalhes finais da sua pizza</p>
+				</div>
+				<button type="button" class="btn-voltar-etapa" onclick="voltarDeAdicionais()">
+					<i class="bi bi-chevron-left"></i> Voltar
+				</button>
+			</div>
+
 			<?php
 			$query = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa'");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
 			$total_reg = @count($res);
 			if ($total_reg > 0) { ?>
 
-				<div class="wizard-header-box mt-4">
+				<div class="wizard-header-box mt-2">
 					<div>
 						<h6 class="wizard-header-title">Escolha os Adicionais</h6>
 						<p class="wizard-header-sub">Opcional</p>
@@ -710,20 +723,19 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 					<textarea maxlength="255" class="form-control rounded-3" type="text" name="obs" id="obs" placeholder="Ex: Tirar cebola, massa bem assada..."></textarea>
 				</div>
 			</div>
-
-			<input type="hidden" id="variacao_sel">
-			<input type="hidden" id="borda_sel">
-			<input type="hidden" id="ids">
-			<input type="hidden" id="quantidade_sabores">
-
 		</div>
+
+		<input type="hidden" id="variacao_sel">
+		<input type="hidden" id="borda_sel">
+		<input type="hidden" id="ids">
+		<input type="hidden" id="quantidade_sabores">
 
 	</ol>
 
-	<!-- Sticky Footer estilo iFood -->
+	<!-- Sticky Footer estilo iFood (Visível permanentemente na Etapa 4) -->
 	<div id="sticky-footer-carrinho" class="sticky-footer-ifood">
 		<button type="button" onclick="addCarrinho()" class="btn-ifood-action">
-			<span id="texto_sticky_sabores">Confirmar Sabores</span>
+			<span id="texto_sticky_sabores">Finalizar Pizza</span>
 			<span><?php echo $texto_botao ?> <i class="bi bi-arrow-right-circle-fill ms-1"></i></span>
 		</button>
 	</div>
@@ -739,7 +751,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	var temBordasCategoria = <?php echo ($total_reg_bordas > 0) ? 'true' : 'false'; ?>;
 
 	function atualizarStepper(etapaAtiva) {
-		for (var i = 1; i <= 3; i++) {
+		for (var i = 1; i <= 4; i++) {
 			var pill = $('#step-pill-' + i);
 			pill.removeClass('active completed');
 			if (i < etapaAtiva) {
@@ -756,10 +768,14 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		atualizarStepper(etapa);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 
-		if (etapa < 3) {
-			$('#sticky-footer-carrinho').fadeOut(150);
+		if (etapa === 4) {
+			$('#sticky-footer-carrinho').fadeIn(200);
 		} else {
-			atualizarControleLimiteSabores();
+			$('#sticky-footer-carrinho').fadeOut(150);
+		}
+
+		if (etapa === 2) {
+			atualizarControleLimiteSabores(false);
 		}
 	}
 
@@ -774,18 +790,37 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			});
 			return;
 		}
-		if (etapa === 2 && !temBordasCategoria) {
-			irParaEtapa(3);
+		var marcados = $('.check-sabor-pizza:checked').length;
+		if (etapa >= 3 && marcados === 0) {
+			Swal.fire({
+				title: 'Escolha os sabores',
+				text: 'Selecione pelo menos 1 sabor para avançar.',
+				icon: 'warning',
+				confirmButtonColor: '#ea1d2c'
+			});
+			irParaEtapa(2);
+			return;
+		}
+		if (etapa === 3 && !temBordasCategoria) {
+			irParaEtapa(4);
 			return;
 		}
 		irParaEtapa(etapa);
 	}
 
-	function voltarDeSabores() {
+	function avancarDeSabores() {
 		if (temBordasCategoria) {
-			irParaEtapa(2);
+			irParaEtapa(3);
 		} else {
-			irParaEtapa(1);
+			irParaEtapa(4);
+		}
+	}
+
+	function voltarDeAdicionais() {
+		if (temBordasCategoria) {
+			irParaEtapa(3);
+		} else {
+			irParaEtapa(2);
 		}
 	}
 
@@ -803,6 +838,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		var ids = $('#ids').val();
 		if (ids == "") {
 			alert("Selecione pelo menos um sabor de pizza!");
+			irParaEtapa(2);
 			return;
 		}
 
@@ -865,14 +901,11 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 				$('#quant_sabores').text(" até " + limite);
 				$('#quantidade_sabores').val(limite);
 				$('#subtitulo_limite_sabores').text('Escolha de 1 até ' + limite + (limite > 1 ? ' sabores' : ' sabor'));
-				atualizarControleLimiteSabores();
+				atualizarControleLimiteSabores(false);
 
+				// Escolheu Tamanho -> Auto-avança para Etapa 2 (Sabores)
 				setTimeout(function() {
-					if (temBordasCategoria) {
-						irParaEtapa(2);
-					} else {
-						irParaEtapa(3);
-					}
+					irParaEtapa(2);
 				}, 180);
 			},
 
@@ -888,8 +921,9 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		$('.card-borda').removeClass('card-selecionado');
 		$('#card_borda_' + id).addClass('card-selecionado');
 
+		// Escolheu Borda -> Auto-avança para Etapa 4 (Adicionais e Observações)
 		setTimeout(function() {
-			irParaEtapa(3);
+			irParaEtapa(4);
 		}, 180);
 	}
 
@@ -912,20 +946,22 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		});
 		$('#ids').val(novoIds);
 
-		if (checkbox.is(':checked')) {
+		var acabouDeMarcar = checkbox.is(':checked');
+		if (acabouDeMarcar) {
 			$('#card_sabor_' + id).addClass('card-selecionado');
 		} else {
 			$('#card_sabor_' + id).removeClass('card-selecionado');
 		}
 
-		atualizarControleLimiteSabores();
+		atualizarControleLimiteSabores(acabouDeMarcar);
 	}
 
-	function atualizarControleLimiteSabores() {
+	function atualizarControleLimiteSabores(autoAvancarAoLimite) {
 		var limite = parseInt($('#quantidade_sabores').val(), 10) || 1;
 		var marcados = $('.check-sabor-pizza:checked').length;
 
 		$('#badge_contador_sabores').text(marcados + ' / ' + limite + (limite > 1 ? ' sabores' : ' sabor'));
+		$('#texto_sticky_sabores').text(marcados + ' de ' + limite + (limite > 1 ? ' sabores' : ' sabor'));
 
 		if (marcados >= limite) {
 			$('#badge_contador_sabores').removeClass('bg-dark').addClass('bg-success');
@@ -935,6 +971,13 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 				var prodId = $(this).val();
 				$('#card_sabor_' + prodId).addClass('sabor-desabilitado');
 			});
+
+			// Atingiu o limite máximo de sabores -> Auto-avança para Etapa 3 (Borda)
+			if (autoAvancarAoLimite) {
+				setTimeout(function() {
+					avancarDeSabores();
+				}, 250);
+			}
 		} else {
 			$('#badge_contador_sabores').removeClass('bg-success').addClass('bg-dark');
 			// Reabilita os checkboxes caso o usuário desmarque algum sabor
@@ -943,10 +986,10 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		}
 
 		if (marcados > 0) {
-			$('#texto_sticky_sabores').text(marcados + ' de ' + limite + (limite > 1 ? ' sabores' : ' sabor'));
-			$('#sticky-footer-carrinho').fadeIn(200);
+			$('#texto_avancar_sabores').text(marcados + ' de ' + limite + (limite > 1 ? ' sabores selecionados' : ' sabor selecionado'));
+			$('#box_avancar_sabores').fadeIn(150);
 		} else {
-			$('#sticky-footer-carrinho').fadeOut(150);
+			$('#box_avancar_sabores').fadeOut(150);
 		}
 	}
 
