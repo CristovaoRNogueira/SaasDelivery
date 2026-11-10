@@ -1066,30 +1066,33 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 <?php if ($id_mesa == "" and $sessão_balcao == "") { ?>
   <footer class="rodape">
-    <div class="row">
-      <div class="col-md-6">
-        <?php if ($endereco_sistema == "") { ?>
-          <span class="ocultar-mobile"><?php echo $nome_sistema ?></span>
-        <?php } else { ?>
-          <span><?php echo $endereco_sistema ?></span>
-        <?php } ?>
+    <div class="container">
+      <div class="row align-items-center py-2">
+        <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+          <?php if ($endereco_sistema == "") { ?>
+            <span class="ocultar-mobile"><?php echo htmlspecialchars($nome_sistema ?? ''); ?></span>
+          <?php } else { ?>
+            <span><i class="bi bi-geo-alt text-danger me-1"></i> <?php echo htmlspecialchars($endereco_sistema); ?></span>
+          <?php } ?>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <?php if (!empty($tel_whats)) { ?>
+          <span class="d-inline-block me-3"><a target="_blank"
+              href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" class="link-neutro"><i
+                class="bi bi-whatsapp text-success me-1"></i> <?php echo htmlspecialchars($telefone_sistema ?? ''); ?></a></span>
+          <?php } ?>
+          <?php if (!empty($url_instagram)) { ?>
+          <span class="d-inline-block"><a target="_blank" href="<?php echo $url_instagram ?>"
+              class="link-neutro"><i class="bi bi-instagram me-1" style="color:#d11144"></i> @Instagram</a></span>
+          <?php } ?>
+        </div>
       </div>
-      <div class="col-md-6">
-        <span style="margin-left: 15px"><a target="_blank"
-            href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" class="link-neutro"><i
-              class="bi bi-whatsapp text-success"></i> <?php echo $telefone_sistema ?></a></span>
-        /
-        <span style="margin-left: 15px"><a target="_blank" href="<?php echo $url_instagram ?>"
-            class="link-neutro"><i class="bi bi-instagram" style="color:#d11144"></i> @Instagram</a></span>
-
-
-        <span class="" style="margin-left: 15px"> / <a href="sistema" class="link-neutro "><i
-              class="bi bi-lock" style="color:red"></i> Painel Sistema</a></span>
+      <hr style="opacity: 0.15; margin: 15px 0;">
+      <div class="footer-copyright text-center" style="font-size: 14px; color: #6c757d; padding: 20px 0;">
+          <p class="mb-1">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($nome_sistema ?? 'Empresa'); ?>. Todos os direitos reservados.</p>
+          <p class="mb-0">Desenvolvido por: <a href="https://crnsistemas.com.br/" target="_blank" rel="noopener noreferrer" style="color: #6c757d; font-weight: bold; text-decoration: none;">CRN Sistemas</a></p>
       </div>
-
-
-
-
+    </div>
   </footer>
 
 <?php 
