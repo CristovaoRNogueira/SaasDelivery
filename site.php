@@ -170,6 +170,7 @@ if($id_edicao == ""){
 <link rel="stylesheet" href="css/testimonails-slider.css">
 
 <link rel="stylesheet" href="css/style_cards_index.css">
+<link rel="stylesheet" type="text/css" href="css/style.css?v=<?php echo @filemtime('css/style.css') ?: time(); ?>">
 
 <script src="js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
 
@@ -441,8 +442,8 @@ if ($id_mesa == "" and $sessão_balcao == "") {
   <!-- Menu End -->
 
 
-<div class="catalog-search-container">
-  <div class="catalog-search-wrapper">
+<div class="catalog-search-container" style="max-width: 400px !important; margin: 0 auto 20px auto !important; width: 100% !important; padding: 0 15px !important;">
+  <div class="catalog-search-wrapper" style="max-width: 400px !important; margin: 0 auto !important; width: 100% !important;">
     <i class="bi bi-search catalog-search-icon"></i>
     <input 
       onkeyup="buscarProduto()"
@@ -451,13 +452,14 @@ if ($id_mesa == "" and $sessão_balcao == "") {
       name="buscar" 
       id="buscar" 
       class="catalog-search-input"
+      style="width: 100%;"
       autocomplete="off"
     >
   </div>
 </div>
 
 
-<div id="area_busca" style="display:none; margin-top:-30px">
+<div id="area_busca" style="display:none; max-width: 500px; margin: -15px auto 20px auto;">
   
 </div>
 
