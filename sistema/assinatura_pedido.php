@@ -5,6 +5,13 @@
  */
 function gerarAssinaturaPedido(PDO $pdo, $idPedido, $idEmpresa)
 {
+    $arquivoPedido = dirname(__DIR__) . '/pedido.php';
+    $arquivoDetalhes = __DIR__ . '/detalhes_item_pedido.php';
+    if (function_exists('opcache_invalidate')) {
+        @opcache_invalidate($arquivoPedido, true);
+        @opcache_invalidate($arquivoDetalhes, true);
+    }
+
     $query = $pdo->prepare('SELECT id, valor, total_pago, valor_recebido, troco, pago, taxa_entrega, tipo_pgto, cupom, taxa_extra_pedido, obs FROM vendas WHERE id = :id AND empresa = :empresa LIMIT 1');
     $query->execute([':id' => (int) $idPedido, ':empresa' => (int) $idEmpresa]);
     $venda = $query->fetch(PDO::FETCH_ASSOC);
@@ -20,6 +27,8 @@ function gerarAssinaturaPedido(PDO $pdo, $idPedido, $idEmpresa)
     $query->execute([':pedido' => (int) $idPedido, ':empresa' => (int) $idEmpresa]);
     $complementos = $query->fetchAll(PDO::FETCH_ASSOC);
 
-    return hash('sha256', json_encode([$venda, $itens, $complementos], JSON_UNESCAPED_UNICODE));
+    $versaoLayout = @filemtime($arquivoPedido) . ':' . @filemtime($arquivoDetalhes);
+
+    return hash('sha256', json_encode([$venda, $itens, $complementos, $versaoLayout], JSON_UNESCAPED_UNICODE));
 }
 

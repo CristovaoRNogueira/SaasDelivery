@@ -238,41 +238,27 @@ $cartoes = @$res[0]['cartoes'];
 				$total_linha = $total_item * $quantidade;
 				$total_itemF = number_format($total_linha, 2, ',', '.');
 
-				// Padronização do nome do produto e sabores em linha única
+				$classe_borda = 'ocultar';
 				if ($sabores > 0) {
-					$sabores_limpos = trim(preg_replace('/\s*\/\s*$/', '', trim((string)$nome_produto_tab)));
-					$sabores_limpos = preg_replace('/\s*\/\s*/', ' / ', $sabores_limpos);
-					if ($sabores_limpos == '') {
-						$sabores_limpos = $nome_produto;
-					}
-					if ($nome_categoria != '' && stripos($sabores_limpos, $nome_categoria) === false) {
-						$titulo_item = $nome_categoria . ' ' . $sabores_limpos;
-					} else {
-						$titulo_item = $sabores_limpos;
-					}
-				} else {
-					$titulo_item = $nome_produto;
+					$nome_produto = $nome_produto_tab;
+					$classe_borda = '';
 				}
 
-				if ($sigla_variacao != '' && stripos($titulo_item, $sigla_variacao) === false) {
-					$titulo_item .= ' ' . $sigla_variacao;
-				}
-				if ($sigla_grade != '' && stripos($titulo_item, $sigla_grade) === false) {
-					$titulo_item .= ' ' . $sigla_grade;
+				$nome_produto = trim(preg_replace('/\s*\/\s*$/', '', trim((string) $nome_produto)));
+				$nome_produto = preg_replace('/\s*\/\s*/', ' / ', $nome_produto);
+
+				if ($nome_categoria != '' && stripos($nome_produto, $nome_categoria) === false) {
+					$nome_produto_completo = trim($nome_categoria . ' ' . $nome_produto);
+				} else {
+					$nome_produto_completo = $nome_produto;
 				}
 
 				$detalhesHtml = renderizarDetalhesItemPedido($pdo, $dados[$i]);
 			?>
 				<div class="order-item-row">
 					<div style="flex: 1; min-width: 0;">
-						<?php if ($nome_categoria != "") { ?>
-						<div>
-							<span class="badge bg-light text-secondary border rounded-pill px-2 py-1 mb-1" style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><?php echo htmlspecialchars($nome_categoria) ?></span>
-						</div>
-						<?php } ?>
 						<div class="fw-bold text-dark" style="font-size: 14px; line-height: 1.3;">
-							<span class="text-danger fw-bold"><?php echo $quantidadeF ?><?php echo $sigla_unidade ?>x</span> 
-							<?php echo htmlspecialchars($titulo_item) ?>
+							<span class="text-danger fw-bold"><?php echo $quantidadeF ?><?php echo $sigla_unidade ?>x</span> <?php echo htmlspecialchars($nome_produto_completo) ?><?php if ($sigla_variacao != '') { ?> <span class="text-secondary fw-semibold"><?php echo htmlspecialchars($sigla_variacao) ?></span><?php } ?><?php if ($sigla_grade != '') { ?> <small class="text-secondary">(<?php echo htmlspecialchars($sigla_grade) ?>)</small><?php } ?>
 						</div>
 						<?php if (!empty(trim($detalhesHtml))) { ?>
 						<div class="mt-1" style="font-size: 12px;">
