@@ -30,6 +30,104 @@ if ($url_site === '' && !empty($_GET['id'])) {
 
 $url_empresa = $url_site;
 
+// =========================================================================
+// STRICT ROUTING MULTI-TENANT: Trava e Redirecionamento Estrito Baseado em Slug
+// =========================================================================
+$pagina_atual = basename($_SERVER['PHP_SELF'] ?? '', '.php');
+$paginas_funil = ['carrinho', 'finalizar', 'pedido', 'itens', 'pizza', 'adicionais', 'observacoes'];
+
+$is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+	|| (isset($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], '/ajax/') !== false || strpos($_SERVER['REQUEST_URI'], '/api/') !== false));
+
+$is_admin = (isset($_SERVER['REQUEST_URI']) && (
+	strpos($_SERVER['REQUEST_URI'], '/sistema') !== false ||
+	strpos($_SERVER['REQUEST_URI'], '/painel') !== false
+));
+
+if (!$is_ajax && !$is_admin && empty($_GET['url_empresa'])) {
+	if (in_array($pagina_atual, $paginas_funil, true) || $pagina_atual === 'site') {
+		// Se não houver slug na URL e nem na sessão, redireciona para a raiz pública
+		if ($url_site === '') {
+			header("Location: /", true, 302);
+			exit();
+		}
+
+		// Preserva parâmetros extras de query string (excluindo parâmetros de roteamento interno)
+		$extra_params = [];
+		if (!empty($_SERVER['QUERY_STRING'])) {
+			parse_str($_SERVER['QUERY_STRING'], $extra_params);
+			unset($extra_params['url_empresa'], $extra_params['url_site'], $extra_params['url'], $extra_params['id']);
+		}
+		$qs = !empty($extra_params) ? '?' . http_build_query($extra_params) : '';
+
+		// Redirecionamento 301 automático para a URL canônica com slug da empresa
+		switch ($pagina_atual) {
+			case 'carrinho':
+				header("Location: /" . $url_site . "/carrinho" . $qs, true, 301);
+				exit();
+
+			case 'finalizar':
+				header("Location: /" . $url_site . "/finalizar" . $qs, true, 301);
+				exit();
+
+			case 'pedido':
+				$id_ped = trim((string) ($_GET['id'] ?? ''));
+				if ($id_ped !== '') {
+					header("Location: /" . $url_site . "/pedido/" . rawurlencode($id_ped) . $qs, true, 301);
+				} else {
+					header("Location: /" . $url_site . $qs, true, 301);
+				}
+				exit();
+
+			case 'itens':
+				$url_cat = trim((string) ($_GET['url'] ?? ''));
+				if ($url_cat !== '') {
+					header("Location: /" . $url_site . "/categoria-" . rawurlencode($url_cat) . $qs, true, 301);
+				} else {
+					header("Location: /" . $url_site . $qs, true, 301);
+				}
+				exit();
+
+			case 'pizza':
+				$url_p = trim((string) ($_GET['url'] ?? ''));
+				$req_uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
+				if ($url_p !== '') {
+					$prefixo = (strpos($req_uri, 'categoria-sabores-') !== false) ? 'categoria-sabores-' : 'produto-';
+					header("Location: /" . $url_site . "/" . $prefixo . rawurlencode($url_p) . $qs, true, 301);
+				} else {
+					header("Location: /" . $url_site . $qs, true, 301);
+				}
+				exit();
+
+			case 'adicionais':
+				$url_p = trim((string) ($_GET['url'] ?? ''));
+				if ($url_p !== '') {
+					header("Location: /" . $url_site . "/adicionais-" . rawurlencode($url_p) . $qs, true, 301);
+				} else {
+					header("Location: /" . $url_site . $qs, true, 301);
+				}
+				exit();
+
+			case 'observacoes':
+				$url_p = trim((string) ($_GET['url'] ?? ''));
+				if ($url_p !== '') {
+					header("Location: /" . $url_site . "/observacoes-" . rawurlencode($url_p), true, 301);
+				} else {
+					header("Location: /" . $url_site . $qs, true, 301);
+				}
+				exit();
+
+			case 'site':
+				header("Location: /" . $url_site . $qs, true, 301);
+				exit();
+
+			default:
+				header("Location: /" . $url_site . "/" . $pagina_atual . $qs, true, 301);
+				exit();
+		}
+	}
+}
+
 $query2 = $pdo->prepare("SELECT * FROM config WHERE url_site = :url_site LIMIT 1");
 $query2->execute([':url_site' => $url_site]);
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
