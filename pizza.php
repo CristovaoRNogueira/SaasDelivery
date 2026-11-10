@@ -248,7 +248,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 		<?php
 		//VERIFICAR SE POSSUI VARIAÇÕES NA CATEGORIA
-		$query = $pdo->query("SELECT * FROM variacoes_cat where categoria = '$id' order by id asc");
+		$query = $pdo->query("SELECT * FROM variacoes_cat where categoria = '$id' and empresa = '$id_empresa' order by id asc");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if ($total_reg > 0) {
@@ -283,7 +283,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 		<?php
 		//VERIFICAR SE POSSUI VARIAÇÕES NA CATEGORIA
-		$query = $pdo->query("SELECT * FROM bordas where categoria = '$id' and ativo = 'Sim' order by id asc");
+		$query = $pdo->query("SELECT * FROM bordas where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' order by id asc");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if ($total_reg > 0) {
@@ -291,8 +291,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			echo '<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha a borda</span></span>';
 		?>
 
-			<li onclick="" class="list-group-item d-flex justify-content-between align-items-center">
-				<small>Sem Borda + <span class="text-success">R$ 0</span></small>
+			<li onclick="selectBorda('0')" class="list-group-item d-flex justify-content-between align-items-center">
+				<small>Borda Catupiry + <span class="text-success">R$ 0,00</span></small>
 				<input onchange="selecionarBorda('0')" class="form-check-input" type="radio" name="borda" id="borda_0" checked
 					value="0">
 			</li>
@@ -320,7 +320,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 		<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha <span id="quant_sabores"> os </span> sabores</span></span>
 		<?php
-		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
+		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if ($total_reg > 0) {
@@ -384,7 +384,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 									<?php echo $descricao ?></div>
 								<span onclick="selectPizzas('<?php echo $id_produto ?>')" class="valor-item-maior">
 									<?php
-									$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and ativo = 'Sim'");
+									$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and ativo = 'Sim' and empresa = '$id_empresa'");
 									$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg2 = @count($res2);
 									if ($total_reg2 > 0) {
@@ -437,7 +437,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 		<?php
-		$query = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim'");
+		$query = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if ($total_reg > 0) { ?>

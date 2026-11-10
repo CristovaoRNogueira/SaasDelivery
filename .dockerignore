@@ -12,6 +12,7 @@
 # Documentação e scripts de migração/teste
 *.md
 migrar_aquadrada.php
+AQuadradaAntigo/
 
 # Arquivos temporários e caches
 /tmp

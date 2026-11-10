@@ -1,6 +1,7 @@
 <?php 
 @session_start();
 $id_usuario = $_SESSION['id'];
+$id_empresa = @$_SESSION['empresa'];
 require_once("../../../conexao.php");
 $_SESSION['sessao_usuario'] = $id_usuario;
 $nova_sessao = $id_usuario;
@@ -24,7 +25,7 @@ $BASE_IMG_PROD = 'images/produtos/'; // ajuste se precisar caminho absoluto/rela
 
     <?php
     // VARIAÇÕES DA CATEGORIA
-    $query = $pdo->query("SELECT * FROM variacoes_cat WHERE categoria = '$id' ORDER BY id ASC");
+    $query = $pdo->query("SELECT * FROM variacoes_cat WHERE categoria = '$id' AND empresa = '$id_empresa' ORDER BY id ASC");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) {
@@ -52,15 +53,15 @@ $BASE_IMG_PROD = 'images/produtos/'; // ajuste se precisar caminho absoluto/rela
 
     <?php
     // BORDAS DA CATEGORIA
-    $query = $pdo->query("SELECT * FROM bordas WHERE categoria = '$id' AND ativo = 'Sim' ORDER BY id ASC");
+    $query = $pdo->query("SELECT * FROM bordas WHERE categoria = '$id' AND ativo = 'Sim' AND empresa = '$id_empresa' ORDER BY id ASC");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) {
         echo '<ul class="list-group form-check" style="margin-bottom:15px">';
         echo '<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha a borda</span></span>';
         ?>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <small>Sem Borda + <span class="text-success">R$ 0</span></small>
+        <li onclick="selectBorda('0')" class="list-group-item d-flex justify-content-between align-items-center">
+            <small>Borda Catupiry + <span class="text-success">R$ 0,00</span></small>
             <input onchange="selecionarBorda('0')" class="form-check-input" type="radio" name="borda" id="borda_0" checked value="0">
         </li>
         <?php
@@ -84,7 +85,7 @@ $BASE_IMG_PROD = 'images/produtos/'; // ajuste se precisar caminho absoluto/rela
     <span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha <span id="quant_sabores"> os </span> sabores</span></span>
     <?php
     // PRODUTOS DA CATEGORIA
-    $query = $pdo->query("SELECT * FROM produtos WHERE categoria = '$id' AND ativo = 'Sim'");
+    $query = $pdo->query("SELECT * FROM produtos WHERE categoria = '$id' AND ativo = 'Sim' AND empresa = '$id_empresa'");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) {
@@ -135,7 +136,7 @@ $BASE_IMG_PROD = 'images/produtos/'; // ajuste se precisar caminho absoluto/rela
 
                             <span onclick="selectPizzas('<?php echo $id_produto ?>')" class="valor-item-maior">
                                 <?php
-                                $query2 = $pdo->query("SELECT * FROM variacoes WHERE produto = '$id_produto' AND ativo = 'Sim'");
+                                $query2 = $pdo->query("SELECT * FROM variacoes WHERE produto = '$id_produto' AND ativo = 'Sim' AND empresa = '$id_empresa'");
                                 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
                                 $total_reg2 = @count($res2);
                                 if ($total_reg2 > 0) {
@@ -169,7 +170,7 @@ $BASE_IMG_PROD = 'images/produtos/'; // ajuste se precisar caminho absoluto/rela
 
     <?php
     // ADICIONAIS DA CATEGORIA
-    $query = $pdo->query("SELECT * FROM adicionais_cat WHERE categoria = '$id' AND ativo = 'Sim'");
+    $query = $pdo->query("SELECT * FROM adicionais_cat WHERE categoria = '$id' AND ativo = 'Sim' AND empresa = '$id_empresa'");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) { ?>

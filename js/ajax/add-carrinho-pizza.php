@@ -16,6 +16,10 @@ $obs = $_POST['obs'];
 $borda = $_POST['borda'];
 $mesa = $_POST['mesa'];
 
+if ($borda === '') {
+    $borda = null;
+}
+
 if(@$_SESSION['sessao_usuario'] == ""){
 	$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);
 	$_SESSION['sessao_usuario'] = $sessao;
@@ -41,7 +45,7 @@ $primeiro_id_produto = $separar[0];
 for($i=0; $i<$total_ids; $i++){
 		$id = $separar[$i];
 
-		$query = $pdo->query("SELECT * FROM produtos where id = '$id'");
+		$query = $pdo->query("SELECT * FROM produtos where id = '$id' and empresa = '$id_empresa'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);		
 		$nome_p = $res[0]['nome'];
 		$categoria = $res[0]['categoria'];
@@ -61,13 +65,13 @@ for($i=0; $i<$total_ids; $i++){
 		
 		$nome_produto .= $nome_p.' / ';
 
-		$query = $pdo->query("SELECT * FROM variacoes_cat where id = '$variacao'");
+		$query = $pdo->query("SELECT * FROM variacoes_cat where id = '$variacao' and empresa = '$id_empresa'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);			
 		$sigla = $res[0]['sigla'];		
 		
 
 
-		$query = $pdo->query("SELECT * FROM variacoes where produto = '$id' and sigla = '$sigla'");
+		$query = $pdo->query("SELECT * FROM variacoes where produto = '$id' and sigla = '$sigla' and empresa = '$id_empresa'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		if(@count($res) > 0){	
 			$valor_p = $res[0]['valor'];	
@@ -87,6 +91,7 @@ for($i=0; $i<$total_ids; $i++){
 
 $nome_produto = substr($nome_produto, 0, -2);	
 
+/*
 $valor_produto_media = $valor_produto_media / $total_ids;
 
 if($mais_sabores == 'Média'){
@@ -94,6 +99,10 @@ if($mais_sabores == 'Média'){
 }else{
 	$valor_produto_final = max($valor_produto);
 }
+*/
+
+// Define o valor final da pizza SEMPRE pelo sabor mais caro
+$valor_produto_final = max($valor_produto);
 
 
 //calcular os adicionais
@@ -108,7 +117,7 @@ if($total_reg > 0){
 			$id_item = $res[$i]['id_item'];	
 			$quantidade_temp = $res[$i]['quantidade'];	
 
-			$query2 =$pdo->query("SELECT * FROM adicionais_cat where id = '$id_item'");
+			$query2 =$pdo->query("SELECT * FROM adicionais_cat where id = '$id_item' and empresa = '$id_empresa'");
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 			$total_reg2 = @count($res2);
 			$nome_adc = $res2[0]['nome'];
@@ -120,7 +129,7 @@ if($total_reg > 0){
 $valor_produto_final += $total_adicionais;
 
 //pegar o valor da borda
-$query =$pdo->query("SELECT * FROM bordas where id = '$borda'");
+$query =$pdo->query("SELECT * FROM bordas where id = '$borda' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -139,15 +148,27 @@ if ($id_edicao > 0) {
 	}
 
 	//adicionar o total item na tabela de vendas
-	$query = $pdo->query("SELECT * FROM vendas where id = '$id_edicao'");
+	$query = $pdo->query("SELECT * FROM vendas where id = '$id_edicao' and empresa = '$id_empresa'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$valor_venda = @$res[0]['valor'];
 
 	$total_venda = $valor_venda + ($valor_produto_final);
 }
 
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$primeiro_id_produto', quantidade = '1', total_item = '$valor_produto_final', obs = :obs, pedido = '$id_edicao', id_sabor = '0', data = curDate(), variacao = '$id_variacao', mesa = '$mesa', nome_cliente = '', sabores = '$quantidade_sabores', nome_produto = '$nome_produto', borda = '$borda', categoria = '$categoria', status = '$status', hora = curTime(), empresa = '$id_empresa' ");
-$query->bindValue(":obs", "$obs");
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = :sessao, cliente = '0', produto = :produto, quantidade = '1', total_item = :total_item, obs = :obs, pedido = :pedido, id_sabor = '0', data = curDate(), variacao = :variacao, mesa = :mesa, nome_cliente = '', sabores = :sabores, nome_produto = :nome_produto, borda = :borda, categoria = :categoria, status = :status, hora = curTime(), empresa = :empresa");
+$query->bindValue(":sessao", $sessao);
+$query->bindValue(":produto", $primeiro_id_produto);
+$query->bindValue(":total_item", $valor_produto_final);
+$query->bindValue(":obs", $obs);
+$query->bindValue(":pedido", $id_edicao);
+$query->bindValue(":variacao", $id_variacao);
+$query->bindValue(":mesa", $mesa);
+$query->bindValue(":sabores", $quantidade_sabores);
+$query->bindValue(":nome_produto", $nome_produto);
+$query->bindValue(":borda", $borda);
+$query->bindValue(":categoria", $categoria);
+$query->bindValue(":status", $status);
+$query->bindValue(":empresa", $id_empresa);
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();
 if ($id_edicao > 0) {
@@ -157,5 +178,5 @@ echo 'Inserido com Sucesso';
 
 
 //limpar os ingredientes e adicionais
-$pdo->query("UPDATE temp SET carrinho = '$id_carrinho' where sessao = '$sessao' and carrinho = '0'"); 
+$pdo->query("UPDATE temp SET carrinho = '$id_carrinho' where sessao = '$sessao' and carrinho = '0' and empresa = '$id_empresa'"); 
 

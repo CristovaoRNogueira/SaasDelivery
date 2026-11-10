@@ -7,6 +7,7 @@ $query = $pdo->query("SELECT * from vendas where id = '$id' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 
 $id = $res[0]['id'];
+$id_empresa = (int) ($res[0]['empresa'] ?? ($id_empresa ?? 0));
 $cliente = $res[0]['cliente'];
 $valor = $res[0]['valor'];
 $total_pago = $res[0]['total_pago'];
@@ -59,7 +60,7 @@ $valor_dos_itensF = number_format($valor_dos_itens, 2, ',', '.');
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes", strtotime($hora)));
 
-$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente' and empresa = '$id_empresa'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 $total_reg2 = @count($res2);
 if ($total_reg2 > 0) {
@@ -228,16 +229,18 @@ if ($entrega == 'Consumir Local') {
     Pedido: <b><?php echo $n_pedido ?></b> - Data: <?php echo $dataF ?> Hora: <?php echo $hora ?>
   </div>
 
-  <div class="th title">Comprovante de Venda</div>
+  <!-- <div class="th title">Comprovante de Venda</div> -->
 
   <div class="th">CUPOM NÃO FISCAL</div>
 
   <?php
-
-  $nome_produto2 = '';
-  $res = $pdo->query("SELECT * from carrinho where pedido = '$id' order by id asc");
+  // ALTERAÇÃO 1: A consulta agora ordena por categoria para agrupar os itens.
+  $res = $pdo->query("SELECT * from carrinho where pedido = '$id' and empresa = '$id_empresa' order by categoria asc, id asc");
   $dados = $res->fetchAll(PDO::FETCH_ASSOC);
   $linhas = count($dados);
+
+  // ALTERAÇÃO 2: A variável de controle agora armazena o ID da categoria, para garantir o agrupamento correto.
+  $id_categoria_atual = '';
 
   $sub_tot;
   for ($i = 0; $i < count($dados); $i++) {
@@ -255,8 +258,16 @@ if ($entrega == 'Consumir Local') {
     $borda = $dados[$i]['borda'];
     $categoria = $dados[$i]['categoria'];
 
+    // ALTERAÇÃO 3: Pega o ID da categoria e busca o nome correspondente na tabela 'categorias'.
+    $categoria_id = $dados[$i]['categoria'];
+    $query_cat = $pdo->query("SELECT nome FROM categorias WHERE id = '$categoria_id' and empresa = '$id_empresa'");
+    $res_cat = $query_cat->fetch(PDO::FETCH_ASSOC);
+    $nome_categoria = @$res_cat['nome'] ?? 'Bebidas';
 
-    $query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
+    $total_item = $total_item * $quantidade;
+
+
+    $query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao' and empresa = '$id_empresa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     if (@count(@$res2) > 0) {
       $sigla_variacao = '(' . $res2[0]['sigla'] . ')';
@@ -265,11 +276,11 @@ if ($entrega == 'Consumir Local') {
     }
 
 
-    $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'Variação' order by id asc limit 1");
+    $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'Variação' and empresa = '$id_empresa' order by id asc limit 1");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     $id_do_item = @$res2[0]['id_item'];
 
-    $query2 = $pdo->query("SELECT * FROM itens_grade where id = '$id_do_item'");
+    $query2 = $pdo->query("SELECT * FROM itens_grade where id = '$id_do_item' and empresa = '$id_empresa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     if (@$res2[0]['texto'] != "") {
       $sigla_grade = @$res2[0]['texto'];
@@ -277,7 +288,7 @@ if ($entrega == 'Consumir Local') {
       $sigla_grade = '';
     }
 
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
+    $query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto' and empresa = '$id_empresa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     if (@count(@$res2) > 0) {
       $nome_produto = $res2[0]['nome'];
@@ -297,18 +308,23 @@ if ($entrega == 'Consumir Local') {
 
     $nome_borda = '';
     if ($borda != "") {
-      $query8 = $pdo->query("SELECT * FROM bordas where id = '$borda'");
+      $query8 = $pdo->query("SELECT * FROM bordas where id = '$borda' and empresa = '$id_empresa'");
       $res8 = $query8->fetchAll(PDO::FETCH_ASSOC);
       $total_reg8 = @count($res8);
       if ($total_reg8 > 0) {
         $nome_borda = $res8[0]['nome'];
       } else {
-        $nome_borda = 'Sem Borda';
+        $nome_borda = 'Borda Catupiry';
       }
     }
 
+    // ALTERAÇÃO 4: A lógica agora compara o ID da categoria, mas imprime o NOME.
+    if ($categoria_id !== $id_categoria_atual) {
+      echo '<div class="th" style="text-align:left; padding: 2px; font-weight: bold; border-bottom: 1px solid #fff; padding-top: 10px;">' . mb_strtoupper($nome_categoria) . '</div>';
+      echo '<div class="th" style=" dashed #000; padding:0; height:1px;"></div>';
 
-
+      $id_categoria_atual = $categoria_id;
+    }
     ?>
 
     <div class=" itens">
@@ -329,15 +345,15 @@ if ($entrega == 'Consumir Local') {
       <?php
 
       if ($sabores > 1) {
-        echo '<span style="margin-left: 15px"><small><b>Atenção: </b>' . $sabores . ' Sabores</small></span><br>';
+        echo '<div style="margin-left: 15px; padding-top: 2px;"><small><b>Atenção: </b>' . $sabores . ' Sabores</small></div>';
       }
 
-      if ($nome_borda != '') {
-        echo '<span style="margin-left: 15px"><small><b>Borda: </b>' . $nome_borda . '</small></span><br>';
+      if ($nome_borda != '' && mb_strtolower(trim($nome_borda)) !== 'sem borda') {
+        echo '<div style="margin-left: 15px; padding-top: 2px;"><small><b>Borda: </b>' . $nome_borda . '</small></div>';
       }
 
 
-      $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais'");
+      $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais' and empresa = '$id_empresa'");
       $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
       $total_reg2 = @count($res2);
       if ($total_reg2 > 0) {
@@ -358,7 +374,7 @@ if ($entrega == 'Consumir Local') {
               $id_item = $res2[$i2]['id_item'];
               $quantidade_temp = $res2[$i2]['quantidade'];
 
-              $query3 = $pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
+              $query3 = $pdo->query("SELECT * FROM $tabela_ad where id = '$id_item' and empresa = '$id_empresa'");
               $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
               $total_reg3 = @count($res3);
               $nome_adc = $res3[0]['nome'];
@@ -380,7 +396,7 @@ if ($entrega == 'Consumir Local') {
 
       <?php
       //percorrer as grades do produto
-      $query20 = $pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação'");
+      $query20 = $pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação' and empresa = '$id_empresa'");
       $res20 = $query20->fetchAll(PDO::FETCH_ASSOC);
       $total_reg20 = @count($res20);
       if ($total_reg20 > 0) {
@@ -391,7 +407,7 @@ if ($entrega == 'Consumir Local') {
 
 
           //buscar os itens selecionados pela grade
-          $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and grade = '$id_da_grade'");
+          $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and grade = '$id_da_grade' and empresa = '$id_empresa'");
           $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
           $total_reg2 = @count($res2);
           if ($total_reg2 > 0) {
@@ -416,7 +432,7 @@ if ($entrega == 'Consumir Local') {
 
 
 
-              $query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item'");
+              $query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item' and empresa = '$id_empresa'");
               $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
               $total_reg3 = @count($res3);
               $nome_item = $res3[0]['texto'];
@@ -461,15 +477,15 @@ if ($entrega == 'Consumir Local') {
 
   <?php if ($entrega == "Delivery") { ?>
     <div class="row valores">
-      <div class="col-6">Total</div>
+      <div class="col-6">Total dos Itens</div>
       <div class="col-6" align="right">R$ <?php echo @$valor_dos_itensF ?></div>
     </div>
   <?php } ?>
 
   <?php if ($entrega == "Delivery") { ?>
     <div class="row valores">
-      <div class="col-6">Frete</div>
-      <div class="col-6" align="right">R$ <?php echo @$taxa_entregaF ?></div>
+      <!--<div class="col-6">Frete</div>
+      <div class="col-6" align="right">R$ <?php echo @$taxa_entregaF ?></div> -->
     </div>
   <?php } ?>
 
@@ -482,7 +498,7 @@ if ($entrega == 'Consumir Local') {
 
   <?php if ($cupom > 0) { ?>
     <div class="row valores">
-      <div class="col-6">Cupom de Desconto</div>
+      <div class="col-6">Desconto</div>
       <div class="col-6" align="right">R$ <?php echo @$cupomF ?></div>
     </div>
   <?php } ?>
@@ -493,20 +509,10 @@ if ($entrega == 'Consumir Local') {
   </div>
 
 
-  </tr>
-
-
-  <?php if ($valor_recebido > 0 && $saldo_pendente > 0) { ?>
+  <?php if ($total_pago != $valor && $tipo_pgto == 'Dinheiro') { ?>
     <div class="row valores">
       <div class="col-6">Valor Recebido</div>
-      <div class="col-6" align="right">R$ <?php echo @$valor_recebidoF ?></div>
-    </div>
-  <?php } ?>
-
-  <?php if ($saldo_pendente > 0) { ?>
-    <div class="row valores" style="font-weight: bold;">
-      <div class="col-6">Acréscimo Pendente</div>
-      <div class="col-6" align="right">R$ <?php echo @$saldo_pendenteF ?></div>
+      <div class="col-6" align="right">R$ <?php echo @$total_pagoF ?></div>
     </div>
   <?php } ?>
 
