@@ -33,10 +33,6 @@ function renderizarDetalhesItemPedido(PDO $pdo, array $item)
     $sabores = (int) ($item['sabores'] ?? 0);
     $html = '';
 
-    if ($sabores > 1) {
-        $html .= linhaDetalhePedido('Sabores', [escaparDetalhePedido($sabores . ' sabores')]);
-    }
-
     $idBorda = (int) ($item['borda'] ?? 0);
     if ($idBorda > 0) {
         $query = $pdo->prepare('SELECT nome FROM bordas WHERE id = :id LIMIT 1');

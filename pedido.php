@@ -132,57 +132,6 @@ $cartoes = @$res[0]['cartoes'];
 			</div>
 		</div>
 
-		<!-- Card de Resumo Financeiro e Detalhes da Entrega -->
-		<div class="order-tracking-card">
-			<h6 class="fw-bold text-dark mb-3" style="font-size: 15px;">
-				<i class="bi bi-receipt text-danger me-1"></i> Resumo da Compra
-			</h6>
-
-			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
-				<span class="text-muted">Forma de Pagamento</span>
-				<span class="fw-bold text-dark"><?php echo $tipo_pgto ?></span>
-			</div>
-
-			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
-				<span class="text-muted">Opção de Entrega</span>
-				<span class="fw-bold text-dark"><?php echo $entrega ?></span>
-			</div>
-
-			<?php if ($taxa_entrega > 0) { ?>
-			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
-				<span class="text-muted">Taxa de Entrega</span>
-				<span class="fw-bold text-dark">R$ <?php echo $taxa_entregaF ?></span>
-			</div>
-			<?php } ?>
-
-			<?php if ($taxa_extra_pedido > 0) { ?>
-			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
-				<span class="text-muted"><?php echo $titulo_taxa ?></span>
-				<span class="fw-bold text-dark">R$ <?php echo $taxa_extra_pedidoF ?></span>
-			</div>
-			<?php } ?>
-
-			<?php if ($cupom > 0) { ?>
-			<div class="d-flex justify-content-between align-items-center mb-2 text-success" style="font-size: 13px;">
-				<span>Desconto Aplicado</span>
-				<span class="fw-bold">- R$ <?php echo $cupomF ?></span>
-			</div>
-			<?php } ?>
-
-			<?php if ($access_token == "" && @$dados_pagamento != "") { ?>
-			<div class="p-2 mb-2 rounded-3 bg-light border" style="font-size: 12px;">
-				<span class="text-muted">Chave Pix:</span> <strong class="text-dark"><?php echo $tipo_chave ?> <?php echo @$dados_pagamento ?></strong>
-			</div>
-			<?php } ?>
-
-			<hr class="my-2" style="opacity: 0.12;">
-
-			<div class="d-flex justify-content-between align-items-center mt-2">
-				<span class="fw-bold text-dark" style="font-size: 15px;">Total do Pedido</span>
-				<span class="fw-bold text-success" style="font-size: 18px;">R$ <?php echo $valorF ?></span>
-			</div>
-		</div>
-
 		<!-- Card de Itens do Pedido -->
 		<div class="order-tracking-card">
 			<h6 class="fw-bold text-dark mb-3" style="font-size: 15px;">
@@ -204,28 +153,36 @@ $cartoes = @$res[0]['cartoes'];
 				$item = $dados[$i]['item'];
 				$variacao = $dados[$i]['variacao'];
 				$nome_produto_tab = $dados[$i]['nome_produto'];
-				$sabores = $dados[$i]['sabores'];
+				$sabores = (int) ($dados[$i]['sabores'] ?? 0);
 				$borda = $dados[$i]['borda'];
 				$categoria = $dados[$i]['categoria'];
 
-				$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
-				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-				if (@count(@$res2) > 0) {
-					$sigla_variacao = '(' . $res2[0]['sigla'] . ')';
-				} else {
-					$sigla_variacao = '';
+				$sigla_variacao = '';
+				if ($variacao != '' && $variacao > 0) {
+					$query2 = $pdo->query("SELECT sigla FROM variacoes where id = '$variacao'");
+					$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+					if (@count(@$res2) > 0 && !empty($res2[0]['sigla'])) {
+						$sigla_variacao = '(' . $res2[0]['sigla'] . ')';
+					} else {
+						$query2 = $pdo->query("SELECT sigla FROM variacoes_cat where id = '$variacao'");
+						$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+						if (@count(@$res2) > 0 && !empty($res2[0]['sigla'])) {
+							$sigla_variacao = '(' . $res2[0]['sigla'] . ')';
+						}
+					}
 				}
 
 				$query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'Variação' order by id asc limit 1");
 				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 				$id_do_item = @$res2[0]['id_item'];
 
-				$query2 = $pdo->query("SELECT * FROM itens_grade where id = '$id_do_item'");
-				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-				if (@$res2[0]['texto'] != "") {
-					$sigla_grade = @$res2[0]['texto'];
-				} else {
-					$sigla_grade = '';
+				$sigla_grade = '';
+				if ($id_do_item > 0) {
+					$query2 = $pdo->query("SELECT texto FROM itens_grade where id = '$id_do_item'");
+					$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+					if (@$res2[0]['texto'] != "") {
+						$sigla_grade = @$res2[0]['texto'];
+					}
 				}
 
 				$query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
@@ -280,6 +237,31 @@ $cartoes = @$res[0]['cartoes'];
 
 				$total_linha = $total_item * $quantidade;
 				$total_itemF = number_format($total_linha, 2, ',', '.');
+
+				// Padronização do nome do produto e sabores em linha única
+				if ($sabores > 0) {
+					$sabores_limpos = trim(preg_replace('/\s*\/\s*$/', '', trim((string)$nome_produto_tab)));
+					$sabores_limpos = preg_replace('/\s*\/\s*/', ' / ', $sabores_limpos);
+					if ($sabores_limpos == '') {
+						$sabores_limpos = $nome_produto;
+					}
+					if ($nome_categoria != '' && stripos($sabores_limpos, $nome_categoria) === false) {
+						$titulo_item = $nome_categoria . ' ' . $sabores_limpos;
+					} else {
+						$titulo_item = $sabores_limpos;
+					}
+				} else {
+					$titulo_item = $nome_produto;
+				}
+
+				if ($sigla_variacao != '' && stripos($titulo_item, $sigla_variacao) === false) {
+					$titulo_item .= ' ' . $sigla_variacao;
+				}
+				if ($sigla_grade != '' && stripos($titulo_item, $sigla_grade) === false) {
+					$titulo_item .= ' ' . $sigla_grade;
+				}
+
+				$detalhesHtml = renderizarDetalhesItemPedido($pdo, $dados[$i]);
 			?>
 				<div class="order-item-row">
 					<div style="flex: 1; min-width: 0;">
@@ -288,19 +270,72 @@ $cartoes = @$res[0]['cartoes'];
 							<span class="badge bg-light text-secondary border rounded-pill px-2 py-1 mb-1" style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><?php echo htmlspecialchars($nome_categoria) ?></span>
 						</div>
 						<?php } ?>
-						<div class="fw-bold text-dark" style="font-size: 14px;">
+						<div class="fw-bold text-dark" style="font-size: 14px; line-height: 1.3;">
 							<span class="text-danger fw-bold"><?php echo $quantidadeF ?><?php echo $sigla_unidade ?>x</span> 
-							<?php echo $nome_produto ?> <small class="text-secondary"><?php echo $sigla_variacao ?> <?php echo $sigla_grade ?></small>
+							<?php echo htmlspecialchars($titulo_item) ?>
 						</div>
+						<?php if (!empty(trim($detalhesHtml))) { ?>
 						<div class="mt-1" style="font-size: 12px;">
-							<?php echo renderizarDetalhesItemPedido($pdo, $dados[$i]); ?>
+							<?php echo $detalhesHtml; ?>
 						</div>
+						<?php } ?>
 					</div>
-					<div class="text-end ps-3" style="font-weight: 700; font-size: 14px; color: #212529;">
+					<div class="text-end ps-3" style="font-weight: 700; font-size: 14px; color: #212529; white-space: nowrap;">
 						R$ <?php echo $total_itemF ?>
 					</div>
 				</div>
 			<?php } ?>
+			</div>
+		</div>
+
+		<!-- Card de Resumo Financeiro e Detalhes da Entrega -->
+		<div class="order-tracking-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 15px;">
+				<i class="bi bi-receipt text-danger me-1"></i> Resumo da Compra
+			</h6>
+
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted">Forma de Pagamento</span>
+				<span class="fw-bold text-dark"><?php echo $tipo_pgto ?></span>
+			</div>
+
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted">Opção de Entrega</span>
+				<span class="fw-bold text-dark"><?php echo $entrega ?></span>
+			</div>
+
+			<?php if ($taxa_entrega > 0) { ?>
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted">Taxa de Entrega</span>
+				<span class="fw-bold text-dark">R$ <?php echo $taxa_entregaF ?></span>
+			</div>
+			<?php } ?>
+
+			<?php if ($taxa_extra_pedido > 0) { ?>
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted"><?php echo $titulo_taxa ?></span>
+				<span class="fw-bold text-dark">R$ <?php echo $taxa_extra_pedidoF ?></span>
+			</div>
+			<?php } ?>
+
+			<?php if ($cupom > 0) { ?>
+			<div class="d-flex justify-content-between align-items-center mb-2 text-success" style="font-size: 13px;">
+				<span>Desconto Aplicado</span>
+				<span class="fw-bold">- R$ <?php echo $cupomF ?></span>
+			</div>
+			<?php } ?>
+
+			<?php if ($access_token == "" && @$dados_pagamento != "") { ?>
+			<div class="p-2 mb-2 rounded-3 bg-light border" style="font-size: 12px;">
+				<span class="text-muted">Chave Pix:</span> <strong class="text-dark"><?php echo $tipo_chave ?> <?php echo @$dados_pagamento ?></strong>
+			</div>
+			<?php } ?>
+
+			<hr class="my-2" style="opacity: 0.12;">
+
+			<div class="d-flex justify-content-between align-items-center mt-2">
+				<span class="fw-bold text-dark" style="font-size: 15px;">Total do Pedido</span>
+				<span class="fw-bold text-success" style="font-size: 18px;">R$ <?php echo $valorF ?></span>
 			</div>
 		</div>
 
