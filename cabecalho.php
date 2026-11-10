@@ -2,8 +2,33 @@
 @session_start();
 require_once("sistema/conexao.php");
 
-$url_site = $_SESSION['url_site'];
+$url_empresa_get = trim((string) ($_GET['url_empresa'] ?? $_GET['url_site'] ?? ''));
+if ($url_empresa_get === '' && basename($_SERVER['PHP_SELF'] ?? '') === 'site.php' && !empty($_GET['url'])) {
+	$url_empresa_get = trim((string) $_GET['url']);
+}
 
+if ($url_empresa_get !== '') {
+	$_SESSION['url_site'] = $url_empresa_get;
+}
+
+$url_site = trim((string) ($_SESSION['url_site'] ?? ''));
+
+// Fallback para links de acompanhamento de pedido legados sem slug na URL
+if ($url_site === '' && !empty($_GET['id'])) {
+	$id_dec = base64_decode((string) $_GET['id']);
+	$partes_id = explode('|', (string) $id_dec);
+	if (count($partes_id) === 2 && $partes_id[1] === 'hugo') {
+		$stmt_ped = $pdo->prepare("SELECT c.url_site FROM vendas v INNER JOIN config c ON c.empresa = v.empresa WHERE v.id = :id LIMIT 1");
+		$stmt_ped->execute([':id' => (int) $partes_id[0]]);
+		$row_ped = $stmt_ped->fetch(PDO::FETCH_ASSOC);
+		if (!empty($row_ped['url_site'])) {
+			$url_site = $row_ped['url_site'];
+			$_SESSION['url_site'] = $url_site;
+		}
+	}
+}
+
+$url_empresa = $url_site;
 
 $query2 = $pdo->prepare("SELECT * FROM config WHERE url_site = :url_site LIMIT 1");
 $query2->execute([':url_site' => $url_site]);
@@ -17,7 +42,13 @@ if (@count($res2) == 0) {
 
 $id_empresa = @$res2[0]['empresa'];
 $_SESSION['empresa'] = $id_empresa;
+
+if (@$_SESSION['sessao_usuario'] == "") {
+	$_SESSION['sessao_usuario'] = date('Y-m-d-H:i:s-') . rand(0, 1500);
+}
+
 require_once("sistema/painel/buscar_config.php");
+$url_empresa = $url_site;
 
 
 ?>

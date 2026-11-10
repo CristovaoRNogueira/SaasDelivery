@@ -1,5 +1,8 @@
 <?php
 @session_start();
+if (!empty($_GET['url_empresa'])) {
+  $_SESSION['url_site'] = $_GET['url_empresa'];
+}
 require_once("cabecalho.php");
 
 $sessao = @$_SESSION['sessao_usuario'];
@@ -41,7 +44,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = '<?php echo $url_site ?>';
                 }
             });
         };
@@ -78,7 +81,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = '<?php echo $url_site ?>';
                 }
             });
         };
@@ -121,7 +124,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = '<?php echo $url_site ?>';
                 }
             });
         };
@@ -147,7 +150,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = '<?php echo $url_site ?>';
                 }
             });
         };
@@ -225,7 +228,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
     </a>
   <?php } else { ?>
     <?php if ($nome_mesa == "") { ?>
-      <a href="finalizar" class="btn-ifood-cart">
+      <a href="<?php echo $url_site ?>/finalizar" class="btn-ifood-cart">
         <span>Finalizar Pedido</span>
         <span>R$ <span class="total-do-pedido-resumo">0,00</span> <i class="bi bi-arrow-right-circle-fill ms-1"></i></span>
       </a>

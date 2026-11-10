@@ -1,6 +1,6 @@
 <?php
 @session_start();
-$url_site = $_GET['url'];
+$url_site = $_GET['url_empresa'] ?? $_GET['url'] ?? $_SESSION['url_site'] ?? '';
 $_SESSION['url_site'] = $url_site;
 
 // O acesso pelo link "Novo Pedido" encerra qualquer contexto anterior de
@@ -356,7 +356,11 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
                 $total_reg2 = @count($res2);
                 if ($total_reg2 > 0) {
-                  $url = 'categoria-' . $res2[0]['url'];
+                  if (($res2[0]['mais_sabores'] ?? 'Não') == 'Sim') {
+                    $url = $url_site . '/categoria-sabores-' . $res2[0]['url'];
+                  } else {
+                    $url = $url_site . '/categoria-' . $res2[0]['url'];
+                  }
                 } else {
                   $url = '#';
                 }
@@ -530,9 +534,9 @@ if ($id_mesa == "" and $sessão_balcao == "") {
               $descricaoF = mb_strimwidth($descricao, 0, 23, "...");
 
               if ($mais_sabores == 'Sim') {
-                $link_cat =  "categoria-sabores-" . $url;
+                $link_cat = $url_site . "/categoria-sabores-" . $url;
               } else {
-                $link_cat =  "categoria-" . $url;
+                $link_cat = $url_site . "/categoria-" . $url;
               }
 
 
@@ -591,7 +595,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   continue;
                 } else {
 
-                  $url_produto = 'produto-' . $url;
+                  $url_produto = $url_site . '/produto-' . $url;
                 }
 
 
@@ -605,13 +609,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = 'adicionais-' . $url;
+                    $url_produto = $url_site . '/adicionais-' . $url;
                   }
                 } else {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = 'observacoes-' . $url;
+                    $url_produto = $url_site . '/observacoes-' . $url;
                   }
                 }
 
@@ -737,9 +741,9 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                 $descricaoF = mb_strimwidth($descricao, 0, 50, "...");
 
                 if ($mais_sabores == 'Sim') {
-                  $link_cat =  "categoria-sabores-" . $url;
+                  $link_cat = $url_site . "/categoria-sabores-" . $url;
                 } else {
-                  $link_cat =  "categoria-" . $url;
+                  $link_cat = $url_site . "/categoria-" . $url;
                 }
 
 
@@ -844,7 +848,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   continue;
                 } else {
 
-                  $url_produto = 'produto-' . $url;
+                  $url_produto = $url_site . '/produto-' . $url;
                 }
 
 
@@ -857,13 +861,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = 'adicionais-' . $url;
+                    $url_produto = $url_site . '/adicionais-' . $url;
                   }
                 } else {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = 'observacoes-' . $url;
+                    $url_produto = $url_site . '/observacoes-' . $url;
                   }
                 }
 
@@ -982,7 +986,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   continue;
                 } else {
 
-                  $url_produto = 'produto-' . $url;
+                  $url_produto = $url_site . '/produto-' . $url;
                 }
 
 
@@ -996,13 +1000,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = 'adicionais-' . $url;
+                    $url_produto = $url_site . '/adicionais-' . $url;
                   }
                 } else {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = 'observacoes-' . $url;
+                    $url_produto = $url_site . '/observacoes-' . $url;
                   }
                 }
 

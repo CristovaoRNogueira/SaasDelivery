@@ -2,6 +2,9 @@
 @session_start();
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
+if (!empty($_GET['url_empresa'])) {
+	$_SESSION['url_site'] = $_GET['url_empresa'];
+}
 require_once("cabecalho.php");
 require_once("js/ajax/ApiConfig.php");
 require_once("sistema/assinatura_pedido.php");

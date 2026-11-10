@@ -493,7 +493,7 @@ $mensagem .= '🧾 *_Detalhes do Pedido_* %0A%0A';
 
 $id_pedido_codificado = encodeIdPedidoHV($id_pedido_feito);
 
-  $mensagem .= $url_sistema . 'pedido/'. $id_pedido_codificado.'%0A';
+  $mensagem .= $url_sistema . $url_site . '/pedido/' . $id_pedido_codificado . '%0A';
   
 
   $data_mensagem = date('Y-m-d H:i:s');

@@ -1,5 +1,8 @@
 <?php
 @session_start();
+if (!empty($_GET['url_empresa'])) {
+	$_SESSION['url_site'] = $_GET['url_empresa'];
+}
 require_once("cabecalho.php");
 
 $url = $_GET['url'];
@@ -550,7 +553,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 							$url_produto = '#';
 						} else {
 							$mostrar = 'ocultar';
-							$url_produto = 'produto-' . $url;
+							$url_produto = $url_site . '/produto-' . $url;
 						}
 
 						if ($promocao == 'Sim') {
@@ -885,7 +888,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			success: function(mensagem) {
 				alert(mensagem);
 				if (mensagem.trim() == "Inserido com Sucesso") {
-					window.location = 'carrinho';
+					window.location = '<?php echo $url_site ?>/carrinho';
 				}
 			},
 

@@ -28,8 +28,8 @@
           <span class="heilight-price text-success fw-bold" style="font-size: 18px;">R$ <span id="total-carrinho-icone"></span></span>
         </div>
         <div class="tpcart__checkout-btn d-flex flex-column gap-2">
-          <a class="tpcheck-btn link-neutro2" href="carrinho">VER CARRINHO</a>
-          <a class="tpcheck-btn tpcheck-btn-finalizar link-neutro2" href="finalizar">FINALIZAR COMPRA</a>
+          <a class="tpcheck-btn link-neutro2" href="<?php echo $url_site ?>/carrinho">VER CARRINHO</a>
+          <a class="tpcheck-btn tpcheck-btn-finalizar link-neutro2" href="<?php echo $url_site ?>/finalizar">FINALIZAR COMPRA</a>
         </div>
       </div>
     </div>

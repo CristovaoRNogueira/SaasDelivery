@@ -1,4 +1,8 @@
 <?php
+@session_start();
+if (!empty($_GET['url_empresa'])) {
+	$_SESSION['url_site'] = $_GET['url_empresa'];
+}
 require_once("cabecalho.php");
 $url = $_GET['url'];
 
@@ -81,7 +85,7 @@ if (@$_SESSION['nome_mesa'] != '') {
 						$url_produto = '#';
 					} else {
 						$mostrar = 'ocultar';
-						$url_produto = 'produto-' . $url;
+						$url_produto = $url_site . '/produto-' . $url;
 					}
 
 
@@ -100,13 +104,13 @@ if (@$_SESSION['nome_mesa'] != '') {
 						if ($tem_estoque == 'Sim' and $estoque <= 0) {
 							$url_produto = '#';
 						} else {
-							$url_produto = 'adicionais-' . $url;
+							$url_produto = $url_site . '/adicionais-' . $url;
 						}
 					} else {
 						if ($tem_estoque == 'Sim' and $estoque <= 0) {
 							$url_produto = '#';
 						} else {
-							$url_produto = 'observacoes-' . $url;
+							$url_produto = $url_site . '/observacoes-' . $url;
 						}
 					}
 

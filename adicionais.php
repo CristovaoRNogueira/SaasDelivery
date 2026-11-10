@@ -1,5 +1,8 @@
 <?php
 @session_start();
+if (!empty($_GET['url_empresa'])) {
+    $_SESSION['url_site'] = $_GET['url_empresa'];
+}
 $id_usuario = @$_SESSION['id'];
 
 require_once("cabecalho.php");
@@ -237,7 +240,7 @@ if ($total_reg > 0) {
         <div class="container-fluid">
             <div class="navbar-brand">
 
-                <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+                <a href="<?php echo $url_site ?>/categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
 
                 <span style="margin-left: 15px; font-size:14px"><?php echo $nome ?> - <?php echo $nome_mesa ?></span>
             </div>
@@ -777,7 +780,7 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
 
             success: function(mensagem) {
                 if (mensagem.trim() == "Inserido com Sucesso") {
-                    window.location = 'carrinho';
+                    window.location = '<?php echo $url_site ?>/carrinho';
                 } else {
                     alert(mensagem)
                 }

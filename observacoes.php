@@ -1,5 +1,8 @@
 <?php
 @session_start();
+if (!empty($_GET['url_empresa'])) {
+	$_SESSION['url_site'] = $_GET['url_empresa'];
+}
 $url_completa = $_GET['url'];
 $sabores = @$_GET['sabores'];
 $id_usuario = @$_SESSION['id'];
@@ -271,7 +274,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		<div class="container-fluid">
 			<div class="navbar-brand">
 
-				<a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big><small></small></a>
+				<a href="<?php echo $url_site ?>/categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big><small></small></a>
 
 				<span style="margin-left: 15px; font-size:14px">RESUMO DO ITEM <?php echo $nome_mesa ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
 			</div>
@@ -416,7 +419,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 				if (mensagem.trim() == "Inserido com Sucesso") {
 
-					window.location = 'carrinho';
+					window.location = '<?php echo $url_site ?>/carrinho';
 
 				} else {
 					alert(mensagem)
