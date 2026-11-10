@@ -80,24 +80,180 @@ if($somente_pix_delivery == 'Sim'){
 
 ?>
 <style>
-  .telefone_user::placeholder {
-    font-size: 20px;
-    color: #999;
+  body {
+    background: #f8f9fa;
   }
 
-  #nome::placeholder {
-    font-size: 20px;
-    color: #888; /* opcional, muda a cor do placeholder */
+  .checkout-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 68px 10px 150px 10px;
+  }
+
+  .checkout-accordion .accordion-item {
+    border: 1px solid #e9ecef !important;
+    border-radius: 14px !important;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .checkout-accordion .accordion-button {
+    font-size: 14px !important;
+    font-weight: 700;
+    color: #212529;
+    background: #ffffff;
+    padding: 15px 18px;
+    box-shadow: none !important;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .checkout-accordion .accordion-button:not(.collapsed) {
+    background: #fff8f8;
+    color: #ea1d2c;
+    border-left: 4px solid #ea1d2c;
+    border-bottom: 1px solid #f1f3f5;
+  }
+
+  .checkout-accordion .accordion-body {
+    padding: 18px;
+    background: #ffffff;
+  }
+
+  .checkout-input-group {
+    margin-bottom: 14px;
+    text-align: left;
+  }
+
+  .checkout-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+  }
+
+  .checkout-input {
+    width: 100%;
+    border: 1.5px solid #dee2e6;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: #212529;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .checkout-input:focus {
+    background: #ffffff;
+    border-color: #ea1d2c;
+    box-shadow: 0 0 0 3px rgba(234, 29, 44, 0.12);
+  }
+
+  .delivery-option-card {
+    border: 1.5px solid #e9ecef !important;
+    border-radius: 12px !important;
+    padding: 14px 16px !important;
+    margin-bottom: 10px !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .delivery-option-card:hover {
+    border-color: #ea1d2c !important;
+  }
+
+  .delivery-option-card.selected {
+    border: 2px solid #ea1d2c !important;
+    background: #fff5f5 !important;
+  }
+
+  .payment-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .payment-pill-card {
+    border: 1.5px solid #e9ecef;
+    border-radius: 12px;
+    padding: 13px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 14px;
+    color: #212529;
+    user-select: none;
+  }
+
+  .payment-pill-card:hover {
+    border-color: #ea1d2c;
+  }
+
+  .payment-pill-card.selected {
+    border: 2px solid #ea1d2c;
+    background: #fff5f5;
+    color: #ea1d2c;
+  }
+
+  .payment-info-box {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+
+  .btn-gps-locate {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    background: #fff5f5;
+    color: #ea1d2c;
+    border: 1.5px solid #f5c2c7;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-gps-locate:hover {
+    background: #ea1d2c;
+    color: #ffffff;
+  }
+
+  .checkout-summary-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   }
 </style>
 
 <div class="main-container">
 
-  <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="<?php echo $url_site ?>">
-        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
-        Finalizar Pedido
+  <nav class="navbar bg-white fixed-top" style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
+    <div class="container-fluid" style="max-width: 720px;">
+      <a class="navbar-brand d-flex align-items-center gap-2 text-dark text-decoration-none" href="carrinho">
+        <i class="bi bi-arrow-left" style="font-size: 20px;"></i>
+        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="40px" height="40px" style="object-fit: contain; border-radius: 8px;" class="d-inline-block align-text-top">
+        <span class="fw-bold" style="font-size: 15px;">Finalizar Pedido</span>
       </a>
 
       <?php require_once("icone-carrinho.php") ?>
@@ -105,386 +261,386 @@ if($somente_pix_delivery == 'Sim'){
     </div>
   </nav>
 
+  <div class="checkout-wrapper">
+    <div class="accordion checkout-accordion" id="accordionExample">
 
+      <!-- ==================== FASE 1: IDENTIFICAÇÃO ==================== -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button id="btn_ident" class="accordion-button" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <i class="bi bi-person-badge me-2"></i> 1 - IDENTIFICAÇÃO
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+          data-bs-parent="#accordionExample">
+          <div class="accordion-body">
 
-  <div class="accordion" id="accordionExample"
-    style="margin-top: 55px; margin-bottom: 130px; overflow: scroll; height:100%; scrollbar-width: thin; z-index: 100">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button id="btn_ident" class="accordion-button" type="button" data-bs-toggle="collapse"
-          data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="font-size:14px">
-          1 - IDENTIFICAÇÃO
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-        data-bs-parent="#accordionExample">
-        <div class="accordion-body" align="center">
-
-         <div style="display: flex; align-items: center; justify-content: center;">
-          <i class="fas fa-phone" style="font-size: 22px; margin-right: 5px;"></i>
-          <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width: 250px; text-align: center; border: 0; margin-top: -15px; font-size: 22px;">
-        </div>
-
-          <img src="img/user.jpg" width="50px" height="50px">
-
-          <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:200px; text-align: center; border:0; font-size: 17px"></div>
-          
-
-
-          <hr>
-          <div><b>Finalizar seu Pedido?</b></div>
-          <hr>
-          <div class="row">
-            <div class="col-6">
-              <a href="<?php echo $url_site ?>" class="btn btn-danger botao_nao">NÃO</a>
-
+            <div class="checkout-input-group">
+              <label class="checkout-label" for="telefone"><i class="bi bi-whatsapp text-success me-1"></i> Seu Telefone / WhatsApp</label>
+              <input onkeyup="" type="tel" class="checkout-input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="font-size: 16px; font-weight: 600;">
             </div>
 
-            <div class="col-6">
-
-              <a class="btn btn-success botao_sim" onclick="dados(); buscarNome()">SIM</a>
+            <div class="checkout-input-group">
+              <label class="checkout-label" for="nome"><i class="bi bi-person me-1"></i> Seu Nome Completo</label>
+              <input onclick="" type="text" class="checkout-input" name="nome" id="nome" required value="" placeholder="Digite seu nome" style="font-size: 15px;">
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="accordion-item <?php echo $esconder_opc_delivery ?>">
-      <h2 class="accordion-header" id="headingTwo">
-        <button id="colapse-2" class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-          data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="font-size:14px">
-          2 - MODO DE ENTREGA
-        </button>
-      </h2>
 
+            <div class="text-center mt-3 mb-2">
+              <span class="fw-bold text-dark" style="font-size: 14px;">Deseja avançar com seu pedido?</span>
+            </div>
 
-
-      <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-        data-bs-parent="#accordionExample">
-        <div class="accordion-body">
-
-          <ul class="list-group form-check">
-
-           
-            <li style="display:<?php echo $ocultar_retirar ?> !important" onclick="retirar()" class="list-group-item d-flex justify-content-between align-items-center">
-              Retirar no Local
-              <input onchange="retirar()" class="form-check-input" type="radio" name="radio_retirar" id="radio_retirar">
-            </li>
-          
-            <li style="display:<?php echo $ocultar_consumir ?> !important" onclick="local()" class="list-group-item d-flex justify-content-between align-items-center">
-              Consumir no Local
-              <input onchange="local()" class="form-check-input" type="radio" name="radio_local" id="radio_local">
-            </li>
-         
-            <li style="display:<?php echo $ocultar_delivery ?> !important" onclick="entrega()" class="list-group-item d-flex justify-content-between align-items-center">
-              Entrega Delivery
-              <input onchange="entrega()" class="form-check-input" type="radio" name="radio_entrega" id="radio_entrega">
-            </li>
-            
-
-          </ul>
-
-        </div>
-      </div>
-
-
-
-
-
-
-    </div>
-    <div class="accordion-item <?php echo $esconder_opc_delivery ?>">
-      <h2 class="accordion-header" id="headingThree">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-          data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" id="colapse-3"
-          style="font-size:14px">
-          3 - ENDEREÇO OU UNIDADE DE RETIRADA
-        </button>
-      </h2>
-      <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-        data-bs-parent="#accordionExample">
-        <div class="accordion-body">
-
-          <div id="area-retirada">
-            <a href="" class="" data-bs-toggle="collapse" data-bs-target="#collapse4"
-              style="text-decoration: none; color:#000">
-              <div>
-                <b> <span id="consumir-local">Endereço da nossa Loja </span></b><br>
-                <?php echo $endereco_sistema ?>
-                <i class="bi bi-check-lg"></i>
+            <div class="row g-2 mt-1">
+              <div class="col-6">
+                <a href="<?php echo $url_site ?>" class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold">
+                  <i class="bi bi-arrow-left me-1"></i> Voltar
+                </a>
               </div>
-            </a>
+              <div class="col-6">
+                <a class="btn btn-danger w-100 rounded-pill py-2 fw-bold" style="background: #ea1d2c; border-color: #ea1d2c;" onclick="dados(); buscarNome()">
+                  Continuar <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+
           </div>
+        </div>
+      </div>
 
+      <!-- ==================== FASE 2: MODO DE ENTREGA ==================== -->
+      <div class="accordion-item <?php echo $esconder_opc_delivery ?>">
+        <h2 class="accordion-header" id="headingTwo">
+          <button id="colapse-2" class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            <i class="bi bi-truck me-2"></i> 2 - MODO DE ENTREGA
+          </button>
+        </h2>
 
-          <div id="area-endereco">
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+          data-bs-parent="#accordionExample">
+          <div class="accordion-body">
 
-            <?php if ($entrega_distancia == "Sim" and $chave_api_maps != "") { ?>
-              <div class="row">
+            <ul class="list-group ps-0 mb-0">
+
+              <li id="card_entrega_retirar" style="display:<?php echo $ocultar_retirar ?> !important" onclick="retirar()" class="list-group-item delivery-option-card">
+                <div class="d-flex align-items-center gap-3">
+                  <i class="bi bi-shop text-danger" style="font-size: 20px;"></i>
+                  <div>
+                    <div class="fw-bold text-dark" style="font-size: 14px;">Retirar no Local</div>
+                    <small class="text-muted" style="font-size: 12px;">Você busca o pedido no balcão da loja</small>
+                  </div>
+                </div>
+                <input onchange="retirar()" class="form-check-input" type="radio" name="radio_retirar" id="radio_retirar" style="transform: scale(1.25);">
+              </li>
+
+              <li id="card_entrega_local" style="display:<?php echo $ocultar_consumir ?> !important" onclick="local()" class="list-group-item delivery-option-card">
+                <div class="d-flex align-items-center gap-3">
+                  <i class="bi bi-cup-straw text-danger" style="font-size: 20px;"></i>
+                  <div>
+                    <div class="fw-bold text-dark" style="font-size: 14px;">Consumir no Local</div>
+                    <small class="text-muted" style="font-size: 12px;">Seu pedido será servido na nossa unidade</small>
+                  </div>
+                </div>
+                <input onchange="local()" class="form-check-input" type="radio" name="radio_local" id="radio_local" style="transform: scale(1.25);">
+              </li>
+
+              <li id="card_entrega_delivery" style="display:<?php echo $ocultar_delivery ?> !important" onclick="entrega()" class="list-group-item delivery-option-card">
+                <div class="d-flex align-items-center gap-3">
+                  <i class="bi bi-bicycle text-danger" style="font-size: 20px;"></i>
+                  <div>
+                    <div class="fw-bold text-dark" style="font-size: 14px;">Entrega Delivery</div>
+                    <small class="text-muted" style="font-size: 12px;">Receba no conforto do seu endereço</small>
+                  </div>
+                </div>
+                <input onchange="entrega()" class="form-check-input" type="radio" name="radio_entrega" id="radio_entrega" style="transform: scale(1.25);">
+              </li>
+
+            </ul>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== FASE 3: ENDEREÇO OU UNIDADE DE RETIRADA ==================== -->
+      <div class="accordion-item <?php echo $esconder_opc_delivery ?>">
+        <h2 class="accordion-header" id="headingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" id="colapse-3">
+            <i class="bi bi-geo-alt me-2"></i> 3 - ENDEREÇO OU UNIDADE DE RETIRADA
+          </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+          data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+
+            <div id="area-retirada">
+              <a href="" class="text-decoration-none" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                <div class="payment-info-box d-flex justify-content-between align-items-center mt-0">
+                  <div>
+                    <div class="fw-bold text-dark" style="font-size: 14px;">
+                      <i class="bi bi-geo-alt-fill text-danger me-1"></i> <span id="consumir-local">Endereço da nossa Loja</span>
+                    </div>
+                    <div class="text-muted mt-1" style="font-size: 13px;"><?php echo $endereco_sistema ?></div>
+                    <span class="badge bg-danger rounded-pill mt-2">Toque para escolher o pagamento <i class="bi bi-arrow-right"></i></span>
+                  </div>
+                  <i class="bi bi-check-circle-fill text-success" style="font-size: 22px;"></i>
+                </div>
+              </a>
+            </div>
+
+            <div id="area-endereco">
+
+              <?php if ($entrega_distancia == "Sim" and $chave_api_maps != "") { ?>
+                <div class="row g-2">
+                  <div class="col-6 col-sm-5">
+                    <div class="checkout-input-group">
+                      <label class="checkout-label" for="cep">CEP*</label>
+                      <input type="text" class="checkout-input" name="cep" id="cep" placeholder="00000-000" required onblur="calcularFreteDistancia()">
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
+
+              <div class="row g-2 align-items-end">
+                <div class="col-8">
+                  <div class="checkout-input-group">
+                    <label class="checkout-label" for="rua">Rua / Logradouro*</label>
+                    <input type="text" class="checkout-input" name="endereco" id="rua" placeholder="Nome da rua" required>
+                  </div>
+                </div>
+
                 <div class="col-4">
-                  <div class="group">
-                    <input type="text" class="input" name="cep" id="cep" required onblur="calcularFreteDistancia()">
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <label class="label">CEP*</label>
+                  <div class="checkout-input-group">
+                    <label class="checkout-label" for="numero">Número*</label>
+                    <input type="text" class="checkout-input" name="numero" id="numero" placeholder="Nº" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <button type="button" title="Buscar Localização" class="btn-gps-locate" onclick="localizacao()">
+                  <i class="bi bi-geo-alt-fill"></i> Usar minha localização atual (GPS)
+                </button>
+              </div>
+
+              <div class="row g-2">
+                <div class="col-12 col-sm-5">
+                  <div class="checkout-input-group">
+                    <label class="checkout-label" for="complemento">Complemento</label>
+                    <input type="text" class="checkout-input" name="complemento" id="complemento" placeholder="Apto, bloco, casa..." required>
                   </div>
                 </div>
 
+                <?php if ($entrega_distancia != "Sim" or $chave_api_maps == "") { ?>
 
-              </div>
-            <?php } ?>
+                  <div class="col-12 col-sm-7">
+                    <div class="checkout-input-group">
+                      <label class="checkout-label" for="bairro">Bairro*</label>
+                      <select class="checkout-input" name="bairro" id="bairro" required onchange="calcularFrete()">
+                        <option value="">Selecione um Bairro</option>
+                        <?php
+                        $query = $pdo->query("SELECT * FROM bairros where empresa = '$id_empresa' ORDER BY id asc");
+                        $res = $query->fetchAll(PDO::FETCH_ASSOC);
+                        $total_reg = @count($res);
+                        if ($total_reg > 0) {
+                          for ($i = 0; $i < $total_reg; $i++) {
+                            $valor = $res[$i]['valor'];
+                            $valorF = 'R$ ' . number_format($valor, 2, ',', '.');
 
-            <div class="row">
-              <div class="col-7">
-                <div class="group">
-                  <input type="text" class="input" name="endereco" id="rua" required>
+                            if ($res[$i]['nome'] == $bairro) {
+                              $classe_bairro = 'selected';
+                            } else {
+                              $classe_bairro = '';
+                            }
 
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label class="label">Rua* </label>
-                </div>
-              </div>
-
-              <div class="col-2" style="margin:0px; padding:0px; margin-top: 10px">
-                <span><button style="width:30px; height:30px; background:  #3765d0; color:#FFF; border:none"
-                    title="Buscar Localização" class="" onclick="localizacao()"> <i class="bi bi-geo-alt"
-                      class="text-primary"></i></button></span>
-
-              </div>
-
-              <div class="col-3">
-                <div class="group">
-                  <input type="text" class="input" name="numero" id="numero" required>
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label class="label">Número*</label>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="row">
-              <div class="col-5">
-                <div class="group">
-                  <input type="text" class="input" name="complemento" id="complemento" required>
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label class="label">Complemento</label>
-                </div>
-              </div>
-
-              <?php if ($entrega_distancia != "Sim" or $chave_api_maps == "") { ?>
-
-         <div class="col-7" style="margin-top:3px">
-  <div class="group">
-    <select class="input" name="bairro" id="bairro" required style="background: transparent; border: none;" onchange="calcularFrete()">
-      <option value="">Selecione um Bairro</option>
-      <?php
-      $query = $pdo->query("SELECT * FROM bairros where empresa = '$id_empresa' ORDER BY id asc");
-      $res = $query->fetchAll(PDO::FETCH_ASSOC);
-      $total_reg = @count($res);
-      if ($total_reg > 0) {
-        for ($i = 0; $i < $total_reg; $i++) {
-          $valor = $res[$i]['valor'];
-          $valorF = 'R$ ' . number_format($valor, 2, ',', '.');
-
-          if ($res[$i]['nome'] == $bairro) {
-            $classe_bairro = 'selected';
-          } else {
-            $classe_bairro = '';
-          }
-
-          echo '<option value="' . $res[$i]['nome'] . '" ' . $classe_bairro . '>' . $res[$i]['nome'] . ' - ' . $valorF . '</option>';
-        }
-      } else {
-        echo '<option value="">Cadastre um Bairro</option>';
-      }
-      ?>
-    </select>
-    <span class="highlight"></span>
-    <span class="bar"></span>
-  </div>
-</div>
-
-
-
-              <div class="col-12">
-                <div class="group">
-                  <input type="text" class="input" name="referencia" id="referencia" >
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label class="label">Ponto de Referência</label>
-                </div>
-              </div>
-
-              <?php } else { ?>
-                <div class="col-7">
-                  <div class="group">
-                    <input type="text" class="input" name="bairro" id="bairro" required>
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
-                    <label class="label">Bairro*</label>
-                  </div>
-                </div>
-
-                <div class="row">
-
-                  <div class="col-12">
-                    <div class="group">
-                      <input type="text" class="input" name="cidade" id="cidade">
-                      <span class="highlight"></span>
-                      <span class="bar"></span>
-                      <label class="label">Cidade*</label>
+                            echo '<option value="' . $res[$i]['nome'] . '" ' . $classe_bairro . '>' . $res[$i]['nome'] . ' - ' . $valorF . '</option>';
+                          }
+                        } else {
+                          echo '<option value="">Cadastre um Bairro</option>';
+                        }
+                        ?>
+                      </select>
                     </div>
                   </div>
 
+                  <div class="col-12">
+                    <div class="checkout-input-group">
+                      <label class="checkout-label" for="referencia">Ponto de Referência</label>
+                      <input type="text" class="checkout-input" name="referencia" id="referencia" placeholder="Próximo a...">
+                    </div>
+                  </div>
 
+                <?php } else { ?>
+                  <div class="col-12 col-sm-7">
+                    <div class="checkout-input-group">
+                      <label class="checkout-label" for="bairro">Bairro*</label>
+                      <input type="text" class="checkout-input" name="bairro" id="bairro" placeholder="Seu bairro" required>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="checkout-input-group">
+                      <label class="checkout-label" for="cidade">Cidade*</label>
+                      <input type="text" class="checkout-input" name="cidade" id="cidade" placeholder="Sua cidade">
+                    </div>
+                  </div>
+                <?php } ?>
+
+                <div class="col-12 mt-2">
+                  <a id="colap-4" href="javascript:void(0)" class="btn btn-danger w-100 rounded-pill py-2 fw-bold" style="background: #ea1d2c; border-color: #ea1d2c;" data-bs-toggle="collapse"
+                    data-bs-target="#collapse4">
+                    Avançar para Pagamento <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
                 </div>
-
-
-              <?php } ?>
-
-
-              <div align="center" class="avancar-pgto">
-
-
-
-                <a id="colap-4" href="javascript:void(0)" class="btn btn-success btn-sm" data-bs-toggle="collapse"
-                  data-bs-target="#collapse4">Avançar para Pagamento</a>
 
               </div>
 
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <!-- ==================== FASE 4: PAGAMENTO ==================== -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading4">
+          <button id="collapse-4" class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+            <i class="bi bi-credit-card me-2"></i> <?php echo $numero_colapse ?> - PAGAMENTO
+          </button>
+        </h2>
+        <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4"
+          data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+
+            <label class="checkout-label mb-2">Selecione como deseja pagar:</label>
+
+            <div class="payment-grid">
+
+              <div id="card_pgto_pix" class="payment-pill-card" onclick="document.getElementById('radio_pix').checked = true; pix();">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-qr-code text-success" style="font-size: 18px;"></i>
+                  <span>Pix</span>
+                </div>
+                <input onchange="pix()" class="form-check-input m-0" type="radio" name="radio_pix" id="radio_pix">
+              </div>
+
+              <div id="card_pgto_dinheiro" class="payment-pill-card" style="display:<?php echo ($visualizar_pagamento == 'none') ? 'none' : 'flex'; ?>" onclick="document.getElementById('radio_dinheiro').checked = true; dinheiro();">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-cash-coin text-success" style="font-size: 18px;"></i>
+                  <span>Dinheiro</span>
+                </div>
+                <input onchange="dinheiro()" class="form-check-input m-0" type="radio" name="racio_dinheiro" id="radio_dinheiro">
+              </div>
+
+              <div id="card_pgto_credito" class="payment-pill-card" style="display:<?php echo ($visualizar_pagamento == 'none') ? 'none' : 'flex'; ?>" onclick="document.getElementById('radio_credito').checked = true; credito();">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-credit-card text-primary" style="font-size: 18px;"></i>
+                  <span>Crédito</span>
+                </div>
+                <input onchange="credito()" class="form-check-input m-0" type="radio" name="radio_credito" id="radio_credito">
+              </div>
+
+              <div id="card_pgto_debito" class="payment-pill-card" style="display:<?php echo ($visualizar_pagamento == 'none') ? 'none' : 'flex'; ?>" onclick="document.getElementById('radio_debito').checked = true; debito();">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-credit-card-2-front text-info" style="font-size: 18px;"></i>
+                  <span>Débito</span>
+                </div>
+                <input onchange="debito()" class="form-check-input m-0" type="radio" name="radio_debito" id="radio_debito">
+              </div>
+
+            </div>
+
+            <?php if($sessao_pedido_balcao == 'BALCÃO' ){ ?>
+            <div class="mt-3">
+              <label class="checkout-label" for="esta_pago">Status do pagamento (Balcão):</label>
+              <select class="checkout-input" name="esta_pago" id="esta_pago" style="max-width: 240px;">
+                <option value="Não">Não está Pago</option>
+                <option value="Sim">Já está Pago</option>
+              </select>
+            </div>
+            <?php } ?>
+
+            <div id="pagar_pix" style="margin-top: 15px;">
+              <div id="listar_pix"></div>
+            </div>
+
+            <div id="pagar_dinheiro" class="payment-info-box">
+              <div class="fw-bold text-dark mb-2" style="font-size: 14px;">
+                <i class="bi bi-cash-stack text-success me-1"></i> Pagamento em Dinheiro na Entrega
+              </div>
+              <div class="checkout-input-group mb-0">
+                <label class="checkout-label" for="troco">Precisa de troco para quanto?</label>
+                <input type="text" class="checkout-input" name="troco" id="troco" placeholder="Ex: 50,00 (deixe em branco se não precisar)" style="background: #ffffff;">
+              </div>
+            </div>
+
+            <div id="pagar_credito" class="payment-info-box">
+              <div class="fw-bold text-dark" style="font-size: 14px;">
+                <i class="bi bi-credit-card text-primary me-1"></i> Pagar com Cartão de Crédito
+              </div>
+              <small class="text-muted">Levamos a maquininha! O pagamento será efetuado no ato da entrega.</small>
+            </div>
+
+            <div id="pagar_debito" class="payment-info-box">
+              <div class="fw-bold text-dark" style="font-size: 14px;">
+                <i class="bi bi-credit-card-2-front text-info me-1"></i> Pagar com Cartão de Débito
+              </div>
+              <small class="text-muted">Levamos a maquininha! O pagamento será efetuado no ato da entrega.</small>
+            </div>
+
+            <!-- Cupom de Desconto -->
+            <div class="mt-3 pt-2 border-top" id="div_cupom">
+              <label class="checkout-label" for="cupom"><i class="bi bi-ticket-perforated text-danger me-1"></i> Possui Cupom de Desconto?</label>
+              <div class="d-flex gap-2">
+                <input class="checkout-input" type="text" name="cupom" id="cupom" placeholder="Digite o código do cupom">
+                <button onclick="cupom()" class="btn btn-dark rounded-3 px-3 fw-bold" type="button" name="btn_cupom" id="btn_cupom">
+                  Aplicar
+                </button>
+              </div>
+            </div>
+
+            <!-- Observações do Pedido -->
+            <div class="checkout-input-group mt-3 mb-0" id="area-obs">
+              <label class="checkout-label" for="obs"><i class="bi bi-chat-left-text me-1"></i> Observações Gerais do Pedido</label>
+              <input type="text" class="checkout-input" name="obs" id="obs" value="" placeholder="Ex: Tocar interfone, deixar na portaria...">
             </div>
 
           </div>
         </div>
       </div>
+
     </div>
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="heading4">
-        <button id="collapse-4" class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-          data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
-          <?php echo $numero_colapse ?> - PAGAMENTO
-        </button>
-      </h2>
-      <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4"
-        data-bs-parent="#accordionExample">
-        <div class="accordion-body">
 
-          <div class="row" style="font-size:14px">
-
-            <div class="col-3 form-check" style="display:<?php echo $visualizar_pagamento ?>">
-              <small>Dinheiro
-                <input onchange="dinheiro()" class="form-check-input" type="radio" name="racio_dinheiro"
-                  id="radio_dinheiro">
-              </small>
-            </div>
-
-            <div class="col-2 form-check">
-              <small>Pix
-                <input onchange="pix()" class="form-check-input" type="radio" name="radio_pix" id="radio_pix">
-              </small>
-            </div>
-
-
-            <div class="col-3 form-check" style="display:<?php echo $visualizar_pagamento ?>">
-              <small>Crédito
-                <input onchange="credito()" class="form-check-input" type="radio" name="radio_credito"
-                  id="radio_credito">
-              </small>
-            </div>
-
-            <div class="col-3 form-check" style="display:<?php echo $visualizar_pagamento ?>">
-              <small>Débito
-                <input onchange="debito()" class="form-check-input" type="radio" name="radio_debito" id="radio_debito">
-              </small>
-            </div>
-
-          </div>
-
-          <?php if($sessao_pedido_balcao == 'BALCÃO' ){ ?>
-          <div>
-            <br>
-            <select class="form-select form-select-sm" name="esta_pago" id="esta_pago" style="width:200px">
-              <option value="Não">Não está Pago</option>
-              <option value="Sim">Já está Pago</option>
-            </select>
-          </div>
-        <?php } ?>
-
-          <div id="pagar_pix" style="margin-top: 15px">
-            <div id="listar_pix">
-
-            </div>
-          </div>
-
-
-          <div id="pagar_dinheiro" style="margin-top: 15px">
-            <b>Dinheiro na Entrega </b><br>
-            <div class="row">
-              <div class="col-5">
-                <small>Precisa de Troco? </small>
-              </div>
-              <div class="col-7" style="margin-top: -13px">
-                <div class="group">
-                  <input type="text" class="input" name="troco" id="troco">
-                  <span class="highlight"></span>
-                  <span class="bar"></span>
-                  <label class="label">Vou precisar de troco para</label>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-
-
-          <div id="pagar_credito" style="margin-top: 15px">
-            <b>Pagar com Cartão de Crédito </b><br>
-            <small>O Pagamento será efetuado no ato da entrega com cartão de crédito</small>
-          </div>
-
-          <div id="pagar_debito" style="margin-top: 15px">
-            <b>Pagar com Cartão de Débito </b><br>
-            <small>O Pagamento será efetuado no ato da entrega com cartão de débito</small>
-          </div>
-
-
-
-        </div>
-
-
-
-        <div class="row" style="margin:10px" id="div_cupom">
-          <small><b>Tem Cupom?</b></small>
-          <div class="col-md-2 col-9">
-            <input class="form-control" type="text" name="cupom" id="cupom" placeholder="Código do Cupom">
-          </div>
-          <div class="col-md-1 col-3">
-            <button onclick="cupom()" class="btn btn-primary" type="button" name="btn_cupom" id="btn_cupom"><i
-                class="bi bi-search"></i></button>
-          </div>
-        </div>
-
-
-        <div class="group mt-4 mx-4" id="area-obs">
-          <input type="text" class="input" name="obs" id="obs" value="">
-          <span class="highlight"></span>
-          <span class="bar"></span>
-          <label class="label">Observações do Pedido</label>
+    <!-- Card de Resumo de Taxas e Descontos -->
+    <div class="checkout-summary-card">
+      <div id="area-taxa" class="w-100">
+        <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 13px;">
+          <span class="text-muted">Taxa de Entrega: <strong class="text-danger">R$ <span id="taxa-entrega">0,00</span></strong></span>
+          <span class="badge bg-light text-dark border rounded-pill"><i class="bi bi-clock me-1"></i> ~<?php echo $previsao_entrega ?> min</span>
         </div>
       </div>
 
+      <?php if($taxa_extra > 0){ ?>
+        <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 13px;">
+          <span class="text-muted"><?php echo $titulo_taxa ?></span>
+          <strong class="text-danger">R$ <?php echo $taxa_extra ?></strong>
+        </div>
+      <?php } ?>
 
+      <div id="desconto_div" style="display:none;" class="mt-1">
+        <div class="d-flex justify-content-between align-items-center text-success" style="font-size: 13px;">
+          <span><b>Desconto do Cupom</b></span>
+          <span><b>- R$ <span id="total_cupom"></span></b></span>
+        </div>
+      </div>
 
+      <div class="d-flex justify-content-between align-items-center pt-1">
+        <span class="fw-bold text-dark" style="font-size: 14px;">TOTAL A PAGAR</span>
+        <span class="fw-bold text-success" style="font-size: 16px;">R$ <span class="total-carrinho-espelho"><?php echo $total_carrinhoF ?></span></span>
+      </div>
     </div>
-
-
-
-
 
   </div>
-
 
 </div>
 
@@ -496,48 +652,14 @@ if($somente_pix_delivery == 'Sim'){
 <input type="hidden" id="valor-cupom">
 
 
-<div class="total-finalizar">
-  <div class="total-pedido" style="border: solid 1px #ababab; border-radius: 10px;">
+<!-- Sticky Footer Fixo de Conclusão do Pedido -->
+<div class="sticky-footer-cart">
+  <a href="javascript:void(0)" id="botao_finalizar" onclick="finalizarPedido()" class="btn-ifood-cart">
+    <span>Concluir Pedido</span>
+    <span>R$ <span id="total-carrinho-finalizar"><?php echo $total_carrinhoF ?></span> <i class="bi bi-check-circle-fill ms-1"></i></span>
+  </a>
 
-   
-
-
-    <span id="area-taxa">
-      <span class="previsao_entrega">Taxa de Entrega: <span class="text-danger">R$ <span id="taxa-entrega"></span>
-        </span></span>
-      <span class="previsao_entrega mx-2">Previsão <?php echo $previsao_entrega ?> Minutos</span>
-
-    </span>
-    <br>
-
-
-     <?php if($taxa_extra > 0){ ?>
-    <span id="area-taxa">
-      <span class="previsao_entrega"><?php echo $titulo_taxa ?>: <span class="text-danger">R$ <?php echo $taxa_extra ?> 
-    </span>
-    <br>
-  <?php } ?>
-
-      
-
-    <div id="desconto_div" style="display:none; ">
-      <span><b>Desconto do Cupom</b></span>
-      <span class="direita"> <b>R$ <span id="total_cupom"></span></b></span>
-    </div>
-    <br>
-    <big>
-      <span><b>TOTAL À PAGAR</b></span>
-      <span class="direita"> <b>R$ <span id="total-carrinho-finalizar"><?php echo $total_carrinhoF ?></span></b></span>
-    </big>
-  </div>
-
-
-  <div class="d-grid gap-2 mt-4 abaixo">
-    <a href='javascript:void(0)' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-warning btn-lg">Concluir
-      Pedido</a>
-
-    <div align="center" id="div_img" style="display:none"><img src="img/loading.gif" width="100%" height="40px"></div>
-  </div>
+  <div align="center" id="div_img" style="display:none"><img src="img/loading.gif" width="100%" height="40px" style="max-width: 300px; object-fit: contain;"></div>
 </div>
 
 
@@ -586,6 +708,8 @@ if($somente_pix_delivery == 'Sim'){
     document.getElementById('radio_retirar').checked = true;
     document.getElementById('radio_local').checked = false;
     document.getElementById('radio_entrega').checked = false;
+    $('.delivery-option-card').removeClass('selected');
+    $('#card_entrega_retirar').addClass('selected');
     $('#colapse-3').click();
     $('#entrega').val('Retirar');
     $('#consumir-local').text('Endereço de Retirada');
@@ -634,6 +758,8 @@ if($somente_pix_delivery == 'Sim'){
     document.getElementById('radio_retirar').checked = false;
     document.getElementById('radio_local').checked = true;
     document.getElementById('radio_entrega').checked = false;
+    $('.delivery-option-card').removeClass('selected');
+    $('#card_entrega_local').addClass('selected');
     $('#colapse-3').click();
     $('#entrega').val('Consumir Local');
     $('#consumir-local').text('Endereço da nossa unidade');
@@ -650,6 +776,8 @@ if($somente_pix_delivery == 'Sim'){
     document.getElementById('radio_retirar').checked = false;
     document.getElementById('radio_local').checked = false;
     document.getElementById('radio_entrega').checked = true;
+    $('.delivery-option-card').removeClass('selected');
+    $('#card_entrega_delivery').addClass('selected');
     $('#colapse-3').click();
     $('#entrega').val('Delivery');
 
@@ -680,6 +808,8 @@ if($somente_pix_delivery == 'Sim'){
 
 <script type="text/javascript">
   function pix() {
+    $('.payment-pill-card').removeClass('selected');
+    $('#card_pgto_pix').addClass('selected');
 
     var entrega = $('#entrega').val();
 
@@ -767,6 +897,8 @@ if($somente_pix_delivery == 'Sim'){
   }
 
   function dinheiro() {
+    $('.payment-pill-card').removeClass('selected');
+    $('#card_pgto_dinheiro').addClass('selected');
 
     document.getElementById('radio_credito').checked = false;
     document.getElementById('radio_debito').checked = false;
@@ -782,6 +914,8 @@ if($somente_pix_delivery == 'Sim'){
   }
 
   function debito() {
+    $('.payment-pill-card').removeClass('selected');
+    $('#card_pgto_debito').addClass('selected');
 
     document.getElementById('radio_credito').checked = false;
     document.getElementById('radio_pix').checked = false;
@@ -798,6 +932,8 @@ if($somente_pix_delivery == 'Sim'){
 
 
   function credito() {
+    $('.payment-pill-card').removeClass('selected');
+    $('#card_pgto_credito').addClass('selected');
 
     document.getElementById('radio_pix').checked = false;
     document.getElementById('radio_debito').checked = false;
@@ -1186,6 +1322,7 @@ if($somente_pix_delivery == 'Sim'){
         var split = result.split("-");
         $('#taxa-entrega').text(split[0]);
         $('#total-carrinho-finalizar').text(split[1]);
+        $('.total-carrinho-espelho').text(split[1]);
         $('#taxa-entrega-input').val(split[0]);
 
 
@@ -1320,6 +1457,7 @@ if($somente_pix_delivery == 'Sim'){
         } else {
 
           $('#total-carrinho-finalizar').text(split[0]);
+          $('.total-carrinho-espelho').text(split[0]);
           $('#valor-cupom').val(split[1]);
           $('#div_cupom').hide();
 
@@ -1399,9 +1537,11 @@ if($somente_pix_delivery == 'Sim'){
 
             var total_compra = "<?= $total_carrinho ?>";
             var total_final_compra = parseFloat(deliveryCost) + parseFloat(total_compra);
-            $('#total-carrinho-finalizar').text(total_final_compra.toLocaleString('pt-br', {
+            var totalFormatado = total_final_compra.toLocaleString('pt-br', {
               minimumFractionDigits: 2
-            }));
+            });
+            $('#total-carrinho-finalizar').text(totalFormatado);
+            $('.total-carrinho-espelho').text(totalFormatado);
 
           } else {
             alertWarning('Endereço fora da área de entrega.');
@@ -1602,31 +1742,27 @@ if($somente_pix_delivery == 'Sim'){
 
 <!-- CSS Customizado para o Select2 -->
 <style>
-  /* Remover borda extra do Select2 e adicionar borda inferior */
   .select2-container--default .select2-selection--single {
-    border: none !important;
-    border-bottom: 1px solid #000 !important; /* Linha simples abaixo do input */
-    height: 38px !important; /* Ajusta a altura do campo */
+    border: 1.5px solid #dee2e6 !important;
+    border-radius: 12px !important;
+    height: 44px !important;
+    background-color: #f8f9fa !important;
+    padding: 0 8px;
   }
 
-  /* Ajustar a altura do input para ficar alinhado */
   .select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 38px !important; /* Ajuste a altura para ficar igual ao seu input */
-    font-size: 17px !important; /* Ajuste o tamanho da fonte conforme necessário */
+    line-height: 42px !important;
+    font-size: 14px !important;
+    color: #212529 !important;
   }
 
-  /* Estilo do dropdown do Select2 */
   .select2-container--default .select2-selection--single .select2-selection__arrow {
-    top: 10px; /* Posiciona a seta corretamente */
+    top: 8px !important;
+    right: 8px !important;
   }
 
-  /* Estilo do campo do select quando estiver em foco */
-  .select2-container--default .select2-selection--single:focus {
-    border-color: #000 !important; /* Caso precise adicionar um foco */
+  .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: #ea1d2c !important;
+    background-color: #ffffff !important;
   }
-
-  .select2-container--default .select2-selection--single {
-  border-radius: 0 !important;
-}
-
 </style>
