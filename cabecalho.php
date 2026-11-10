@@ -34,7 +34,7 @@ $url_empresa = $url_site;
 // STRICT ROUTING MULTI-TENANT: Trava e Redirecionamento Estrito Baseado em Slug
 // =========================================================================
 $pagina_atual = basename($_SERVER['PHP_SELF'] ?? '', '.php');
-$paginas_funil = ['carrinho', 'finalizar', 'pedido', 'itens', 'pizza', 'adicionais', 'observacoes'];
+$paginas_funil = ['carrinho', 'finalizar', 'pedido', 'itens', 'pizza', 'adicionais', 'observacoes', 'mesa'];
 
 $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
 	|| (isset($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], '/ajax/') !== false || strpos($_SERVER['REQUEST_URI'], '/api/') !== false));
@@ -45,7 +45,11 @@ $is_admin = (isset($_SERVER['REQUEST_URI']) && (
 ));
 
 if (!$is_ajax && !$is_admin && empty($_GET['url_empresa'])) {
-	if (in_array($pagina_atual, $paginas_funil, true) || $pagina_atual === 'site') {
+	$req_uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
+	$ja_esta_no_slug = ($url_site !== '' && strpos($req_uri, '/' . $url_site) !== false);
+
+	// Apenas páginas internas do funil público são redirecionadas (site e index são preservados)
+	if (!$ja_esta_no_slug && in_array($pagina_atual, $paginas_funil, true)) {
 		// Se não houver slug na URL e nem na sessão, redireciona para a raiz pública
 		if ($url_site === '') {
 			header("Location: /", true, 302);
@@ -56,7 +60,7 @@ if (!$is_ajax && !$is_admin && empty($_GET['url_empresa'])) {
 		$extra_params = [];
 		if (!empty($_SERVER['QUERY_STRING'])) {
 			parse_str($_SERVER['QUERY_STRING'], $extra_params);
-			unset($extra_params['url_empresa'], $extra_params['url_site'], $extra_params['url'], $extra_params['id']);
+			unset($extra_params['url_empresa'], $extra_params['url_site'], $extra_params['url'], $extra_params['id'], $extra_params['id_mesa']);
 		}
 		$qs = !empty($extra_params) ? '?' . http_build_query($extra_params) : '';
 
@@ -90,7 +94,6 @@ if (!$is_ajax && !$is_admin && empty($_GET['url_empresa'])) {
 
 			case 'pizza':
 				$url_p = trim((string) ($_GET['url'] ?? ''));
-				$req_uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
 				if ($url_p !== '') {
 					$prefixo = (strpos($req_uri, 'categoria-sabores-') !== false) ? 'categoria-sabores-' : 'produto-';
 					header("Location: /" . $url_site . "/" . $prefixo . rawurlencode($url_p) . $qs, true, 301);
@@ -117,8 +120,13 @@ if (!$is_ajax && !$is_admin && empty($_GET['url_empresa'])) {
 				}
 				exit();
 
-			case 'site':
-				header("Location: /" . $url_site . $qs, true, 301);
+			case 'mesa':
+				$id_m = trim((string) ($_GET['id_mesa'] ?? ''));
+				if ($id_m !== '') {
+					header("Location: /" . $url_site . "/mesa/" . rawurlencode($id_m) . $qs, true, 301);
+				} else {
+					header("Location: /" . $url_site . $qs, true, 301);
+				}
 				exit();
 
 			default:
