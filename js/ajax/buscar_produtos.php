@@ -15,7 +15,7 @@ $buscar = $_POST['buscar'];
 echo <<<HTML
 
 
-<ol class="list-group " style="margin-top: 65px">
+<div class="catalog-search-results px-2 py-1">
 
 
 HTML;
@@ -132,31 +132,27 @@ HTML;
 
 echo <<<HTML
 
-					<a href="{$link_red}" class="link-neutro">
-						<li class="list-group-item d-flex justify-content-between align-items-start mb-2" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; border-radius: 8px;">
+					<a href="{$link_red}" class="text-decoration-none">
+						<div class="catalog-search-item position-relative">
 
-							<img class="{$mostrar}" src="img/esgotado.png" width="65px" height="65px" style="position:absolute; right:0; top:0px">
-
+							<img class="{$mostrar}" src="img/esgotado.png" width="50px" height="50px" style="position:absolute; right:6px; top:6px; z-index: 2;">
 HTML;
 
 if($mostrar != "") {
-
 echo <<<HTML
-								<img class="{$mostrar_promo}" src="img/promocao2.png" width="65px" height="65px" style="position:absolute; right:0; top:0px; opacity:80%">
-
+								<img class="{$mostrar_promo}" src="img/promocao2.png" width="50px" height="50px" style="position:absolute; right:6px; top:6px; opacity:85%; z-index: 2;">
 HTML;
-
 }
 
 echo <<<HTML
+							<div style="width: 68px; height: 68px; flex-shrink: 0; border-radius: 12px; overflow: hidden; background: #f8f9fa;">
+								<img src="sistema/painel/images/produtos/{$foto}" style="width: 100%; height: 100%; object-fit: cover;">
+							</div>
 
-							<div class="row" style="width:100%">
-								<div class="col-10">
-
-									<div class="me-auto">
-										<div class="fw-bold titulo-item" style="font-weight: 600">{$nome}</div>
-										<div class="subtitulo-item-menor" style="font-size:10px; font-weight: 380">{$descricao}</div>
-										<span class="valor-item-maior">
+							<div style="flex: 1; min-width: 0;">
+								<div class="fw-bold text-dark" style="font-size: 14px; line-height: 1.2;">{$nome}</div>
+								<div class="text-muted text-truncate" style="font-size: 11px; margin-top: 2px;">{$descricao}</div>
+								<div class="mt-1" style="font-size: 13px; font-weight: 700; color: #198754;">
 HTML;
 
 											$query2 = $pdo->query("SELECT * FROM grades where produto = '$id' and tipo_item = 'Variação' and ativo = 'Sim' order by id asc");
@@ -187,33 +183,21 @@ HTML;
 
 													if($val_promocional != 0 and $promocao != 'Não'){
 														echo 'R$ ' . $val_promocionalF;
-														echo '  <del style="color: red">R$ ' . $valorF . ' </del';
-
-														//$valor = $val_promocional;
+														echo ' <del style="color: #a0aec0; font-size: 11px; font-weight: 500;">R$ ' . $valorF . '</del>';
 													}else{
 														echo 'R$ ' . $valorF;
 													}
-
-													
 												}
 											}
 echo <<<HTML
-
-										</span>
-									</div>
-
 								</div>
-
-
-								<div class="col-2" style="margin-top: 10px;" align="right">
-									<img class="" src="sistema/painel/images/produtos/{$foto}" width="60px" height="60px">
-								</div>
-
-
-
 							</div>
 
-						</li>
+							<div class="catalog-btn-add" title="Ver produto">
+								<i class="bi bi-plus-lg"></i>
+							</div>
+
+						</div>
 					</a>
 
 HTML;
@@ -223,7 +207,7 @@ HTML;
 
 echo <<<HTML
 
-		</ol>
+		</div>
 
 HTML;
 

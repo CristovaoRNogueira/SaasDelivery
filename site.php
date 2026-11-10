@@ -422,55 +422,38 @@ if ($id_mesa == "" and $sessão_balcao == "") {
       <?php
 
       } ?>
-      <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
-
-        <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
-          <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#categoria">
-              <img class="icone_mobile" src="img/acai.png" width="50px" height="50px">
-              <div class="ps-1">
-                <small class="text-body titulo_icones">Categorias</small>
-                <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Produtos</h6>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 pb-3" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#combo">
-              <img class="icone_mobile" src="img/acai2.png" width="50px" height="50px">
-              <div class="ps-1">
-                <small class="text-body titulo_icones">Combos</small>
-                <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Diversos</h6>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item" style="width:32%;">
-            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#promocao">
-              <img class="icone_mobile" src="img/icone3.png" width="50px" height="50px">
-              <div class="ps-1">
-                <small class="text-body titulo_icones">Promoções</small>
-                <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Ofertas</h6>
-              </div>
-            </a>
-          </li>
-        </ul>
-
-
+      <div class="catalog-quick-nav wow fadeInUp" data-wow-delay="0.1s">
+        <a class="catalog-nav-chip" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#categoria">
+          <img src="img/acai.png" alt="Categorias">
+          <span>Categorias</span>
+        </a>
+        <a class="catalog-nav-chip" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#combo">
+          <img src="img/acai2.png" alt="Combos">
+          <span>Combos</span>
+        </a>
+        <a class="catalog-nav-chip" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#promocao">
+          <img src="img/icone3.png" alt="Promoções">
+          <span>Promoções</span>
+        </a>
       </div>
     </div>
   </div>
   <!-- Menu End -->
 
 
-<div style=" display:flex; align-items:center; margin-bottom:20px; " class="padding_input">
-  <input 
-    onkeyup = "buscarProduto()"
-    placeholder="Digite o nome do Produto" 
-    type="text" 
-    name="buscar" 
-    id="buscar" 
-    style="flex-grow:1; margin-right:10px; border:none; border-bottom:1px solid #b3b3b3; outline:none; margin-top:-10px"
-  >
-  <i class="icon-search"></i>
+<div class="catalog-search-container">
+  <div class="catalog-search-wrapper">
+    <i class="bi bi-search catalog-search-icon"></i>
+    <input 
+      onkeyup="buscarProduto()"
+      placeholder="O que você procura hoje?" 
+      type="text" 
+      name="buscar" 
+      id="buscar" 
+      class="catalog-search-input"
+      autocomplete="off"
+    >
+  </div>
 </div>
 
 
@@ -488,11 +471,12 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
     <!-- CATEGORIAS -->
-    <section class="category-area ocultar_dasktop" id="categoria">
-      <div class="row">
-        <div class="col-lg-12 text-center mb-10">
-          <h4 class="tpsection__sub-title">~~~~~~~~ CATEGORIAS ~~~~~~~~</h4>
-        </div>
+    <section class="category-area ocultar_dasktop mb-4" id="categoria">
+      <div class="catalog-section-header px-3">
+        <h5 class="catalog-section-title">
+          <i class="bi bi-grid-fill text-danger"></i> Categorias
+        </h5>
+        <span class="catalog-section-badge"><?php echo $total_cat ?> categorias</span>
       </div>
 
 
@@ -556,28 +540,20 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 
-              <a href="<?php echo $link_cat ?>">
-                <div class="swiper-slide">
-                  <div class="category__item mb-30" style="height: 200px; background: #f5f5f5; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px">
-                    <div class="quadrado">
-                      <div class="fix">
-                        <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
-
-                      </div>
-
-
+              <div class="swiper-slide" style="width: auto; min-width: 140px; padding: 4px;">
+                <a href="<?php echo $link_cat ?>" class="text-decoration-none">
+                  <div class="catalog-category-card">
+                    <div class="catalog-category-img-wrap">
+                      <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="<?php echo $nome ?>">
                     </div>
-                    <div class="category__content">
-                      <a href="<?php echo $link_cat ?>">
-                        <h4 class="category__title"></h4>
-                        <h6 style="color: #000000"><b><?php echo $nome ?></b></h6>
-                        <p style=" color: #adadad; font-size: 11px; margin-top: -10px"><?php echo $descricaoF ?></p>
-                        <p style="color:#474747; font-size: 11px; margin-top: -20px"><?php echo $tem_produto ?> Itens</p>
-                      </a>
+                    <div>
+                      <div class="catalog-category-title"><?php echo $nome ?></div>
+                      <div class="catalog-category-desc"><?php echo $descricaoF ?></div>
+                      <span class="catalog-category-count"><?php echo $tem_produto ?> Itens</span>
                     </div>
                   </div>
-                </div>
-              </a>
+                </a>
+              </div>
 
           <?php }
           } ?>
@@ -703,17 +679,16 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
     <!-- CATEGORIAS DASKTOP -->
-    <section class="brand-product ocultar_mobile" id="categoria">
+    <section class="brand-product ocultar_mobile mb-4" id="categoria">
       <div class="container">
-        <div class="sections__wrapper white-bg pl-50 pr-50 pb-40 brand-product">
-          <div class="row">
-            <div class="col-lg-12 text-center mb-20">
-              <div class="tpsection">
-                <h4 class="tpsection__sub-title">~~~~~~~~ CATEGORIAS ~~~~~~~~</h4>
-              </div>
-            </div>
+        <div class="sections__wrapper white-bg p-4 brand-product" style="border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+          <div class="catalog-section-header">
+            <h5 class="catalog-section-title">
+              <i class="bi bi-grid-fill text-danger"></i> Categorias
+            </h5>
+            <span class="catalog-section-badge"><?php echo $total_cat2 ?> categorias</span>
           </div>
-          <div class="row">
+          <div class="row g-3">
 
             <?php
             $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa' order by posicao asc");
@@ -772,20 +747,17 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 
-                <div class="col-xl-4">
-                  <a href="<?php echo $link_cat ?>">
-                    <div class="tpbrandproduct__item d-flex mb-10" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                      <div class="imgem-cat-div p-relative">
-                        <img class="imagem-cat" src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="">
+                <div class="col-xl-4 col-lg-4 col-md-6">
+                  <a href="<?php echo $link_cat ?>" class="text-decoration-none">
+                    <div class="catalog-category-card-desktop">
+                      <div class="category-img-wrap">
+                        <img class="imagem-cat" src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="<?php echo $nome ?>">
                       </div>
 
-                      <div class="tpbrandproduct__contact">
-                        <span><?php echo $nome ?></span><br>
-                        <span class="" style="color:#474747; font-size: 13px"><?php echo $descricaoF ?></span>
-
-                        <div class="tpproduct__price">
-                          <span style="color:#474747; font-size: 12px"><?php echo $tem_produto ?> Itens</span>
-                        </div>
+                      <div class="category-info-wrap">
+                        <span class="category-title"><?php echo $nome ?></span>
+                        <span class="category-desc"><?php echo $descricaoF ?></span>
+                        <span class="category-count"><i class="bi bi-tag-fill me-1"></i><?php echo $tem_produto ?> Itens</span>
                       </div>
                     </div>
                   </a>
@@ -824,17 +796,16 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
     <!-- OFERTAS DA SEMANA -->
-    <section class="brand-product" style="margin-top: 20px" id="promocao">
+    <section class="brand-product mb-4" style="margin-top: 20px" id="promocao">
       <div class="container">
-        <div class="sections__wrapper white-bg pl-50 pr-50 pb-40 brand-product">
-          <div class="row">
-            <div class="col-lg-12 text-center mb-20">
-              <div class="tpsection">
-                <h4 class="tpsection__sub-title">~~~~~~~~ OFERTAS DA SEMANA ~~~~~~~~</h4>
-              </div>
-            </div>
+        <div class="sections__wrapper white-bg p-4 brand-product" style="border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+          <div class="catalog-section-header">
+            <h5 class="catalog-section-title">
+              <i class="bi bi-lightning-charge-fill text-danger"></i> Ofertas da Semana
+            </h5>
+            <span class="catalog-section-badge text-danger fw-bold">Imperdível</span>
           </div>
-          <div class="row">
+          <div class="row g-3">
 
             <?php
             $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa'");
@@ -905,29 +876,28 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 
-                <div class="col-xl-4">
-                  <div class="tpbrandproduct__item d-flex mb-20" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                    <a href="<?php echo $url_produto ?>">
-                      <div class="imgem-cat-div p-relative">
-                        <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="">
-                        <div class="tpproduct__info bage tpbrandproduct__bage">
-                          <span class="tpproduct__info-discount bage__discount">-<?php echo $valor_porcentagemF ?></span>
-                        </div>
+                <div class="col-xl-4 col-lg-6 col-md-6">
+                  <div class="catalog-product-card catalog-product-card-horizontal">
+                    <a href="<?php echo $url_produto ?>" class="catalog-product-link">
+                      <div class="catalog-product-img-wrap">
+                        <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="<?php echo $nome ?>" class="catalog-product-img">
+                        <span class="catalog-product-badge-discount">-<?php echo $valor_porcentagemF ?></span>
                       </div>
 
 
-                      <div class="tpbrandproduct__contact">
-                        <span><?php echo $nome ?></span><br>
-                        <div class="tpproduct__rating">
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
+                      <div class="catalog-product-body">
+                        <div>
+                          <h6 class="catalog-product-title"><?php echo $nome ?></h6>
+                          <p class="catalog-product-desc"><?php echo $descricaoF ?></p>
                         </div>
-                        <div class="tpproduct__price">
-                          <span>R$ <?php echo $val_promocionalF    ?></span>
-                          <del>R$ <?php echo $valorF ?></del>
+                        <div class="catalog-product-footer">
+                          <div class="catalog-product-price-box">
+                            <span class="catalog-price-promo">R$ <?php echo $val_promocionalF ?></span>
+                            <del class="catalog-price-old">R$ <?php echo $valorF ?></del>
+                          </div>
+                          <span class="catalog-btn-add" title="Ver produto">
+                            <i class="bi bi-plus-lg"></i>
+                          </span>
                         </div>
                       </div>
                     </a>
@@ -963,14 +933,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
     <!-- APROVEITE NOSSO COMBOS -->
-    <section class="blog-area pt-75 pb-30" style="margin-top: -80px; margin-bottom: 80px;" id="combo">
+    <section class="blog-area mb-5" style="margin-top: 10px;" id="combo">
       <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <div class="tpsection mb-35">
-              <h4 class="tpsection__sub-title">~~~~~~~~ APROVEITE NOSSOS COMBOS ~~~~~~~~</h4>
-            </div>
-          </div>
+        <div class="catalog-section-header">
+          <h5 class="catalog-section-title">
+            <i class="bi bi-stars text-danger"></i> Aproveite Nossos Combos
+          </h5>
+          <span class="catalog-section-badge">Especial</span>
         </div>
 
         <div class="swiper-container tpblog-active">
@@ -1040,28 +1009,25 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
                 <div class="swiper-slide">
-                  <div class="tpbrandproduct__item d-flex" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px">
-                    <a href="<?php echo $url_produto ?>">
-                      <div class="tpblog__item">
+                  <div class="catalog-product-card combo-card">
+                    <a href="<?php echo $url_produto ?>" class="catalog-product-link">
+                      <div class="combo-img-wrap">
+                        <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="<?php echo $nome ?>" class="combo-img">
+                      </div>
 
-
-
-                        <div class="img_combo" style="height: 220px; width: 100%;">
-                          <a href="<?php echo $url_produto ?>">
-                            <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="" 
-                                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
-                          </a>
+                      <div class="catalog-product-body">
+                        <div>
+                          <h6 class="catalog-product-title"><?php echo $nome ?></h6>
+                          <p class="catalog-product-desc"><?php echo $descricaoF ?></p>
                         </div>
-                        <br><hr>
-                        <span><b><?php echo $nome ?></b></span><br>
-                        <span style="font-size: 12px; color: #939393"><b><?php echo $descricaoF ?></b></span>
-                        <div class="tpproduct__price mb-10">
-                          <span>R$ <?php echo $valorF ?></span>
-
+                        <div class="catalog-product-footer">
+                          <div class="catalog-product-price-box">
+                            <span class="catalog-price-promo">R$ <?php echo $valorF ?></span>
+                          </div>
+                          <span class="catalog-btn-add" title="Ver combo">
+                            <i class="bi bi-plus-lg"></i>
+                          </span>
                         </div>
-
-
-
                       </div>
                     </a>
                   </div>
@@ -1073,7 +1039,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
         </div>
 
       </div>
-    </section><br>
+    </section>
     <!-- FIM APROVEITE NOSSO COMBOS -->
 
 

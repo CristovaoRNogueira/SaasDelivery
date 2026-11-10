@@ -1152,3 +1152,432 @@ input:valid~label {
   border-color: #ea1d2c;
   color: #ea1d2c !important;
 }
+
+/* ==========================================================================
+   DESIGN SYSTEM PREMIUM — CATÁLOGO / HOME (site.php)
+   ========================================================================== */
+
+/* 1. Barra de Navegação Rápida (Pílulas / Chips) */
+.catalog-quick-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.catalog-nav-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1.5px solid #edf2f7;
+  border-radius: 50px;
+  padding: 8px 18px;
+  text-decoration: none !important;
+  color: #2d3748 !important;
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.catalog-nav-chip:hover {
+  border-color: #ea1d2c;
+  color: #ea1d2c !important;
+  box-shadow: 0 4px 12px rgba(234, 29, 44, 0.12);
+  transform: translateY(-1px);
+}
+
+.catalog-nav-chip img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* 2. Campo de Busca Moderno */
+.catalog-search-container {
+  padding: 0 15px;
+  max-width: 1200px;
+  margin: 0 auto 24px auto;
+}
+
+.catalog-search-wrapper {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1.5px solid #e9ecef;
+  padding: 6px 18px;
+  transition: all 0.25s ease;
+}
+
+.catalog-search-wrapper:focus-within {
+  border-color: #ea1d2c;
+  box-shadow: 0 3px 14px rgba(234, 29, 44, 0.15);
+}
+
+.catalog-search-icon {
+  font-size: 16px;
+  color: #adb5bd;
+  margin-right: 12px;
+}
+
+.catalog-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #212529;
+  padding: 8px 0;
+  font-weight: 500;
+}
+
+.catalog-search-input::placeholder {
+  color: #8c98a4;
+  font-size: 14px;
+}
+
+/* 3. Títulos das Seções */
+.catalog-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+
+.catalog-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.catalog-section-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #718096;
+  background: #edf2f7;
+  padding: 3px 10px;
+  border-radius: 50px;
+}
+
+/* 4. Cards de Categorias (Mobile Slider & Desktop Grid) */
+.catalog-category-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1.5px solid #edf2f7;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  padding: 12px;
+  text-align: center;
+  transition: all 0.25s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.catalog-category-card:hover {
+  border-color: #ea1d2c;
+  box-shadow: 0 4px 16px rgba(234, 29, 44, 0.1);
+  transform: translateY(-2px);
+}
+
+.catalog-category-img-wrap {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 10px auto;
+  border-radius: 14px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.catalog-category-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+}
+
+.catalog-category-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.catalog-category-desc {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-bottom: 6px;
+}
+
+.catalog-category-count {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #718096;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  padding: 2px 8px;
+}
+
+/* Categorias no Desktop */
+.catalog-category-card-desktop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1.5px solid #edf2f7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 14px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.catalog-category-card-desktop:hover {
+  border-color: #ea1d2c;
+  box-shadow: 0 4px 14px rgba(234, 29, 44, 0.1);
+  transform: translateY(-2px);
+}
+
+.catalog-category-card-desktop .category-img-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: #f8f9fa;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.catalog-category-card-desktop .category-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+.catalog-category-card-desktop .category-info-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.catalog-category-card-desktop .category-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d3748;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.catalog-category-card-desktop .category-desc {
+  font-size: 12px;
+  color: #718096;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.catalog-category-card-desktop .category-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ea1d2c;
+}
+
+/* 5. Cards de Produtos (Ofertas e Combos) */
+.catalog-product-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1.5px solid #edf2f7;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+  overflow: hidden;
+  height: 100%;
+}
+
+.catalog-product-card:hover {
+  border-color: #ea1d2c;
+  box-shadow: 0 6px 18px rgba(234, 29, 44, 0.12);
+  transform: translateY(-2px);
+}
+
+.catalog-product-link {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.catalog-product-card-horizontal .catalog-product-link {
+  flex-direction: row;
+  align-items: center;
+  padding: 12px;
+  gap: 14px;
+}
+
+.catalog-product-img-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: #f8f9fa;
+  overflow: hidden;
+}
+
+.catalog-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.catalog-product-badge-discount {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: #ea1d2c;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.catalog-product-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.catalog-product-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+
+.catalog-product-desc {
+  font-size: 12px;
+  color: #718096;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+
+.catalog-product-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.catalog-product-price-box {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.catalog-price-promo {
+  font-size: 15px;
+  font-weight: 800;
+  color: #198754;
+}
+
+.catalog-price-old {
+  font-size: 12px;
+  color: #a0aec0;
+  text-decoration: line-through;
+}
+
+.catalog-btn-add {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  border: 1.5px solid #edf2f7;
+  color: #ea1d2c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.catalog-product-card:hover .catalog-btn-add {
+  background: #ea1d2c;
+  color: #ffffff;
+  border-color: #ea1d2c;
+}
+
+/* Combos Slide */
+.combo-card {
+  padding: 12px;
+}
+
+.combo-img-wrap {
+  width: 100%;
+  height: 150px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: #f8f9fa;
+}
+
+.combo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.combo-card:hover .combo-img {
+  transform: scale(1.03);
+}
+
+/* Search Results Modal / List Items */
+.catalog-search-item {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1.5px solid #edf2f7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.catalog-search-item:hover {
+  border-color: #ea1d2c;
+  box-shadow: 0 4px 12px rgba(234, 29, 44, 0.1);
+  transform: translateY(-1px);
+}
+
