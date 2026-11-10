@@ -78,6 +78,20 @@ if ($pago == 'Sim') {
 $query = $pdo->query("SELECT * FROM clientes where id = '$cliente' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $cartoes = @$res[0]['cartoes'];
+
+//BUSCAR DADOS DE CONFIGURAÇÃO DA EMPRESA E WHATSAPP DINÂMICO
+$query_cfg = $pdo->prepare("SELECT * FROM config WHERE empresa = :empresa LIMIT 1");
+$query_cfg->execute([':empresa' => $id_empresa]);
+$res_cfg = $query_cfg->fetchAll(PDO::FETCH_ASSOC);
+if (@count($res_cfg) > 0) {
+	$telefone_sistema = $res_cfg[0]['telefone'] ?? $telefone_sistema;
+	$whatsapp_sistema = $res_cfg[0]['telefone'] ?? $whatsapp_sistema;
+}
+
+$tel_whats = preg_replace('/[^0-9]/', '', (string)($whatsapp_sistema ?: $telefone_sistema));
+if (strlen($tel_whats) == 10 || strlen($tel_whats) == 11) {
+	$tel_whats = '55' . $tel_whats;
+}
    
 
 ?>
@@ -357,8 +371,8 @@ $cartoes = @$res[0]['cartoes'];
 
 		<!-- Botões de Ação Modernos -->
 		<div class="d-flex flex-column gap-2 mt-3">
-			<a href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" target="_blank" class="btn-order-action btn-order-whatsapp">
-				<i class="bi bi-whatsapp" style="font-size: 18px;"></i> Falar com o Restaurante no WhatsApp
+			<a href="https://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" target="_blank" class="btn-order-action btn-order-whatsapp">
+				<i class="bi bi-whatsapp" style="font-size: 18px;"></i> Falar com o Delivery no WhatsApp
 			</a>
 
 			<a href="<?php echo $url_sistema ?><?php echo $url_site ?>?novo_pedido=1" class="btn-order-action btn-order-new">
