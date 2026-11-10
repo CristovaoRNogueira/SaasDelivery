@@ -1,0 +1,29 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^usuarios(.*)$ index.php?pagina=usuarios [L]
+RewriteRule ^grupo_acessos(.*)$ index.php?pagina=grupo_acessos [L]
+RewriteRule ^acessos(.*)$ index.php?pagina=acessos [L]
+
+RewriteRule ^index(.*)$ index.php [L]
+RewriteRule ^receber(.*)$ index.php?pagina=receber [L]
+RewriteRule ^pagar(.*)$ index.php?pagina=pagar [L]
+RewriteRule ^formas_pgto(.*)$ index.php?pagina=formas_pgto [L]
+RewriteRule ^frequencias(.*)$ index.php?pagina=frequencias [L]
+RewriteRule ^funcionarios(.*)$ index.php?pagina=funcionarios [L]
+RewriteRule ^fornecedores(.*)$ index.php?pagina=fornecedores [L]
+RewriteRule ^cargos(.*)$ index.php?pagina=cargos [L]
+RewriteRule ^clientes(.*)$ index.php?pagina=clientes [L]
+RewriteRule ^home(.*)$ index.php?pagina=home [L]
+RewriteRule ^caixas(.*)$ index.php?pagina=caixas [L]
+RewriteRule ^tarefas(.*)$ index.php?pagina=tarefas [L]
+RewriteRule ^anotacoes(.*)$ index.php?pagina=anotacoes [L]
+RewriteRule ^agendas(.*)$ index.php?pagina=agendas [L]
+RewriteRule ^dispositivos(.*)$ index.php?pagina=dispositivos [L]
+RewriteRule ^recursos(.*)$ index.php?pagina=recursos [L]
+RewriteRule ^videos(.*)$ index.php?pagina=videos [L]
+RewriteRule ^chamados(.*)$ index.php?pagina=chamados [L]
+RewriteRule ^planos(.*)$ index.php?pagina=planos [L]
+RewriteRule ^site(.*)$ index.php?pagina=site [L]
+RewriteRule ^alertas(.*)$ index.php?pagina=alertas [L]

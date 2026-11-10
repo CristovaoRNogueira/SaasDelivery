@@ -1,0 +1,170 @@
+<?php 
+$api_whatsapp = $_POST['seletor_api'];
+$token_whatsapp = $_POST['token'];
+$instancia_whatsapp = $_POST['instancia'];
+$telefone_sistema = $_POST['telefone_sistema'];
+$url_evolution = @$_POST['url_evolution'];
+
+$telefone_sistemaF = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
+
+$mensagem_whatsapp = 'Testando o disparo da api '.$api_whatsapp;
+
+if($api_whatsapp == 'menuia'){
+	$curl = curl_init();
+
+	curl_setopt_array($curl, array(
+	  CURLOPT_URL => 'https://chatbot.menuia.com/api/create-message',
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => '',
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 0,
+	  CURLOPT_FOLLOWLOCATION => true,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => 'POST',
+	  CURLOPT_POSTFIELDS => array(
+	  'appkey' => $token_whatsapp,
+	  'authkey' => $instancia_whatsapp,
+	  'to' => $telefone_sistemaF,
+	  'message' => $mensagem_whatsapp,
+	  'licence' => 'hugocursos',
+	  'sandbox' => 'false'
+	  ),
+	));
+
+	$response = curl_exec($curl);
+
+	curl_close($curl);
+	echo $response;
+}
+
+
+
+if($api_whatsapp == 'wm'){
+	$url = "http://api.wordmensagens.com.br/send-text";
+
+	$data = array('instance' => $instancia_whatsapp,
+	              'to' => $telefone_sistemaF,
+	              'token' => $token_whatsapp,
+	              'message' => $mensagem_whatsapp);
+
+	$options = array('http' => array(
+	               'method' => 'POST',
+	               'content' => http_build_query($data)
+	));
+
+	$stream = stream_context_create($options);
+
+	$result = @file_get_contents($url, false, $stream);
+
+	echo $result;
+
+}
+
+
+
+if($api_whatsapp == 'newtek'){
+	$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => 'https://webapi.newteksoft.com.br/enviar-texto',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'POST',
+  CURLOPT_POSTFIELDS => json_encode(array(
+    "instancia" => $instancia_whatsapp,
+    "token" => $token_whatsapp,
+    "mensagem" => $mensagem_whatsapp,
+    "para" => array($telefone_sistemaF),
+    "delay" => "3"
+  )),
+  CURLOPT_HTTPHEADER => array(
+    'Content-Type: application/json'
+  ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+echo $response;
+}
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| EVOLUTION API
+|--------------------------------------------------------------------------
+*/
+if ($api_whatsapp === 'evolution') {
+
+    $retorno = [
+        'api'  => 'evolution',
+        'ok'   => false,
+        'msg'  => 'WhatsApp (Evolution): não enviado.',
+        'http' => null,
+        'raw'  => null,
+        'url'  => null
+    ];
+
+    // campos obrigatórios
+    $url_base = rtrim(trim($url_evolution ?? ''), '/');
+    $instance = trim($instancia_whatsapp ?? '');
+    $api_key  = trim($token_whatsapp ?? '');
+
+    if ($url_base === '' || $instance === '' || $api_key === '') {
+        $retorno['msg'] = 'URL, Instance ou ApiKey não configurados.';
+    } else {
+
+        
+        // 🔥 endpoint CORRETO da Evolution
+        $url = "{$url_base}/message/sendText/{$instance}";
+        $retorno['url'] = $url;
+
+        $payload = [
+            "number" => $telefone_sistemaF,
+            "text"   => $mensagem_whatsapp
+        ];
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_HTTPHEADER     => [
+                "Content-Type: application/json",
+                "apikey: {$api_key}"
+            ],
+            CURLOPT_POSTFIELDS     => json_encode($payload, JSON_UNESCAPED_UNICODE),
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT        => 30,
+        ]);
+
+        $response = curl_exec($ch);
+        $http     = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err      = curl_error($ch);
+        curl_close($ch);
+
+        $retorno['http'] = $http;
+        $retorno['raw']  = $response;
+
+        if ($response === false || $err) {
+            echo "Erro cURL: " . ($err ?: 'sem detalhes');
+        } else {
+            if ($http >= 200 && $http < 300) {
+                $retorno['ok']  = true;
+                echo 'WhatsApp (Evolution): enviado com sucesso.';
+            } else {
+                echo "Erro HTTP {$http}";
+            }
+        }
+    }
+
+    
+}
+
+
+ ?>

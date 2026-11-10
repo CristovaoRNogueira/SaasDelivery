@@ -1,0 +1,399 @@
+/* Estilos base */
+    :root {
+      --primary-color: #2d4c63;
+      --secondary-color: #1a2c3d;
+      --accent-color: #ffc107;
+      --silver-color: #c0c0c0;
+      --gold-color: #ffd700;
+      --diamond-color: #b9f2ff;
+      --text-light: #ffffff;
+      --text-dark: #333333;
+      --border-radius: 10px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      --transition: all 0.3s ease;
+      --custom-green: #2ba304; /* Adicionando a cor personalizada */
+    }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      color: var(--text-light);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    /* Animações */
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+    }
+    .animate-pulse-button {
+      animation: pulse 2s infinite;
+    }
+    .animate-pulse-button:hover {
+      animation: none;
+    }
+    .bg-glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    /* Estilos para animações GSAP */
+    .gsap-reveal {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .gsap-fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .gsap-fade-in {
+      opacity: 0;
+    }
+    .gsap-scale-in {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    .gsap-stagger-item {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    /* Estilo para o logo grande */
+    .large-logo {
+      width: auto !important;
+      height: 120px !important;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)) !important;
+      animation: logoGlow 3s infinite alternate !important;
+    }
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5)); }
+    }
+    /* Estilo para o badge de lançamento */
+    .launch-badge {
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
+    }
+    /* Estilo para os cards de recursos */
+    .feature-card {
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      border-color: rgba(255, 193, 7, 0.3);
+    }
+    .feature-icon {
+      color: #2ba304; /* Verde personalizado */
+    }
+    /* Estilo para a seção de chamada à ação */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(45, 76, 99, 0.8), rgba(26, 44, 61, 0.8)), url('img/pattern.png');
+      background-size: cover;
+      background-position: center;
+    }
+    /* Estilo para a seção de depoimentos */
+    .testimonial-card {
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 20px;
+      font-size: 80px;
+      color: rgba(255, 193, 7, 0.2);
+      font-family: serif;
+      line-height: 1;
+    }
+    /* Estilo para a timeline de lançamento */
+    .timeline-container {
+      position: relative;
+    }
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background-color: rgba(255, 193, 7, 0.5);
+      transform: translateX(-50%);
+    }
+    .timeline-item {
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      background-color: #ffc107;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+    /* Estilo para a seção de contato social */
+    .social-icon {
+      transition: all 0.3s ease;
+    }
+    .social-icon:hover {
+      transform: translateY(-3px) scale(1.1);
+      color: #ffc107;
+    }
+    /* Ajustes responsivos */
+    @media (max-width: 640px) {
+      .large-logo {
+        height: 80px !important;
+      }
+      .feature-card {
+        padding: 1rem !important;
+      }
+      .feature-icon {
+        font-size: 2rem !important;
+        margin-bottom: 0.75rem !important;
+      }
+      .plan-card .p-6 {
+        padding: 1rem !important;
+      }
+    }
+    /* Melhorar a visualização em dispositivos móveis */
+    .container {
+      width: 100%;
+      padding-right: 1rem;
+      padding-left: 1rem;
+    }
+    @media (min-width: 640px) {
+      .container {
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .container {
+        padding-right: 2rem;
+        padding-left: 2rem;
+      }
+    }
+    /* Estilos para formulários - Ajustado para texto mais escuro */
+    .form-input {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #d1d5db !important;
+      border-radius: 0.5rem !important;
+      padding: 0.75rem 1rem 0.75rem 2.5rem !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+      transition: all 0.2s ease !important;
+    }
+    .form-input:focus {
+      border-color: #ffc107 !important;
+      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25) !important;
+      outline: none !important;
+    }
+    .form-input::placeholder {
+      color: #9ca3af !important;
+    }
+    .form-label {
+      display: block !important;
+      font-size: 0.875rem !important;
+      font-weight: 500 !important;
+      color: #f3f4f6 !important;
+      margin-bottom: 0.375rem !important;
+    }
+    .form-select {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #d1d5db !important;
+      border-radius: 0.5rem !important;
+      padding: 0.75rem 1rem 0.75rem 2.5rem !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+      transition: all 0.2s ease !important;
+    }
+    .form-select:focus {
+      border-color: #ffc107 !important;
+      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25) !important;
+      outline: none !important;
+    }
+    /* Botões */
+    .btn-primary {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+      color: var(--text-dark);
+      font-weight: 600;
+      padding: 10px 25px;
+      border-radius: 30px;
+      transition: var(--transition);
+      animation: pulse 2s infinite;
+    }
+    .btn-primary:hover {
+      background-color: #e0a800;
+      border-color: #e0a800;
+      transform: translateY(-3px);
+      animation: none;
+    }
+
+/* Botão verde personalizado */
+.btn-green {
+  background-color: #2ba304;
+  border-color: #2ba304;
+  color: white;
+  font-weight: 600;
+  padding: 10px 25px;
+  border-radius: 30px;
+  transition: var(--transition);
+  animation: pulseGreen 2s infinite;
+}
+
+.btn-green:hover {
+  background-color: #239003;
+  border-color: #239003;
+  transform: translateY(-3px);
+  animation: none;
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(43, 163, 4, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(43, 163, 4, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(43, 163, 4, 0); }
+}
+
+.animate-pulse-green {
+  animation: pulseGreen 2s infinite;
+}
+
+.animate-pulse-green:hover {
+  animation: none;
+}
+
+    /* Animações */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    /* Decorações */
+    .decoration-dot {
+      position: absolute;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 9999px;
+      background-color: var(--accent-color);
+      opacity: 0.7;
+    }
+    /* Efeito de brilho */
+    .glow {
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+    }
+    /* Efeito de gradiente no texto */
+    .text-gradient {
+      background: linear-gradient(90deg, #ffc107, #ffcd38);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Ajuste para ícones nos inputs */
+    .input-icon {
+      position: absolute !important;
+      top: 50% !important;
+      left: 0.75rem !important;
+      transform: translateY(-50%) !important;
+      color: #6b7280 !important;
+      pointer-events: none !important;
+    }
+    /* Estilo para o badge de pagamento seguro */
+    .secure-payment-badge {
+      background-color: rgba(16, 185, 129, 0.1) !important;
+      border: 1px solid rgba(16, 185, 129, 0.3) !important;
+      border-radius: 0.5rem !important;
+      padding: 0.75rem !important;
+      display: flex !important;
+      align-items: center !important;
+      margin-top: 1rem !important;
+    }
+    .secure-payment-badge i {
+      color: #10b981 !important;
+      margin-right: 0.75rem !important;
+    }
+    /* Estilo para o logo grande no footer */
+    .large-logo-footer {
+      width: auto !important;
+      height: 80px !important;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2)) !important;
+      animation: logoFooterGlow 3s infinite alternate !important;
+    }
+    @keyframes logoFooterGlow {
+      from { filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2)); }
+      to { filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.4)); }
+    }
+    /* Ajustes responsivos para dispositivos móveis */
+    @media (max-width: 640px) {
+      .large-logo {
+        height: 90px !important;
+      }
+      .bg-glass {
+        border-radius: 1rem !important;
+      }
+      .form-input, .form-select {
+        padding: 0.625rem 1rem 0.625rem 2.25rem !important;
+      }
+      .secure-payment-badge {
+        padding: 0.5rem !important;
+        margin-top: 0.75rem !important;
+      }
+      .large-logo-footer {
+        height: 60px !important;
+      }
+    }
+    /* Melhorar a visualização em dispositivos muito pequenos */
+    @media (max-width: 360px) {
+      .form-label {
+        font-size: 0.75rem !important;
+      }
+      .form-input, .form-select {
+        font-size: 0.875rem !important;
+      }
+      .btn-primary {
+        font-size: 0.875rem !important;
+        padding: 0.625rem !important;
+      }
+      .plan-price {
+        flex-direction: row;
+        align-items: baseline;
+      }
+      .amount {
+        font-size: 28px;
+      }
+      .plan-features li {
+        font-size: 14px;
+      }
+    }
+    /* Ajustes adicionais para espaçamento em dispositivos móveis */
+    @media (max-width: 640px) {
+      .mb-20 {
+        margin-bottom: 2.5rem !important;
+      }
+      .py-12 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+      }
+      .gap-8 {
+        gap: 1.5rem !important;
+      }
+    }
+    /* Cor personalizada para os ícones */
+    .custom-green-icon {
+      color: #2ba304 !important;
+    }
+
+
+
+

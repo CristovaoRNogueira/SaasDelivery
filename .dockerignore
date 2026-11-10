@@ -1,0 +1,20 @@
+# Controle de versão e ambiente
+.git
+.gitignore
+.env
+.DS_Store
+
+# Dumps e backups SQL
+*.sql
+*.sql.gz
+*.bak
+
+# Documentação e scripts de migração/teste
+*.md
+migrar_aquadrada.php
+
+# Arquivos temporários e caches
+/tmp
+/scratch
+*.log
+

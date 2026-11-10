@@ -1,0 +1,63 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^pedidos_bar(.*)$ index.php?pagina=pedidos_bar [L]
+RewriteRule ^pedidos_outros(.*)$ index.php?pagina=pedidos_outros [L]
+RewriteRule ^pdv(.*)$ index.php?pagina=pdv [L]
+RewriteRule ^unidade_medida(.*)$ index.php?pagina=unidade_medida [L]
+RewriteRule ^grupos_disparos(.*)$ index.php?pagina=grupos_disparos [L]
+RewriteRule ^usuarios(.*)$ index.php?pagina=usuarios [L]
+RewriteRule ^grupo_acessos(.*)$ index.php?pagina=grupo_acessos [L]
+RewriteRule ^acessos(.*)$ index.php?pagina=acessos [L]
+RewriteRule ^pedidos_mesa(.*)$ index.php?pagina=pedidos_mesa [L]
+
+RewriteRule ^index(.*)$ index.php [L]
+RewriteRule ^receber(.*)$ index.php?pagina=receber [L]
+RewriteRule ^pagar(.*)$ index.php?pagina=pagar [L]
+RewriteRule ^formas_pgto(.*)$ index.php?pagina=formas_pgto [L]
+RewriteRule ^frequencias(.*)$ index.php?pagina=frequencias [L]
+RewriteRule ^funcionarios(.*)$ index.php?pagina=funcionarios [L]
+RewriteRule ^fornecedores(.*)$ index.php?pagina=fornecedores [L]
+RewriteRule ^cargos(.*)$ index.php?pagina=cargos [L]
+RewriteRule ^clientes(.*)$ index.php?pagina=clientes [L]
+RewriteRule ^home(.*)$ index.php?pagina=home [L]
+RewriteRule ^caixas(.*)$ index.php?pagina=caixas [L]
+RewriteRule ^tarefas(.*)$ index.php?pagina=tarefas [L]
+RewriteRule ^anotacoes(.*)$ index.php?pagina=anotacoes [L]
+
+RewriteRule ^pedidos_esteiras(.*)$ index.php?pagina=pedidos_esteiras [L]
+RewriteRule ^pedidos(.*)$ index.php?pagina=pedidos [L]
+
+RewriteRule ^produtos(.*)$ index.php?pagina=produtos [L]
+RewriteRule ^categorias(.*)$ index.php?pagina=categorias [L]
+RewriteRule ^estoque(.*)$ index.php?pagina=estoque [L]
+RewriteRule ^entradas(.*)$ index.php?pagina=entradas [L]
+RewriteRule ^saidas(.*)$ index.php?pagina=saidas [L]
+
+RewriteRule ^banner_rotativo(.*)$ index.php?pagina=banner_rotativo [L]
+RewriteRule ^mesas(.*)$ index.php?pagina=mesas [L]
+RewriteRule ^cupons(.*)$ index.php?pagina=cupons [L]
+RewriteRule ^bairros(.*)$ index.php?pagina=bairros [L]
+RewriteRule ^cargos(.*)$ index.php?pagina=cargos [L]
+RewriteRule ^dias(.*)$ index.php?pagina=dias [L]
+
+RewriteRule ^compras(.*)$ index.php?pagina=compras [L]
+
+RewriteRule ^novo_pedido(.*)$ index.php?pagina=novo_pedido [L]
+RewriteRule ^pedido_site(.*)$ index.php?pagina=pdv [L]
+
+
+RewriteRule ^adicionais(.*)$ index.php?pagina=adicionais [L]
+RewriteRule ^vendas(.*)$ index.php?pagina=vendas [L]
+RewriteRule ^lista_pedidos_mesas(.*)$ index.php?pagina=lista_pedidos_mesas [L]
+
+RewriteRule ^comissoes(.*)$ index.php?pagina=comissoes [L]
+RewriteRule ^minhas_comissoes(.*)$ index.php?pagina=minhas_comissoes [L]
+
+RewriteRule ^marketing(.*)$ index.php?pagina=marketing [L]
+RewriteRule ^dispositivos(.*)$ index.php?pagina=dispositivos [L]
+
+RewriteRule ^tutoriais(.*)$ index.php?pagina=tutoriais [L]
+RewriteRule ^chamados(.*)$ index.php?pagina=chamados [L]
+RewriteRule ^mensalidades(.*)$ index.php?pagina=mensalidades [L]

@@ -1,0 +1,15 @@
+# Credenciais e Variáveis de Ambiente
+.env
+
+# Arquivos de Sistema (macOS)
+.DS_Store
+**/.DS_Store
+
+# Logs e Diretórios Temporários
+*.log
+/tmp/
+
+# Permitir rastreamento do banco inicial de produção AWS
+!banco_producao_aws.sql
+sistema/sas/backup/
+banco_producao_aws.sql

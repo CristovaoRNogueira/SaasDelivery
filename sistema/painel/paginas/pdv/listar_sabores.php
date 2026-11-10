@@ -1,0 +1,437 @@
+<?php 
+@session_start();
+$id_usuario = $_SESSION['id'];
+require_once("../../../conexao.php");
+$_SESSION['sessao_usuario'] = $id_usuario;
+$nova_sessao = $id_usuario;
+$sessao = $id_usuario;
+
+
+$tem_variação = "";
+$id_ab_mesa = $_SESSION['id_ab_mesa'];
+
+$id = $_POST['id'];
+
+
+// garantir variáveis auxiliares
+if (!isset($texto_botao) || !$texto_botao) { $texto_botao = 'Adicionar'; }
+$BASE_IMG_PROD = 'images/produtos/'; // ajuste se precisar caminho absoluto/relativo
+
+// $id já vem do POST, $sessao já está setado como id do usuário
+
+?>
+<ol class="list-group" style="margin-top: 15px">
+
+    <?php
+    // VARIAÇÕES DA CATEGORIA
+    $query = $pdo->query("SELECT * FROM variacoes_cat WHERE categoria = '$id' ORDER BY id ASC");
+    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg = @count($res);
+    if ($total_reg > 0) {
+        echo '<ul class="list-group form-check">';
+        echo '<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha o tamanho</span></span>';
+        for ($i = 0; $i < $total_reg; $i++) {
+            $id_var = $res[$i]['id'];
+            $nome_var = $res[$i]['nome'];
+            $sigla_var = $res[$i]['sigla'];
+            $descricao_var = $res[$i]['descricao'];
+            $sabores_var = $res[$i]['sabores'];
+            ?>
+            <li onclick="selecVar('<?php echo $sigla_var ?>', '<?php echo $id_var ?>')"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <small>(<?php echo $sigla_var ?>) <?php echo $nome_var ?> / <?php echo $descricao_var ?> / <small>Até
+                        <?php echo $sabores_var ?> Sabores</small></small>
+                <input onchange="selecionarVar('<?php echo $sigla_var ?>', '<?php echo $id_var ?>')" class="form-check-input"
+                       type="radio" value="<?php echo $sigla_var ?>" name="variacoes" id="variacoes_<?php echo $sigla_var ?>">
+            </li>
+            <?php
+        }
+        echo '</ul>';
+    }
+    ?>
+
+    <?php
+    // BORDAS DA CATEGORIA
+    $query = $pdo->query("SELECT * FROM bordas WHERE categoria = '$id' AND ativo = 'Sim' ORDER BY id ASC");
+    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg = @count($res);
+    if ($total_reg > 0) {
+        echo '<ul class="list-group form-check" style="margin-bottom:15px">';
+        echo '<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha a borda</span></span>';
+        ?>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <small>Sem Borda + <span class="text-success">R$ 0</span></small>
+            <input onchange="selecionarBorda('0')" class="form-check-input" type="radio" name="borda" id="borda_0" checked value="0">
+        </li>
+        <?php
+        for ($i = 0; $i < $total_reg; $i++) {
+            $id_bor = $res[$i]['id'];
+            $nome_bor = $res[$i]['nome'];
+            $valor_bor = $res[$i]['valor'];
+            ?>
+            <li onclick="selectBorda('<?php echo $id_bor ?>')"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <small><?php echo $nome_bor ?> + <span class="text-success">R$ <?php echo $valor_bor ?></span></small>
+                <input onchange="selecionarBorda('<?php echo $id_bor ?>')" class="form-check-input" type="radio" name="borda"
+                       id="borda_<?php echo $id_bor ?>" value="<?php echo $id_bor ?>">
+            </li>
+            <?php
+        }
+        echo '</ul>';
+    }
+    ?>
+
+    <span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha <span id="quant_sabores"> os </span> sabores</span></span>
+    <?php
+    // PRODUTOS DA CATEGORIA
+    $query = $pdo->query("SELECT * FROM produtos WHERE categoria = '$id' AND ativo = 'Sim'");
+    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg = @count($res);
+    if ($total_reg > 0) {
+        for ($i = 0; $i < $total_reg; $i++) {
+            $id_produto = $res[$i]['id'];
+            $foto = $res[$i]['foto'];
+            $nome = $res[$i]['nome'];
+            $descricao = $res[$i]['descricao'];
+            $url = $res[$i]['url'];
+            $estoque = $res[$i]['estoque'];
+            $tem_estoque = $res[$i]['tem_estoque'];
+            $valor = $res[$i]['valor_venda'];
+            $valorF = number_format($valor, 2, ',', '.');
+            $promocao = $res[$i]['promocao'];
+
+            if ($tem_estoque == 'Sim' && $estoque <= 0) {
+                $mostrar = '';
+                $url_produto = '#';
+            } else {
+                $mostrar = 'ocultar';
+                $url_produto = 'produto-' . $url;
+            }
+
+            $mostrar_promo = ($promocao == 'Sim') ? '' : 'ocultar';
+            ?>
+            <li class="list-group-item d-flex justify-content-between align-items-start ">
+                <img onclick="selectPizzas('<?php echo $id_produto ?>')" class="<?php echo $mostrar ?>" src="../../img/esgotado.png"
+                     width="65" height="65" style="position:absolute; right:0; top:0">
+
+                <?php if ($mostrar != "") { ?>
+                    <img onclick="selectPizzas('<?php echo $id_produto ?>')" class="<?php echo $mostrar_promo ?>"
+                         src="../../img/promocao2.png" width="65" height="65" style="position:absolute; right:0; top:0; opacity:80%">
+                <?php } ?>
+
+                <div class="row" style="width:100%">
+                    <div class="col-10">
+                        <div class="me-auto">
+                            <div class="fw-bold titulo-item">
+                                <input class="form-check-input" type="checkbox" value="<?php echo $id_produto ?>"
+                                       id="seletor-<?php echo $id_produto ?>" onchange="selecionar('<?php echo $id_produto ?>')"
+                                       style="margin-top: 5px">
+                                <small onclick="selectPizzas('<?php echo $id_produto ?>')"> <?php echo $nome ?></small>
+                            </div>
+
+                            <div onclick="selectPizzas('<?php echo $id_produto ?>')" class="subtitulo-item-menor" style="color:#450703">
+                                <?php echo $descricao ?>
+                            </div>
+
+                            <span onclick="selectPizzas('<?php echo $id_produto ?>')" class="valor-item-maior">
+                                <?php
+                                $query2 = $pdo->query("SELECT * FROM variacoes WHERE produto = '$id_produto' AND ativo = 'Sim'");
+                                $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+                                $total_reg2 = @count($res2);
+                                if ($total_reg2 > 0) {
+                                    for ($i2 = 0; $i2 < $total_reg2; $i2++) {
+                                        $sigla = $res2[$i2]['sigla'];
+                                        $valorvar = $res2[$i2]['valor'];
+                                        $valorvarF = number_format($valorvar, 2, ',', '.');
+
+                                        echo '<span style="font-size:10px">(' . $sigla . ') R$ ' . $valorvarF;
+                                        if ($i2 < $total_reg2 - 1) { echo ' / '; }
+                                        echo '</span>';
+                                    }
+                                } else {
+                                    echo 'R$ ' . $valorF;
+                                }
+                                ?>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-2" style="margin-top: 10px;" align="right">
+                        <img onclick="selectPizzas('<?php echo $id_produto ?>')"
+                             src="images/produtos/<?php echo $foto ?>" width="60" height="60" alt="<?php echo htmlspecialchars($nome) ?>">
+                    </div>
+                </div>
+            </li>
+            <?php
+        }
+    }
+    ?>
+
+    <?php
+    // ADICIONAIS DA CATEGORIA
+    $query = $pdo->query("SELECT * FROM adicionais_cat WHERE categoria = '$id' AND ativo = 'Sim'");
+    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg = @count($res);
+    if ($total_reg > 0) { ?>
+        <span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha os Adicionais</span></span>
+        <div style="margin-top: -18px">
+            <?php
+            for ($i = 0; $i < $total_reg; $i++) {
+                $id_adc = $res[$i]['id'];
+                $nome = $res[$i]['nome'];
+                $valor = $res[$i]['valor'];
+                $valorF = number_format($valor, 2, ',', '.');
+                ?>
+                <li class="list-group-item d-flex">
+                    <span style="font-size: 12px"><?php echo $nome ?> (R$ <?php echo $valorF ?>)</span>
+                    <span class="direita" style="font-size:14px">
+                        <span>
+                            <button onclick="dim('<?php echo $id_adc ?>', '<?php echo $sessao ?>')" style="background:transparent; border:none">
+                                <i class="bi bi-dash-circle-fill text-danger"></i>
+                            </button>
+                        </span>
+                        <span>
+                            <b><input id="quantidade_item_<?php echo $id_adc ?>" value="0"
+                                      style="background: transparent; border:none; width:20px; text-align:center"></b>
+                        </span>
+                        <span>
+                            <button onclick="aum('<?php echo $id_adc ?>', '<?php echo $sessao ?>')" style="background:transparent; border:none">
+                                <i class="bi bi-plus-circle-fill text-success"></i>
+                            </button>
+                        </span>
+                    </span>
+                </li>
+                <?php
+            }
+            ?>
+        </div>
+        <?php
+    }
+    ?>
+    <hr>
+    <div class="destaque-qtd">
+        <b>OBSERVAÇÕES</b>
+        <div class="form-group mt-3">
+            <textarea maxlength="255" class="form-control" name="obs" id="obs" placeholder="Deseja adicionar alguma Observação?"></textarea>
+        </div>
+    </div>
+
+    <input type="hidden" id="variacao_sel">
+    <input type="hidden" id="borda_sel">
+    <input type="hidden" id="ids">
+    <input type="hidden" id="quantidade_sabores">
+
+    <div class="d-grid gap-2 col-8 mx-auto mt-4 mb-4">
+        <button onclick="addCarrinho()" class="btn btn-warning btn-lg"><?php echo $texto_botao; ?> <i class="fal fa-long-arrow-right"></i></button>
+    </div>
+
+</ol>
+
+
+
+
+<script type="text/javascript">
+	function addCarrinho() {
+		var variacao = $('#variacao_sel').val();
+		var borda = $('#borda_sel').val();
+		var mesa = "<?= $id_ab_mesa ?>";
+
+		if (variacao == "") {
+			alertWarning("Selecione um Tamanho");
+			return;
+		}
+
+		var ids = $('#ids').val();
+		if (ids == "") {
+			alertWarning("Selecione pelo menos um sabor de pizza!");
+			return;
+		}
+
+		var obs = $('#obs').val();
+		var quantidade_sabores = $('#quantidade_sabores').val();
+
+		var id_prod = ids.split("-");
+
+		if (id_prod.length - 1 > quantidade_sabores) {
+			alertWarning('Você pode escolher só até ' + quantidade_sabores + ' Sabores!');
+			return;
+		}
+
+		$.ajax({
+			url: '../../js/ajax/add-carrinho-pizza.php',
+			method: 'POST',
+			data: {
+				variacao,
+				ids,
+				obs,
+				borda,
+				mesa
+			},
+			dataType: "text",
+
+			success: function(mensagem) {
+				if (mensagem.trim() == "Inserido com Sucesso") {
+                    $('#btn-fechar-grade').click();
+                    listarVendas();
+                } else {
+                    alertWarning(mensagem)
+                }
+
+			},
+
+		});
+	}
+
+	function selecionarVar(sigla, id) {
+		$('#variacao_sel').val(id);
+
+		$.ajax({
+			url: '../../js/ajax/buscar_variacoes.php',
+			method: 'POST',
+			data: {
+				id
+			},
+			dataType: "text",
+
+			success: function(mensagem) {
+				$('#quant_sabores').text(" até " + mensagem);
+				$('#quantidade_sabores').val(mensagem);
+			},
+
+		});
+
+	}
+
+
+	function selecionarBorda(id) {
+		var id = $('#borda_' + id).val();
+		$('#borda_sel').val(id);
+
+	}
+
+
+	function selecionar(id) {
+
+		var ids = $('#ids').val();
+
+		if ($('#seletor-' + id).is(":checked") == true) {
+			var novo_id = ids + id + '-';
+			$('#ids').val(novo_id);
+		} else {
+			var retirar = ids.replace(id + '-', '');
+			$('#ids').val(retirar);
+
+		}
+
+
+	}
+
+
+
+	function func_adicional(id) {
+
+		var id = $('#adicional_' + id).val();
+
+		if ($('#adicional_' + id).is(":checked") == true) {
+			var acao = 'Sim';
+		} else {
+			var acao = 'Não';
+		}
+
+		adicionar(id, acao, 'Sim');
+
+
+	}
+
+
+
+	function adicionar(id, quantidade) {
+
+		$.ajax({
+			url: '../../js/ajax/adicionais.php',
+			method: 'POST',
+			data: {
+				id,
+				quantidade
+			},
+			dataType: "text",
+
+			success: function(mensagem) {
+
+				if (mensagem.trim() == "Alterado com Sucesso") {
+
+				}
+
+			},
+
+		});
+	}
+
+
+	function selecVar(sigla, id) {
+		$('#variacoes_' + sigla).prop('checked', true);
+		selecionarVar(sigla, id)
+	}
+
+	function selectBorda(id) {
+		$('#borda_' + id).prop('checked', true);
+		selecionarBorda(id)
+	}
+
+	function selectAdc(id) {
+
+		if ($('#adicional_' + id).is(":checked") == true) {
+			var acao = 'Não';
+			$('#adicional_' + id).prop('checked', false);
+		} else {
+			var acao = 'Sim';
+			$('#adicional_' + id).prop('checked', true);
+		}
+
+		adicionar(id, acao, 'Sim');
+
+	}
+
+
+
+	function selectPizzas(id) {
+
+		if ($('#seletor-' + id).is(":checked") == true) {
+			$('#seletor-' + id).prop('checked', false);
+		} else {
+			$('#seletor-' + id).prop('checked', true);
+		}
+
+		selecionar(id);
+
+	}
+</script>
+
+
+
+<script type="text/javascript">
+	function aum(id, cat) {
+		var quant = $("#quantidade_item_" + id).val();
+		var quantidade = parseFloat(quant) + 1;
+
+		$("#quantidade_item_" + id).val(quantidade);
+		adicionar(id, quantidade)
+
+	}
+
+	function dim(id, cat) {
+		var quant = $("#quantidade_item_" + id).val();
+		var quantidade = parseFloat(quant) - 1;
+
+		if (quantidade == -1) {
+			var quant = $("#quantidade_item_" + id).val('0');
+			return;
+		}
+
+		$("#quantidade_item_" + id).val(quantidade);
+		adicionar(id, quantidade)
+
+
+
+	}
+</script>

@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+
+RewriteRule ^index(.*)$ index.php [L]
+
+
+RewriteRule ^home(.*)$ index.php?pagina=home [L]
+RewriteRule ^tarefas(.*)$ index.php?pagina=tarefas [L]
+
+
+RewriteRule ^entregas(.*)$ index.php?pagina=entregas [L]
+RewriteRule ^entregador(.*)$ index.php?pagina=entregador [L]

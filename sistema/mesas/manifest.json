@@ -1,0 +1,35 @@
+{
+
+"name": "Projeto modelo", 
+"short_name": "Projeto modelo",
+"start_url": "index.php",
+"display": "standalone",
+"theme_color": "#000000",
+"background_color": "#ffffff",
+"orientation": "portrait",
+
+    "icons": [
+        {
+            "src": "img/72x72.png",
+            "type": "image/png",
+            "sizes": "72x72"
+            
+        },
+        {
+            "src": "img/96x96.png",
+            "type": "image/png",
+            "sizes": "96x96"
+            
+        },
+        
+        {
+            "src": "img/512x512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any maskable"
+        }
+    
+    ]
+
+}
+
