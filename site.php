@@ -1095,7 +1095,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
         </div>
       </div>
       <hr style="opacity: 0.15; margin: 15px 0;">
-      <div class="footer-copyright text-center" style="font-size: 14px; color: #6c757d; padding: 20px 0;">
+      <div class="footer-copyright text-center" style="font-size: 14px; color: #6c757d;">
           <p class="mb-1">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($nome_sistema ?? 'Empresa'); ?>. Todos os direitos reservados.</p>
           <p class="mb-0">Desenvolvido por: <a href="https://crnsistemas.com.br/" target="_blank" rel="noopener noreferrer" style="color: #6c757d; font-weight: bold; text-decoration: none;">CRN Sistemas</a></p>
       </div>
