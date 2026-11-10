@@ -540,13 +540,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 
-              <div class="swiper-slide" style="width: auto; min-width: 140px; padding: 4px;">
+              <div class="swiper-slide" style="width: auto; min-width: 145px; max-width: 165px; padding: 4px;">
                 <a href="<?php echo $link_cat ?>" class="text-decoration-none">
                   <div class="catalog-category-card">
                     <div class="catalog-category-img-wrap">
-                      <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="<?php echo $nome ?>">
+                      <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="<?php echo $nome ?>" class="catalog-category-img">
                     </div>
-                    <div>
+                    <div class="catalog-category-content">
                       <div class="catalog-category-title"><?php echo $nome ?></div>
                       <div class="catalog-category-desc"><?php echo $descricaoF ?></div>
                       <span class="catalog-category-count"><?php echo $tem_produto ?> Itens</span>
