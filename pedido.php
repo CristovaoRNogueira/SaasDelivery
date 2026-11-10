@@ -82,61 +82,120 @@ $cartoes = @$res[0]['cartoes'];
 
 ?>
 
-<body style="background: #ededdf;">
-	<div class="container" align="center" style="padding:10px; font-size: 'Verdana';">
-		<img src="<?php echo $url_sistema ?>img/check_ok.png" width="80px">
-		<br>
-		<span style="font-size: 18px; margin-top: 5px"><b>Nº PEDIDO <?php echo $n_pedido ?></b></span>
-		<br>
-		<span style="font-size: 12px; margin-top: -5px">Ficamos gratos por realizar essa compra!</span><br>
+<body style="background: #f8f9fa;">
 
-		<?php if($total_cartoes_config > 0){ ?>
-		<span style="font-size: 12px; margin-top: -5px">Você ganhou mais um cartão Fidelidade</span><br>
+	<nav class="navbar bg-white fixed-top" style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
+		<div class="container-fluid" style="max-width: 680px;">
+			<a class="navbar-brand d-flex align-items-center gap-2 text-dark text-decoration-none" href="<?php echo $url_sistema ?><?php echo $url_site ?>">
+				<img src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" alt="" width="38px" height="38px" style="object-fit: contain; border-radius: 8px;" class="d-inline-block align-text-top">
+				<span class="fw-bold" style="font-size: 15px;">Acompanhar Pedido</span>
+			</a>
+			<a href="<?php echo $url_sistema ?><?php echo $url_site ?>?novo_pedido=1" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold" style="font-size: 12px;">
+				<i class="bi bi-plus-lg me-1"></i> Novo Pedido
+			</a>
+		</div>
+	</nav>
 
-		<span style="font-size: 12px; margin-top: -5px">Você possui <b><?php echo $cartoes ?> 
-		<?php if($cartoes == 1) {
-			echo 'Cartão';
-		} else { 
-			echo 'Cartões';
-		} ?>
-		 Fidelidade </b></span><br>
+	<div class="order-tracking-wrapper">
 
-		<?php } ?>
+		<!-- Card de Sucesso / Cabeçalho -->
+		<div class="order-tracking-card text-center">
+			<div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; border-radius: 50%; background: #e8f5e9; color: #2e7d32;">
+				<i class="bi bi-check2-circle" style="font-size: 32px;"></i>
+			</div>
+			<h4 class="fw-bold text-dark mb-1" style="letter-spacing: -0.3px;">Pedido #<?php echo $n_pedido ?></h4>
+			<p class="text-muted mb-3" style="font-size: 13px;">Obrigado pela sua compra! Acompanhe o status abaixo em tempo real.</p>
+			
+			<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+				<span class="badge rounded-pill px-3 py-2" style="background: #f1f3f5; color: #495057; font-size: 12px;">
+					<i class="bi bi-calendar3 me-1"></i> <?php echo $dataF ?> às <?php echo $hora ?>
+				</span>
+				<span class="badge rounded-pill px-3 py-2" style="background: <?php echo ($pago == 'Sim') ? '#e8f5e9; color: #2e7d32;' : '#ffebee; color: #c62828;'; ?> font-size: 12px;">
+					<i class="bi bi-cash-stack me-1"></i> <?php echo ($pago == 'Sim') ? 'Pago' : 'Pagamento Pendente'; ?>
+				</span>
+			</div>
+		</div>
 
+		<!-- Card da Timeline / Stepper Visual -->
+		<div class="order-tracking-card">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h6 class="fw-bold text-dark m-0" style="font-size: 15px;">
+					<i class="bi bi-clock-history text-danger me-1"></i> Status do Pedido
+				</h6>
+				<span class="badge bg-light text-secondary border rounded-pill" style="font-size: 11px;">
+					<i class="bi bi-arrow-repeat me-1"></i> Atualização automática
+				</span>
+			</div>
+			
+			<div id="listar_st">
+				<!-- Carregado via AJAX com layout moderno em Stepper -->
+			</div>
+		</div>
 
-		<span style="font-size: 13px;"><b>Novo Pedido -> </b> <span><a href="<?php echo $url_sistema ?><?php echo $url_site ?>?novo_pedido=1">Clique Aqui</a></span></span>
+		<!-- Card de Resumo Financeiro e Detalhes da Entrega -->
+		<div class="order-tracking-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 15px;">
+				<i class="bi bi-receipt text-danger me-1"></i> Resumo da Compra
+			</h6>
 
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted">Forma de Pagamento</span>
+				<span class="fw-bold text-dark"><?php echo $tipo_pgto ?></span>
+			</div>
 
-		<hr style="margin:7px">
-		<p>
-			<span style="font-size: 13px;"><b>Pagamento: </b> <span><?php echo $tipo_pgto ?></span></span> /
-			<span style="font-size: 13px;"><b>Pago: </b> <span style="color:<?php echo $cor_pago ?>"><?php echo $pago ?></span></span>
-			<br>
-			<span style="font-size: 13px;"><b>Opção de Entrega: </b> <span><?php echo $entrega ?></span></span><br>
-			<span style="font-size: 13px;"><b>Pagamento: <span style="color:<?php echo $cor_pago ?>; font-size: 15px">R$ <?php echo $valorF ?></span></b></span><br>
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted">Opção de Entrega</span>
+				<span class="fw-bold text-dark"><?php echo $entrega ?></span>
+			</div>
+
+			<?php if ($taxa_entrega > 0) { ?>
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted">Taxa de Entrega</span>
+				<span class="fw-bold text-dark">R$ <?php echo $taxa_entregaF ?></span>
+			</div>
+			<?php } ?>
+
 			<?php if ($taxa_extra_pedido > 0) { ?>
-				<span style="font-size: 12px;"><b>Taxa adicional:</b> R$ <?php echo $taxa_extra_pedidoF ?></span><br>
+			<div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px;">
+				<span class="text-muted"><?php echo $titulo_taxa ?></span>
+				<span class="fw-bold text-dark">R$ <?php echo $taxa_extra_pedidoF ?></span>
+			</div>
 			<?php } ?>
-			<?php if ($access_token == "") { ?>
-				<span style="font-size: 13px;"><b>Chave Pix:</b> <span style="font-size: 13px"><?php echo $tipo_chave ?> <?php echo @$dados_pagamento ?></span></span><br>
+
+			<?php if ($cupom > 0) { ?>
+			<div class="d-flex justify-content-between align-items-center mb-2 text-success" style="font-size: 13px;">
+				<span>Desconto Aplicado</span>
+				<span class="fw-bold">- R$ <?php echo $cupomF ?></span>
+			</div>
 			<?php } ?>
-		</p>
 
-		<hr style="margin:7px">
-		<p style="background: #757571; padding:2px; color:#FFF; font-size:13px">CONFIRA SEUS ITENS</p>
+			<?php if ($access_token == "" && @$dados_pagamento != "") { ?>
+			<div class="p-2 mb-2 rounded-3 bg-light border" style="font-size: 12px;">
+				<span class="text-muted">Chave Pix:</span> <strong class="text-dark"><?php echo $tipo_chave ?> <?php echo @$dados_pagamento ?></strong>
+			</div>
+			<?php } ?>
 
+			<hr class="my-2" style="opacity: 0.12;">
 
+			<div class="d-flex justify-content-between align-items-center mt-2">
+				<span class="fw-bold text-dark" style="font-size: 15px;">Total do Pedido</span>
+				<span class="fw-bold text-success" style="font-size: 18px;">R$ <?php echo $valorF ?></span>
+			</div>
+		</div>
 
-		<div class="row itens" style="font-size:12px">
+		<!-- Card de Itens do Pedido -->
+		<div class="order-tracking-card">
+			<h6 class="fw-bold text-dark mb-3" style="font-size: 15px;">
+				<i class="bi bi-basket2 text-danger me-1"></i> Itens do Pedido
+			</h6>
+
+			<div class="order-items-list">
 			<?php
 			$res = $pdo->query("SELECT * from carrinho where pedido = '$id' and empresa = '$id_empresa' order by id asc");
 			$dados = $res->fetchAll(PDO::FETCH_ASSOC);
 			$linhas = count($dados);
 
-			$sub_tot;
 			for ($i = 0; $i < count($dados); $i++) {
-				foreach ($dados[$i] as $key => $value) {
-				}
 				$id_carrinho = $dados[$i]['id'];
 				$id_produto = $dados[$i]['produto'];
 				$quantidade = $dados[$i]['quantidade'];
@@ -148,7 +207,6 @@ $cartoes = @$res[0]['cartoes'];
 				$sabores = $dados[$i]['sabores'];
 				$borda = $dados[$i]['borda'];
 				$categoria = $dados[$i]['categoria'];
-
 
 				$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
 				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -171,131 +229,106 @@ $cartoes = @$res[0]['cartoes'];
 				}
 
 				$query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if (@count(@$res2) > 0) {
-			$nome_produto = $res2[0]['nome'];
-			$foto_produto = $res2[0]['foto'];
-			$unidade = $res2[0]['unidade'];
-		} else {
-			$nome_produto = $nome_produto_tab;
-			$foto_produto = "";
-			$unidade = "";
-		}
+				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+				if (@count(@$res2) > 0) {
+					$nome_produto = $res2[0]['nome'];
+					$foto_produto = $res2[0]['foto'];
+					$unidade = $res2[0]['unidade'];
+				} else {
+					$nome_produto = $nome_produto_tab;
+					$foto_produto = "";
+					$unidade = "";
+				}
 
+				$query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
+				$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+				if (@count($res3) > 0) {
+					$nome_unidade = $res3[0]['nome'];
+				} else {
+					$nome_unidade = 'Sem Unidade';
+				}
 
+				$sigla_unidade = '';
+				if ($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG') {
+					$sigla_unidade = ' (KG)';
+				}
+				if ($nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm') {
+					$sigla_unidade = ' (m)';
+				}
+				if ($nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L') {
+					$sigla_unidade = ' (L)';
+				}
 
-		$query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
-			$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-			if(@count($res3) > 0){
-				$nome_unidade = $res3[0]['nome'];
-			}else{
-				$nome_unidade = 'Sem Unidade';
-			}
+				$qt = explode(".", $quantidade);
+				if ($qt[1] > 0) {
+					$quantidadeF = $quantidade;
+				} else {
+					$quantidadeF = $qt[0];
+				}
 
-
-		$ocultar_quantidades = '';
-			$sigla_unidade = '';
-			if($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG'){
-				$sigla_unidade = ' (KG)';
-				$ocultar_quantidades = 'ocultar';
-			}
-
-			if($nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm'){
-				$sigla_unidade = ' (m)';
-				$ocultar_quantidades = 'ocultar';
-			}
-
-			if($nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L'){
-				$sigla_unidade = ' (L)';
-				$ocultar_quantidades = 'ocultar';
-			}
-
-			//tratamento separa string
-			$qt = explode(".", $quantidade);
-			if($qt[1] > 0){
-				$quantidadeF = $quantidade;		
-			}else{
-				$quantidadeF = $qt[0];
-			}
-
+				$total_linha = $total_item * $quantidade;
+				$total_itemF = number_format($total_linha, 2, ',', '.');
 			?>
-
-
-
-				<div align="left" class="col-9"> <span class=""><?php echo $quantidadeF ?> <?php echo $sigla_unidade ?> </span> - <?php echo $nome_produto ?> <?php echo $sigla_variacao ?> <?php echo $sigla_grade ?>
-
+				<div class="order-item-row">
+					<div style="flex: 1; min-width: 0;">
+						<div class="fw-bold text-dark" style="font-size: 14px;">
+							<span class="text-danger fw-bold"><?php echo $quantidadeF ?><?php echo $sigla_unidade ?>x</span> 
+							<?php echo $nome_produto ?> <small class="text-secondary"><?php echo $sigla_variacao ?> <?php echo $sigla_grade ?></small>
+						</div>
+						<div class="mt-1" style="font-size: 12px;">
+							<?php echo renderizarDetalhesItemPedido($pdo, $dados[$i]); ?>
+						</div>
+					</div>
+					<div class="text-end ps-3" style="font-weight: 700; font-size: 14px; color: #212529;">
+						R$ <?php echo $total_itemF ?>
+					</div>
 				</div>
-
-				<div align="right" class="col-3">
-					R$ <?php
-							$total_linha = $total_item * $quantidade;
-							$total_itemF = number_format($total_linha, 2, ',', '.');
-							// $total = number_format( $cp1 , 2, ',', '.');
-							echo $total_itemF;
-							?>
-				</div>
-
-				<div class="col-12">
-					<?php echo renderizarDetalhesItemPedido($pdo, $dados[$i]); ?>
-				</div>
-
-				<hr style="margin:2px">
-
 			<?php } ?>
+			</div>
 		</div>
 
+		<!-- Card de Fidelidade (se ativo) -->
+		<?php if ($total_cartoes_config > 0) { ?>
+		<div class="order-tracking-card text-center">
+			<h6 class="fw-bold text-dark mb-2" style="font-size: 14px;">
+				<i class="bi bi-star-fill text-warning me-1"></i> Cartão Fidelidade
+			</h6>
 
+			<?php if ($total_cartoes_config == $cartoes) { ?>
+				<p class="text-success fw-bold mb-2" style="font-size: 13px;">
+					Parabéns! Você completou <?php echo $total_cartoes_config ?> cartões fidelidade! Na próxima compra use o cupom <strong>cartao</strong> para ganhar R$ <?php echo $valor_cupom_config ?> de desconto!
+				</p>
+			<?php } else { ?>
+				<p class="text-muted mb-2" style="font-size: 12px;">
+					Você possui <strong><?php echo $cartoes ?> de <?php echo $total_cartoes_config ?></strong> selos. Complete para ganhar R$ <?php echo $valor_cupom_config ?> de desconto!
+				</p>
+			<?php } ?>
 
-		<div style="font-size: 12px; margin-top: 15px" align="left" id="listar_st">
-
-
-
+			<div class="d-flex justify-content-center align-items-center flex-wrap gap-2 mt-2">
+			<?php 
+			for ($i = 1; $i <= $total_cartoes_config; $i++) { 
+				$atingido = ($cartoes >= $i);
+			?>
+				<div style="width: 42px; height: 42px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: <?php echo $atingido ? '#fff5f5' : '#f8f9fa'; ?>; border: 1.5px solid <?php echo $atingido ? '#ea1d2c' : '#dee2e6'; ?>;">
+					<img src="<?php echo $url_sistema ?>img/cartao.png" width="28px" style="filter: grayscale(<?php echo $atingido ? 0 : 1 ?>); opacity: <?php echo $atingido ? 1 : 0.35 ?>;">
+				</div>
+			<?php } ?>
+			</div>
 		</div>
-
-
-		<?php if($total_cartoes_config > 0){ ?>
-
-
-		<br>
-
-		<?php if($total_cartoes_config == $cartoes){ ?>
-
-			<span style="font-size: 12px; margin-top: -5px">Você completou <b><?php echo $total_cartoes_config ?> cartões fidelidades </b>, em sua próxima compra digite a palavra cartao no campo de cupom de desconto para ganhar um desconto de  <b><?php echo $valor_cupom_config ?> Reais!</b></span><br>
-
-		<?php }else{ ?>
-
-			<span style="font-size: 12px; margin-top: -5px">Após completar <b><?php echo $total_cartoes_config ?> cartões </b>, você poderá trocar por um cupom de <b>desconto de <?php echo $valor_cupom_config ?> Reais!</b></span><br>
-		
 		<?php } ?>
 
-<br>
-<div class="row" style="display: flex; justify-content: center; flex-wrap: wrap;">
- <?php 
-for($i=1; $i<=$total_cartoes_config; $i++){ 
-		if($cartoes >= $i){
-			$valor = 0;
-			$opacity = 1;
-		}else{
-			$valor = 1;
-			$opacity = 0.3;		}
-	?>
+		<!-- Botões de Ação Modernos -->
+		<div class="d-flex flex-column gap-2 mt-3">
+			<a href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" target="_blank" class="btn-order-action btn-order-whatsapp">
+				<i class="bi bi-whatsapp" style="font-size: 18px;"></i> Falar com o Restaurante no WhatsApp
+			</a>
 
-<div class="col-md-1 col-2" align="center">
-<img src="<?php echo $url_sistema ?>img/cartao.png" width="100%" style="filter: grayscale(<?php echo $valor ?>); filter: opacity(<?php echo $opacity ?>)">
-</div>
-<?php } ?>
-</div>
-
-
-<?php } ?>
-
-<br>
-
-
-
-		<div style="margin-top: 25px">
-			<a href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" target="_blank"><img src="<?php echo $url_sistema ?>img/whats.png" width="80%"></a>
+			<a href="<?php echo $url_sistema ?><?php echo $url_site ?>?novo_pedido=1" class="btn-order-action btn-order-new">
+				<i class="bi bi-arrow-repeat" style="font-size: 17px;"></i> Fazer um Novo Pedido
+			</a>
 		</div>
+
+	</div>
 
 </body>
 

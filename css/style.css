@@ -968,3 +968,187 @@ input:valid~label {
   background: #c81421;
   color: #ffffff !important;
 }
+
+/* ==========================================================================
+   TIMELINE STEPPER E ACOMPANHAMENTO DE PEDIDO (DESIGN SYSTEM IFOOD)
+   ========================================================================== */
+
+.order-tracking-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 68px 12px 60px 12px;
+}
+
+.order-tracking-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-stepper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 6px 0;
+}
+
+.timeline-step {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  min-height: 58px;
+}
+
+.timeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  background: #f1f3f5;
+  color: #adb5bd;
+  border: 2px solid #dee2e6;
+}
+
+.timeline-line {
+  width: 2px;
+  flex-grow: 1;
+  min-height: 24px;
+  background: #e9ecef;
+  margin: 4px 0;
+}
+
+.timeline-step.is-last .timeline-line {
+  display: none;
+}
+
+.timeline-content {
+  padding-top: 5px;
+  padding-bottom: 12px;
+}
+
+.timeline-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #495057;
+  line-height: 1.2;
+}
+
+.timeline-sub {
+  font-size: 12px;
+  color: #6c757d;
+  margin-top: 2px;
+}
+
+/* Estados da timeline */
+.timeline-step.completed .timeline-icon {
+  background: #198754;
+  color: #ffffff;
+  border-color: #198754;
+}
+
+.timeline-step.completed .timeline-line {
+  background: #198754;
+}
+
+.timeline-step.completed .timeline-title {
+  color: #198754;
+}
+
+.timeline-step.active .timeline-icon {
+  background: #ea1d2c;
+  color: #ffffff;
+  border-color: #ea1d2c;
+  box-shadow: 0 0 0 4px rgba(234, 29, 44, 0.2);
+  animation: pulseTracking 1.8s infinite;
+}
+
+.timeline-step.active .timeline-title {
+  color: #ea1d2c;
+  font-weight: 800;
+}
+
+.timeline-step.pending .timeline-icon {
+  background: #f8f9fa;
+  color: #adb5bd;
+  border-color: #e9ecef;
+}
+
+@keyframes pulseTracking {
+  0% {
+    box-shadow: 0 0 0 0 rgba(234, 29, 44, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(234, 29, 44, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(234, 29, 44, 0);
+  }
+}
+
+.order-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px dashed #e9ecef;
+}
+
+.order-item-row:last-child {
+  border-bottom: none;
+}
+
+.btn-order-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-order-whatsapp {
+  background: #25d366;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+}
+
+.btn-order-whatsapp:hover {
+  background: #20ba5a;
+  color: #ffffff !important;
+}
+
+.btn-order-new {
+  background: #ffffff;
+  color: #212529 !important;
+  border: 1.5px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.btn-order-new:hover {
+  border-color: #ea1d2c;
+  color: #ea1d2c !important;
+}
