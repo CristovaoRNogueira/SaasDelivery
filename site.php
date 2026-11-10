@@ -442,8 +442,8 @@ if ($id_mesa == "" and $sessão_balcao == "") {
   <!-- Menu End -->
 
 
-<div class="catalog-search-container" style="max-width: 400px !important; margin: 0 auto 20px auto !important; width: 100% !important; padding: 0 15px !important;">
-  <div class="catalog-search-wrapper" style="max-width: 400px !important; margin: 0 auto !important; width: 100% !important;">
+<div class="catalog-search-container" style="max-width: 400px !important; margin: 0 auto 16px auto !important; width: 100% !important; padding: 0 15px !important;">
+  <div class="catalog-search-wrapper" style="max-width: 400px !important; height: 42px !important; min-height: 42px !important; max-height: 44px !important; margin: 0 auto !important; width: 100% !important; padding: 0 16px !important;">
     <i class="bi bi-search catalog-search-icon"></i>
     <input 
       onkeyup="buscarProduto()"
@@ -452,7 +452,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
       name="buscar" 
       id="buscar" 
       class="catalog-search-input"
-      style="width: 100%;"
+      style="width: 100%; height: 100%; margin: 0 !important; padding: 0 !important; border: none; outline: none; background: transparent;"
       autocomplete="off"
     >
   </div>

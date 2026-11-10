@@ -1218,7 +1218,7 @@ input:valid~label {
   padding: 0 15px !important;
   max-width: 400px !important;
   width: 100% !important;
-  margin: 0 auto 24px auto !important;
+  margin: 0 auto 16px auto !important;
   box-sizing: border-box !important;
   display: block !important;
 }
@@ -1228,11 +1228,14 @@ input:valid~label {
   align-items: center !important;
   background: #ffffff !important;
   border-radius: 50px !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
   border: 1.5px solid #e9ecef !important;
-  padding: 4px 16px !important;
+  padding: 0 16px !important;
   width: 100% !important;
   max-width: 400px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 44px !important;
   margin: 0 auto !important;
   box-sizing: border-box !important;
   transition: all 0.25s ease;
@@ -1240,29 +1243,39 @@ input:valid~label {
 
 .catalog-search-wrapper:focus-within {
   border-color: #ea1d2c !important;
-  box-shadow: 0 3px 14px rgba(234, 29, 44, 0.15) !important;
+  box-shadow: 0 2px 10px rgba(234, 29, 44, 0.15) !important;
 }
 
 .catalog-search-icon {
-  font-size: 16px;
-  color: #adb5bd;
-  margin-right: 12px;
+  font-size: 15px !important;
+  color: #adb5bd !important;
+  margin-right: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
 }
 
 .catalog-search-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 14px;
-  color: #212529;
-  padding: 7px 0;
-  font-weight: 500;
+  flex: 1 !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  font-size: 13px !important;
+  color: #212529 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+  line-height: 42px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
 }
 
 .catalog-search-input::placeholder {
-  color: #8c98a4;
-  font-size: 14px;
+  color: #8c98a4 !important;
+  font-size: 13px !important;
+  font-style: normal !important;
 }
 
 /* 3. Títulos das Seções */
