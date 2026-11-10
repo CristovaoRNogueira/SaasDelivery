@@ -94,10 +94,22 @@ if($total_reg > 0){
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 			$unidade = $res2[0]['unidade'];
+			if ($categoria == "" || $categoria == 0) {
+				$categoria = $res2[0]['categoria'];
+			}
 		} else {
 			$nome_produto = $nome_produto_tab;
 			$foto_produto = "";
 			$unidade = "";
+		}
+
+		$nome_categoria = '';
+		if ($categoria != "" && $categoria > 0) {
+			$query_cat = $pdo->query("SELECT nome FROM categorias where id = '$categoria' and empresa = '$id_empresa'");
+			$res_cat = $query_cat->fetchAll(PDO::FETCH_ASSOC);
+			if (@count($res_cat) > 0) {
+				$nome_categoria = $res_cat[0]['nome'];
+			}
 		}
 
 
@@ -192,6 +204,12 @@ if($total_reg > 0){
 
 
 
+		if ($nome_categoria != "") {
+			$badge_categoria = '<span class="badge bg-light text-secondary border rounded-pill px-2 py-1 mb-1" style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">'.$nome_categoria.'</span>';
+		} else {
+			$badge_categoria = '';
+		}
+
 echo <<<HTML
 
 		<li class="list-group-item cart-card-item">
@@ -199,6 +217,7 @@ echo <<<HTML
 				<div class="d-flex align-items-start gap-3" style="flex: 1; min-width: 0;">
 					<img class="cart-item-thumb" src="sistema/painel/images/produtos/{$foto_produto}" alt="{$nome_produto}">
 					<div style="flex: 1; min-width: 0;">
+						{$badge_categoria}
 						<div class="fw-bold text-dark" style="font-size: 14px; line-height: 1.3;">
 							{$nome_produto} <span class="text-secondary fw-semibold">{$sigla_variacao}</span> {$sigla_grade}
 						</div>
@@ -228,25 +247,6 @@ echo '<span class="text-danger ingredientes">'.$nome_ingrediente.'</span>';
 }
 			echo '</div>';
 }
-
-
-$query5 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'adicionais'");
-		$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg5 = @count($res5);
-		if($total_reg5 > 0){
-			$classe_adc = '';
-		}else{
-			$classe_adc = 'ocultar';
-		}
-
-$query5 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela != 'adicionais'");
-		$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg5 = @count($res5);
-		if($total_reg5 > 0){
-			$classe_grade = '';
-		}else{
-			$classe_grade = 'ocultar';
-		}
 
 echo <<<HTML
 					</div>
@@ -279,19 +279,10 @@ echo <<<HTML
 						<i class="bi bi-chat-left-text-fill {$classe_obs}"></i>
 						<span>Obs</span>
 					</a>
-
-					<a title="Ver Adicionais" class="pill-action-cart {$classe_adc}" href="javascript:void(0)" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')">
-						<i class="bi bi-plus-circle-fill text-primary"></i>
-						<span>Adc</span>
-					</a>
-
-					<a title="Ver Opcionais" class="pill-action-cart {$classe_grade}" href="javascript:void(0)" onclick="grades('{$nome_produto}', '{$id}', '{$produto}')">
-						<i class="bi bi-list-check text-primary"></i>
-						<span>Opções</span>
-					</a>
+					<span class="fw-bold text-success" style="font-size: 15px; margin-left: 4px;">R$ {$total_itemF}</span>
 				</div>
 
-				<div class="d-flex align-items-center gap-3 ms-auto">
+				<div class="d-flex align-items-center gap-2 ms-auto">
 					<div class="d-flex align-items-center gap-1">
 						<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="btn-qty-touch" aria-label="Diminuir quantidade">
 							<i class="bi bi-dash"></i>
@@ -305,10 +296,6 @@ echo <<<HTML
 						<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'mais')" class="btn-qty-touch" aria-label="Aumentar quantidade">
 							<i class="bi bi-plus"></i>
 						</a>
-					</div>
-
-					<div class="text-end" style="min-width: 78px;">
-						<span class="fw-bold text-success" style="font-size: 15px;">R$ {$total_itemF}</span>
 					</div>
 				</div>
 			</div>

@@ -204,7 +204,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
     <?php if ($nome_mesa == "") { ?>
     <div class="d-flex justify-content-between align-items-center mb-2 text-muted" style="font-size: 13px;">
       <span>Taxa de entrega</span>
-      <span class="badge bg-light text-secondary border rounded-pill fw-normal">A calcular na entrega</span>
+      <span>R$ 0,00</span>
     </div>
     <?php } ?>
     <hr class="my-2" style="opacity: 0.12;">
