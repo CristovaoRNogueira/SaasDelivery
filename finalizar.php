@@ -278,7 +278,7 @@ if($somente_pix_delivery == 'Sim'){
 
             <div class="checkout-input-group">
               <label class="checkout-label" for="telefone"><i class="bi bi-whatsapp text-success me-1"></i> Seu Telefone / WhatsApp</label>
-              <input onkeyup="" type="tel" class="checkout-input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="font-size: 16px; font-weight: 600;">
+              <input onkeyup="buscarNome()" onblur="buscarNome()" type="tel" class="checkout-input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="font-size: 16px; font-weight: 600;">
             </div>
 
             <div class="checkout-input-group">
@@ -1358,12 +1358,16 @@ if($somente_pix_delivery == 'Sim'){
 
         var split = result.split("**");
 
+        if (split[0] !== undefined && split[0].trim() !== "") {
+          $('#nome').val(split[0].trim());
+        }
         $('#rua').val(split[1]);
         $('#numero').val(split[2]);
         $('#bairro').val(split[3]).change();
         $('#complemento').val(split[4]);
         $('#taxa-entrega-input').val(split[5]);
         $('#taxa-entrega').text(split[6]);
+        $('#id_cliente').val(split[7]);
         $('#id_cliente').text(split[7]);
         $('#cep').val(split[8]);
         $('#cidade').val(split[9]);
