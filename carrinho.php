@@ -169,64 +169,73 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 <style type="text/css">
   body {
-    background: #f2f2f2;
+    background: #f8f9fa;
   }
 </style>
 
-<div class="main-container">
+<div class="main-container" style="max-width: 720px; margin: 0 auto; padding-bottom: 130px;">
 
-  <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
-    <div class="container-fluid">
-      <div class="navbar-brand">
-        <a href="<?php echo $url_site ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-        <span style="margin-left: 15px; font-size:14px">RESUMO DO PEDIDO <?php echo $nome_mesa ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
-
+  <nav class="navbar bg-white fixed-top" style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
+    <div class="container-fluid" style="max-width: 720px;">
+      <div class="navbar-brand d-flex align-items-center">
+        <a href="<?php echo $url_site ?>" class="text-dark text-decoration-none"><big><i class="bi bi-arrow-left"></i></big></a>
+        <span class="fw-bold text-dark" style="margin-left: 12px; font-size: 14px;">SACOLA / RESUMO <?php echo $nome_mesa ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
       </div>
 
-      <a class="" href="<?php echo $url_site ?>">
-        <div class="">
-          <button type="button" class="btn btn-warning btn-sm">Comprar Mais?</button>
-        </div>
+      <a class="text-decoration-none" href="<?php echo $url_site ?>">
+        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold" style="font-size: 12px;">
+          <i class="bi bi-plus-lg me-1"></i> Adicionar mais
+        </button>
       </a>
-
-
     </div>
   </nav>
 
-
-
-  <ol class="list-group" style="margin-top: 65px; margin-bottom: 95px; overflow: scroll; height:100%; scrollbar-width: thin;"
-    id="listar-itens-carrinho">
+  <!-- Lista de Itens do Carrinho -->
+  <ol class="list-group ps-0" style="margin-top: 68px; margin-bottom: 16px;" id="listar-itens-carrinho">
   </ol>
 
+  <!-- Resumo Financeiro Limpo -->
+  <div class="cart-summary-card">
+    <h6 class="fw-bold text-dark mb-3" style="font-size: 14px;">Resumo de valores</h6>
+    <div class="d-flex justify-content-between align-items-center mb-2 text-muted" style="font-size: 13px;">
+      <span>Subtotal dos itens</span>
+      <span>R$ <span class="total-do-pedido-resumo">0,00</span></span>
+    </div>
+    <?php if ($nome_mesa == "") { ?>
+    <div class="d-flex justify-content-between align-items-center mb-2 text-muted" style="font-size: 13px;">
+      <span>Taxa de entrega</span>
+      <span class="badge bg-light text-secondary border rounded-pill fw-normal">A calcular na entrega</span>
+    </div>
+    <?php } ?>
+    <hr class="my-2" style="opacity: 0.12;">
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <span class="fw-bold text-dark" style="font-size: 15px;">Total parcial</span>
+      <span class="fw-bold text-success" style="font-size: 17px;">R$ <span id="total-do-pedido">0,00</span></span>
+    </div>
+  </div>
 
 </div>
 
-
-<div class="area-pedidos">
-  <div class="total-pedido" style="border: solid 1px #ababab; border-radius: 10px;">
-    <big>
-      <span><b>SUB TOTAL</b></span>
-      <span class="direita"> <b>R$ <span id="total-do-pedido"></span></b></span>
-    </big>
-  </div>
-
-
-  <div class="d-grid gap-2 mt-4 abaixo">
-
-    <?php if($id_edicao > 0){ ?>
-          <a href='' onclick="window.close()" class="btn btn-warning btn-lg">Finalizar Edição <i class="fal fa-long-arrow-right"></i></a>
-    <?php }else{ ?>
-
-      <?php if ($nome_mesa == "") { ?>
-        <a href='finalizar' class="btn btn-warning btn-lg">Finalizar Pedido <i class="fal fa-long-arrow-right"></i></a>
-      <?php } else { ?>
-        
-      <?php } ?>
-
-
+<!-- Sticky Footer Estilo iFood -->
+<div class="sticky-footer-cart">
+  <?php if ($id_edicao > 0) { ?>
+    <a href="" onclick="window.close()" class="btn-ifood-cart">
+      <span>Finalizar Edição</span>
+      <span>R$ <span class="total-do-pedido-resumo">0,00</span> <i class="bi bi-check-circle-fill ms-1"></i></span>
+    </a>
+  <?php } else { ?>
+    <?php if ($nome_mesa == "") { ?>
+      <a href="finalizar" class="btn-ifood-cart">
+        <span>Finalizar Pedido</span>
+        <span>R$ <span class="total-do-pedido-resumo">0,00</span> <i class="bi bi-arrow-right-circle-fill ms-1"></i></span>
+      </a>
+    <?php } else { ?>
+      <div class="d-flex justify-content-between align-items-center mx-auto" style="max-width: 520px;">
+        <span class="fw-bold text-dark">Total da Mesa</span>
+        <span class="fw-bold text-success" style="font-size: 17px;">R$ <span class="total-do-pedido-resumo">0,00</span></span>
+      </div>
+    <?php } ?>
   <?php } ?>
-  </div>
 </div>
 
 

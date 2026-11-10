@@ -194,19 +194,24 @@ if($total_reg > 0){
 
 echo <<<HTML
 
-		
-		<li class="list-group-item mb-1" style="border:  solid 1px #ababab; border-radius: 10px; box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
-		<img class="" src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
-		<span class="nome-produto"><b>{$nome_produto} {$sigla_variacao} {$sigla_grade}</b></span>
-		<span class="{$classe_borda}" style="font-size:11px; color:#450703"><b> {$nome_borda}</b></span>
-
+		<li class="list-group-item cart-card-item">
+			<div class="d-flex justify-content-between align-items-start gap-3">
+				<div class="d-flex align-items-start gap-3" style="flex: 1; min-width: 0;">
+					<img class="cart-item-thumb" src="sistema/painel/images/produtos/{$foto_produto}" alt="{$nome_produto}">
+					<div style="flex: 1; min-width: 0;">
+						<div class="fw-bold text-dark" style="font-size: 14px; line-height: 1.3;">
+							{$nome_produto} <span class="text-secondary fw-semibold">{$sigla_variacao}</span> {$sigla_grade}
+						</div>
+						<div class="{$classe_borda} mt-1" style="font-size: 12px; color: #ea1d2c; font-weight: 600;">
+							{$nome_borda}
+						</div>
 HTML;
 
 $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'ingredientes'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if($total_reg2 > 0){
-
+			echo '<div class="mt-1">';
 		for($i2=0; $i2 < $total_reg2; $i2++){
 			foreach ($res2[$i2] as $key => $value){}
 				$id_item = $res2[$i2]['id_item'];
@@ -221,6 +226,7 @@ $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'i
 echo '<span class="text-danger ingredientes">'.$nome_ingrediente.'</span>';
 
 }
+			echo '</div>';
 }
 
 
@@ -243,69 +249,70 @@ $query5 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela != '
 		}
 
 echo <<<HTML
+					</div>
+				</div>
 
-
-			
-			<a href="javascript:void(0)" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita"></i></a>
-
-			<div id="popup-excluir{$id}" class="overlay-excluir">
-			<div class="popup">
-			<div class="row">
-			<div class="col-12">
-			Confirmar Exclusão? <a href="javascript:void(0)" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" class="text-danger link-neutro">Sim</a>
-			</div>
-			<div class="col-3">
-			<a class="close" href="javascript:void(0)" onclick="fecharExcluir('{$id}')">&times;</a>
-			</div>
+				<a href="javascript:void(0)" onclick="excluir('{$id}')" title="Remover item" class="btn-trash-touch {$ocultar_excluir}">
+					<i class="bi bi-trash3-fill"></i>
+				</a>
 			</div>
 
-			</div>
-			</div>	
-
-
-			
-			<div class="carrinho-qtd">
-
-			<div class="itens-carrinho-qtd">
-				<a title="Observações do item" class="link-neutro" href="javascript:void(0)" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')"><i class="bi bi-card-text {$classe_obs}"></i></a>
-			</div>
-
-			<div class="itens-carrinho-qtd-adc {$classe_adc}">
-				<a title="Ver Adicionais" class="link-neutro" href="javascript:void(0)" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')"><i class="bi  bi-plus text-primary"></i><small><small>Adc</small></small></a>
-			</div>
-
-			<div class="itens-carrinho-qtd-adc {$classe_grade}">
-				<a title="Ver Opcionais" class="link-neutro" href="javascript:void(0)" onclick="grades('{$nome_produto}', '{$id}', '{$produto}')"><i class="bi  bi-plus text-primary"></i><small><small>Opções</small></small></a>
+			<div id="popup-excluir{$id}" class="cart-confirm-delete">
+				<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+					<span class="fw-bold text-danger" style="font-size: 13px;">
+						<i class="bi bi-exclamation-circle-fill me-1"></i> Remover este item do carrinho?
+					</span>
+					<div class="d-flex align-items-center gap-2">
+						<a href="javascript:void(0)" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">
+							Sim, remover
+						</a>
+						<a href="javascript:void(0)" onclick="fecharExcluir('{$id}')" class="btn btn-light btn-sm rounded-pill px-3 border fw-semibold">
+							Cancelar
+						</a>
+					</div>
+				</div>
 			</div>
 
-			<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="link-neutro">
-			<div class="menos-mais">
-			-
+			<div class="cart-controls-bar">
+				<div class="d-flex align-items-center flex-wrap gap-2">
+					<a title="Observações do item" class="pill-action-cart" href="javascript:void(0)" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')">
+						<i class="bi bi-chat-left-text-fill {$classe_obs}"></i>
+						<span>Obs</span>
+					</a>
+
+					<a title="Ver Adicionais" class="pill-action-cart {$classe_adc}" href="javascript:void(0)" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')">
+						<i class="bi bi-plus-circle-fill text-primary"></i>
+						<span>Adc</span>
+					</a>
+
+					<a title="Ver Opcionais" class="pill-action-cart {$classe_grade}" href="javascript:void(0)" onclick="grades('{$nome_produto}', '{$id}', '{$produto}')">
+						<i class="bi bi-list-check text-primary"></i>
+						<span>Opções</span>
+					</a>
+				</div>
+
+				<div class="d-flex align-items-center gap-3 ms-auto">
+					<div class="d-flex align-items-center gap-1">
+						<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="btn-qty-touch" aria-label="Diminuir quantidade">
+							<i class="bi bi-dash"></i>
+						</a>
+
+						<div class="cart-qty-badge">
+							<span class="quantidade-carrinho">{$quantidadeF}</span>
+							<span class="unidade-carrinho">{$sigla_unidade}</span>
+						</div>
+
+						<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'mais')" class="btn-qty-touch" aria-label="Aumentar quantidade">
+							<i class="bi bi-plus"></i>
+						</a>
+					</div>
+
+					<div class="text-end" style="min-width: 78px;">
+						<span class="fw-bold text-success" style="font-size: 15px;">R$ {$total_itemF}</span>
+					</div>
+				</div>
 			</div>
-			</a>
-
-
-			<div class="qtd-item-carrinho">
-			<span class="quantidade-carrinho">{$quantidadeF}</span>
-			<span class="unidade-carrinho">{$sigla_unidade}</span>
-			</div>
-
-
-			<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'mais')" class="link-neutro">
-			<div class="menos-mais">
-			+
-			</div>
-			</a>
-
-
-			<div class="valor-carrinho-it">
-			<small><b>R$ {$total_itemF}</b></small>
-			</div>
-
-			</div>
-
-
-			</li>
+		</li>
 
 HTML;
 
@@ -320,6 +327,7 @@ HTML;
 
 	<script type="text/javascript">
 		$("#total-do-pedido").text("<?=$total_carrinhoF?>");
+		$(".total-do-pedido-resumo").text("<?=$total_carrinhoF?>");
 		var id_mesa = "<?=$id_mesa?>";
 
 		
