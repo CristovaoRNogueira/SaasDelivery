@@ -9,6 +9,12 @@
 *.log
 /tmp/
 
+# Certificados SSL / TLS (Cloudflare Origin CA)
+certs/*.pem
+certs/*.key
+certs/*.crt
+!certs/.gitkeep
+
 # Permitir rastreamento do banco inicial de produção AWS
 !banco_producao_aws.sql
 sistema/sas/backup/

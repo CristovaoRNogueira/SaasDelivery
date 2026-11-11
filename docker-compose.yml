@@ -21,6 +21,8 @@ services:
     volumes:
       # Projeto servido diretamente na raiz (Document Root /)
       - ./:/var/www/vhosts/localhost/html
+      # Certificados SSL Cloudflare Origin
+      - ./certs:/usr/local/lsws/conf/certs:ro
 
   db:
     image: mariadb:10.11

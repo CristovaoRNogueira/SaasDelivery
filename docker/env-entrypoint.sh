@@ -58,6 +58,16 @@ fi
 
 cat "$TMP" > "$CONF"
 rm -f "$TMP"
+
+# Migra listener HTTPS default para SSL_Listener com certificados Cloudflare se necessário
+if grep -q "listener HTTPS" "$CONF" && ! grep -q "listener SSL_Listener" "$CONF"; then
+    sed -i 's/listener HTTPS[[:space:]]*{/listener SSL_Listener {/' "$CONF"
+    sed -i 's|keyFile[[:space:]].*webadmin\.key|keyFile                 /usr/local/lsws/conf/certs/key.pem|' "$CONF"
+    sed -i 's|certFile[[:space:]].*webadmin\.crt|certFile                /usr/local/lsws/conf/certs/cert.pem\n  map                     localhost *|' "$CONF"
+    sed -i 's/listeners[[:space:]]*HTTP,[[:space:]]*HTTPS/listeners               HTTP, SSL_Listener/' "$CONF"
+    echo "[env-entrypoint] Listener SSL_Listener configurado para certificados Cloudflare."
+fi
+
 chown lsadm:lsadm "$CONF" 2>/dev/null || true
 
 echo "[env-entrypoint] Variáveis do banco injetadas no extProcessor lsphp."

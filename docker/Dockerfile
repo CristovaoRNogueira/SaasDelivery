@@ -18,6 +18,7 @@ COPY php/99-app.ini /usr/local/lsws/lsphp83/etc/php/8.3/mods-available/99-app.in
 # Virtual host e template Docker (docRoot + suporte a .htaccess e rotas amigáveis)
 COPY ols/docker.conf /usr/local/lsws/conf/templates/docker.conf
 COPY ols/vhconf.conf /usr/local/lsws/conf/vhosts/Example/vhconf.conf
+COPY ols/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
 
 # Entrypoint que injeta as variáveis do banco no extProcessor do OLS
 COPY env-entrypoint.sh /usr/local/bin/env-entrypoint.sh
@@ -27,6 +28,6 @@ RUN chmod +x /usr/local/bin/env-entrypoint.sh \
 
 WORKDIR /var/www/vhosts/localhost/html
 
-EXPOSE 80
+EXPOSE 80 443
 
 ENTRYPOINT ["/usr/local/bin/env-entrypoint.sh"]
