@@ -2,141 +2,17 @@
 @session_start();
 require_once("sistema/conexao.php");
 
-$url_empresa_get = trim((string) ($_GET['url_empresa'] ?? $_GET['url_site'] ?? ''));
-if ($url_empresa_get === '' && basename($_SERVER['PHP_SELF'] ?? '') === 'site.php' && !empty($_GET['url'])) {
-	$url_empresa_get = trim((string) $_GET['url']);
-}
-
-if ($url_empresa_get !== '') {
-	$_SESSION['url_site'] = $url_empresa_get;
-}
-
-$url_site = trim((string) ($_SESSION['url_site'] ?? ''));
-
-// Fallback para links de acompanhamento de pedido legados sem slug na URL
-if ($url_site === '' && !empty($_GET['id'])) {
-	$id_dec = base64_decode((string) $_GET['id']);
-	$partes_id = explode('|', (string) $id_dec);
-	if (count($partes_id) === 2 && $partes_id[1] === 'hugo') {
-		$stmt_ped = $pdo->prepare("SELECT c.url_site FROM vendas v INNER JOIN config c ON c.empresa = v.empresa WHERE v.id = :id LIMIT 1");
-		$stmt_ped->execute([':id' => (int) $partes_id[0]]);
-		$row_ped = $stmt_ped->fetch(PDO::FETCH_ASSOC);
-		if (!empty($row_ped['url_site'])) {
-			$url_site = $row_ped['url_site'];
-			$_SESSION['url_site'] = $url_site;
-		}
-	}
-}
-
+$url_site = resolverSubdominioTenant(true);
+$_SESSION['url_site'] = $url_site;
 $url_empresa = $url_site;
 
-// =========================================================================
-// STRICT ROUTING MULTI-TENANT: Trava e Redirecionamento Estrito Baseado em Slug
-// =========================================================================
-$pagina_atual = basename($_SERVER['PHP_SELF'] ?? '', '.php');
-$paginas_funil = ['carrinho', 'finalizar', 'pedido', 'itens', 'pizza', 'adicionais', 'observacoes', 'mesa'];
-
-$is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-	|| (isset($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], '/ajax/') !== false || strpos($_SERVER['REQUEST_URI'], '/api/') !== false));
-
-$is_admin = (isset($_SERVER['REQUEST_URI']) && (
-	strpos($_SERVER['REQUEST_URI'], '/sistema') !== false ||
-	strpos($_SERVER['REQUEST_URI'], '/painel') !== false
-));
-
-if (!$is_ajax && !$is_admin && empty($_GET['url_empresa'])) {
-	$req_uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
-	$ja_esta_no_slug = ($url_site !== '' && strpos($req_uri, '/' . $url_site) !== false);
-
-	// Apenas páginas internas do funil público são redirecionadas (site e index são preservados)
-	if (!$ja_esta_no_slug && in_array($pagina_atual, $paginas_funil, true)) {
-		// Se não houver slug na URL e nem na sessão, redireciona para a raiz pública
-		if ($url_site === '') {
-			header("Location: /", true, 302);
-			exit();
-		}
-
-		// Preserva parâmetros extras de query string (excluindo parâmetros de roteamento interno)
-		$extra_params = [];
-		if (!empty($_SERVER['QUERY_STRING'])) {
-			parse_str($_SERVER['QUERY_STRING'], $extra_params);
-			unset($extra_params['url_empresa'], $extra_params['url_site'], $extra_params['url'], $extra_params['id'], $extra_params['id_mesa']);
-		}
-		$qs = !empty($extra_params) ? '?' . http_build_query($extra_params) : '';
-
-		// Redirecionamento 301 automático para a URL canônica com slug da empresa
-		switch ($pagina_atual) {
-			case 'carrinho':
-				header("Location: /" . $url_site . "/carrinho" . $qs, true, 301);
-				exit();
-
-			case 'finalizar':
-				header("Location: /" . $url_site . "/finalizar" . $qs, true, 301);
-				exit();
-
-			case 'pedido':
-				$id_ped = trim((string) ($_GET['id'] ?? ''));
-				if ($id_ped !== '') {
-					header("Location: /" . $url_site . "/pedido/" . rawurlencode($id_ped) . $qs, true, 301);
-				} else {
-					header("Location: /" . $url_site . $qs, true, 301);
-				}
-				exit();
-
-			case 'itens':
-				$url_cat = trim((string) ($_GET['url'] ?? ''));
-				if ($url_cat !== '') {
-					header("Location: /" . $url_site . "/categoria-" . rawurlencode($url_cat) . $qs, true, 301);
-				} else {
-					header("Location: /" . $url_site . $qs, true, 301);
-				}
-				exit();
-
-			case 'pizza':
-				$url_p = trim((string) ($_GET['url'] ?? ''));
-				if ($url_p !== '') {
-					$prefixo = (strpos($req_uri, 'categoria-sabores-') !== false) ? 'categoria-sabores-' : 'produto-';
-					header("Location: /" . $url_site . "/" . $prefixo . rawurlencode($url_p) . $qs, true, 301);
-				} else {
-					header("Location: /" . $url_site . $qs, true, 301);
-				}
-				exit();
-
-			case 'adicionais':
-				$url_p = trim((string) ($_GET['url'] ?? ''));
-				if ($url_p !== '') {
-					header("Location: /" . $url_site . "/adicionais-" . rawurlencode($url_p) . $qs, true, 301);
-				} else {
-					header("Location: /" . $url_site . $qs, true, 301);
-				}
-				exit();
-
-			case 'observacoes':
-				$url_p = trim((string) ($_GET['url'] ?? ''));
-				if ($url_p !== '') {
-					header("Location: /" . $url_site . "/observacoes-" . rawurlencode($url_p), true, 301);
-				} else {
-					header("Location: /" . $url_site . $qs, true, 301);
-				}
-				exit();
-
-			case 'mesa':
-				$id_m = trim((string) ($_GET['id_mesa'] ?? ''));
-				if ($id_m !== '') {
-					header("Location: /" . $url_site . "/mesa/" . rawurlencode($id_m) . $qs, true, 301);
-				} else {
-					header("Location: /" . $url_site . $qs, true, 301);
-				}
-				exit();
-
-			default:
-				header("Location: /" . $url_site . "/" . $pagina_atual . $qs, true, 301);
-				exit();
-		}
-	}
+if ($url_site === '') {
+	http_response_code(404);
+	echo 'Empresa não encontrada para esta URL.';
+	exit();
 }
 
-$query2 = $pdo->prepare("SELECT * FROM config WHERE url_site = :url_site LIMIT 1");
+$query2 = $pdo->prepare("SELECT * FROM config WHERE url_site = :url_site AND empresa > 0 LIMIT 1");
 $query2->execute([':url_site' => $url_site]);
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 
@@ -181,7 +57,7 @@ $url_empresa = $url_site;
 	<meta name="description" content="Temos sanduíches de qualidade.." />
 	<meta name="author" content="Hugo Vasconcelos" />
 
-	<link rel="canonical" href="<?php echo $url_sistema . rawurlencode($url_site) ?>">
+	<link rel="canonical" href="<?php echo $url_sistema ?>">
 	<link rel="shortcut icon" href="sistema/img/<?php echo $icone_sistema ?>" type="image/x-icon">
 	<link rel="manifest" href="manifest.php?empresa=<?php echo (int) $id_empresa ?>">
 

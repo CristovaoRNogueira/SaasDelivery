@@ -306,7 +306,7 @@ HTML;
 		} 
 
 	}else{
-		echo "<script>window.location='".$url_site."'</script>";
+		echo "<script>window.location='index'</script>";
 	}
 
 

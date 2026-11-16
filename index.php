@@ -2,6 +2,13 @@
 session_start();
 require_once("sistema/conexao.php");
 
+$url_site = resolverSubdominioTenant(false);
+if ($url_site !== '') {
+  $_SESSION['url_site'] = $url_site;
+  require_once("site.php");
+  exit();
+}
+
 // Verifica se o usuário está logado (exemplo: verifica se existe uma sessão)
 if (!isset($_SESSION['usuario_logado_pagina'])) {
     if($pagina_entrada == 'Login'){

@@ -1,14 +1,11 @@
 <?php 
-@session_start();
-$id_empresa = @$_SESSION['empresa'];
 require_once("../../../conexao.php");
-require_once("../../buscar_config.php");
 $tabela = 'mesas';
 
 $id = $_POST['id'];
 $nome_mesa = $_POST['nome'];
 
-$url_mesa = $url_sistema . ($url_site ? $url_site . '/' : '') . 'mesa/' . $id;
+$url_mesa = $url_sistema.'mesa/'.$id;
 
 //gerar qrcode
 

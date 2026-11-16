@@ -1,8 +1,5 @@
 <?php
 @session_start();
-if (!empty($_GET['url_empresa'])) {
-	$_SESSION['url_site'] = $_GET['url_empresa'];
-}
 require_once("cabecalho.php");
 
 $url = $_GET['url'];
@@ -80,7 +77,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                 confirmButtonText: 'OK'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -105,7 +102,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -142,7 +139,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -185,7 +182,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -211,7 +208,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -415,7 +412,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand">
-				<a href="<?php echo $url_site ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
 				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?>
 					<?php echo @$_SESSION['nome_mesa'] ?><?php echo @$_SESSION['pedido_balcao'] ?></span>
 			</div>
@@ -553,7 +550,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 							$url_produto = '#';
 						} else {
 							$mostrar = 'ocultar';
-							$url_produto = $url_site . '/produto-' . $url;
+							$url_produto = 'produto-' . $url;
 						}
 
 						if ($promocao == 'Sim') {
@@ -888,7 +885,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			success: function(mensagem) {
 				alert(mensagem);
 				if (mensagem.trim() == "Inserido com Sucesso") {
-					window.location = '<?php echo $url_site ?>/carrinho';
+					window.location = 'carrinho';
 				}
 			},
 

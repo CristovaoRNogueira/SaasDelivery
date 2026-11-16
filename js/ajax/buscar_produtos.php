@@ -91,7 +91,7 @@ HTML;
 						$url_produto = '#';
 					} else {
 						$mostrar = 'ocultar';
-						$url_produto = $url_site . '/produto-' . $url;
+						$url_produto = 'produto-' . $url;
 					}
 
 
@@ -110,20 +110,20 @@ HTML;
 						if ($tem_estoque == 'Sim' and $estoque <= 0) {
 							$url_produto = '#';
 						} else {
-							$url_produto = $url_site . '/adicionais-' . $url;
+							$url_produto = 'adicionais-' . $url;
 						}
 					} else {
 						if ($tem_estoque == 'Sim' and $estoque <= 0) {
 							$url_produto = '#';
 						} else {
-							$url_produto = $url_site . '/observacoes-' . $url;
+							$url_produto = 'observacoes-' . $url;
 						}
 					}
 
 
 
 					if($mais_sabores == "Sim"){
-						$link_red = $url_site . '/categoria-sabores-'.$url_cat;
+						$link_red = 'categoria-sabores-'.$url_cat;
 					}else{
 						$link_red = $url_produto;
 					}

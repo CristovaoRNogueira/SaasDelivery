@@ -2,9 +2,6 @@
 @session_start();
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
-if (!empty($_GET['url_empresa'])) {
-	$_SESSION['url_site'] = $_GET['url_empresa'];
-}
 require_once("cabecalho.php");
 require_once("js/ajax/ApiConfig.php");
 require_once("sistema/assinatura_pedido.php");
@@ -19,7 +16,7 @@ if($id != ''){
   if(count($partes) == 2 && $partes[1] == 'hugo'){
     $id = $partes[0];
   } else {
-    echo "<script>window.location='".$url_sistema.$url_site."'</script>";
+    echo "<script>window.location='".$url_sistema."'</script>";
     exit();
   }
 }
@@ -103,11 +100,11 @@ if (strlen($tel_whats) == 10 || strlen($tel_whats) == 11) {
 
 	<nav class="navbar bg-white fixed-top" style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
 		<div class="container-fluid" style="max-width: 680px;">
-			<a class="navbar-brand d-flex align-items-center gap-2 text-dark text-decoration-none" href="<?php echo $url_sistema ?><?php echo $url_site ?>">
+			<a class="navbar-brand d-flex align-items-center gap-2 text-dark text-decoration-none" href="<?php echo $url_sistema ?>">
 				<img src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" alt="" width="38px" height="38px" style="object-fit: contain; border-radius: 8px;" class="d-inline-block align-text-top">
 				<span class="fw-bold" style="font-size: 15px;">Acompanhar Pedido</span>
 			</a>
-			<a href="<?php echo $url_sistema ?><?php echo $url_site ?>?novo_pedido=1" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold" style="font-size: 12px;">
+			<a href="<?php echo $url_sistema ?>?novo_pedido=1" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold" style="font-size: 12px;">
 				<i class="bi bi-plus-lg me-1"></i> Novo Pedido
 			</a>
 		</div>
@@ -378,7 +375,7 @@ if (strlen($tel_whats) == 10 || strlen($tel_whats) == 11) {
 				<i class="bi bi-whatsapp" style="font-size: 18px;"></i> Falar com o Delivery no WhatsApp
 			</a>
 
-			<a href="<?php echo $url_sistema ?><?php echo $url_site ?>?novo_pedido=1" class="btn-order-action btn-order-new">
+			<a href="<?php echo $url_sistema ?>?novo_pedido=1" class="btn-order-action btn-order-new">
 				<i class="bi bi-arrow-repeat" style="font-size: 17px;"></i> Fazer um Novo Pedido
 			</a>
 		</div>

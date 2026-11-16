@@ -1,8 +1,5 @@
 <?php
 @session_start();
-if (!empty($_GET['url_empresa'])) {
-  $_SESSION['url_site'] = $_GET['url_empresa'];
-}
 require_once("cabecalho.php");
 
 $sessao = @$_SESSION['sessao_usuario'];
@@ -44,7 +41,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '<?php echo $url_site ?>';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -81,7 +78,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '<?php echo $url_site ?>';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -124,7 +121,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '<?php echo $url_site ?>';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -150,7 +147,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '<?php echo $url_site ?>';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -181,11 +178,11 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
   <nav class="navbar bg-white fixed-top" style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
     <div class="container-fluid" style="max-width: 720px;">
       <div class="navbar-brand d-flex align-items-center">
-        <a href="<?php echo $url_site ?>" class="text-dark text-decoration-none"><big><i class="bi bi-arrow-left"></i></big></a>
+        <a href="index" class="text-dark text-decoration-none"><big><i class="bi bi-arrow-left"></i></big></a>
         <span class="fw-bold text-dark" style="margin-left: 12px; font-size: 14px;">SACOLA / RESUMO <?php echo $nome_mesa ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
       </div>
 
-      <a class="text-decoration-none" href="<?php echo $url_site ?>">
+      <a class="text-decoration-none" href="index">
         <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold" style="font-size: 12px;">
           <i class="bi bi-plus-lg me-1"></i> Adicionar mais
         </button>
@@ -228,7 +225,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
     </a>
   <?php } else { ?>
     <?php if ($nome_mesa == "") { ?>
-      <a href="<?php echo $url_site ?>/finalizar" class="btn-ifood-cart">
+      <a href="finalizar" class="btn-ifood-cart">
         <span>Finalizar Pedido</span>
         <span>R$ <span class="total-do-pedido-resumo">0,00</span> <i class="bi bi-arrow-right-circle-fill ms-1"></i></span>
       </a>

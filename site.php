@@ -1,6 +1,7 @@
 <?php
 @session_start();
-$url_site = $_GET['url_empresa'] ?? $_GET['url'] ?? $_SESSION['url_site'] ?? '';
+require_once("sistema/conexao.php");
+$url_site = resolverSubdominioTenant(true);
 $_SESSION['url_site'] = $url_site;
 
 // O acesso pelo link "Novo Pedido" encerra qualquer contexto anterior de
@@ -223,7 +224,7 @@ if($id_edicao == ""){
     <div class="container-fluid">
 
 
-      <a class="navbar-brand" href="<?php echo $url_site ?>">
+      <a class="navbar-brand" href="index">
         <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
         <small>
           <?php
@@ -357,9 +358,9 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                 $total_reg2 = @count($res2);
                 if ($total_reg2 > 0) {
                   if (($res2[0]['mais_sabores'] ?? 'Não') == 'Sim') {
-                    $url = $url_site . '/categoria-sabores-' . $res2[0]['url'];
+                    $url = 'categoria-sabores-' . $res2[0]['url'];
                   } else {
-                    $url = $url_site . '/categoria-' . $res2[0]['url'];
+                    $url = 'categoria-' . $res2[0]['url'];
                   }
                 } else {
                   $url = '#';
@@ -428,15 +429,15 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
       } ?>
       <div class="catalog-quick-nav wow fadeInUp" data-wow-delay="0.1s">
-        <a class="catalog-nav-chip" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#categoria">
+        <a class="catalog-nav-chip" href="#categoria">
           <img src="img/acai.png" alt="Categorias">
           <span>Categorias</span>
         </a>
-        <a class="catalog-nav-chip" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#combo">
+        <a class="catalog-nav-chip" href="#combo">
           <img src="img/acai2.png" alt="Combos">
           <span>Combos</span>
         </a>
-        <a class="catalog-nav-chip" href="<?php echo htmlspecialchars($url_sistema . rawurlencode($url_site), ENT_QUOTES, 'UTF-8') ?>#promocao">
+        <a class="catalog-nav-chip" href="#promocao">
           <img src="img/icone3.png" alt="Promoções">
           <span>Promoções</span>
         </a>
@@ -534,9 +535,9 @@ if ($id_mesa == "" and $sessão_balcao == "") {
               $descricaoF = mb_strimwidth($descricao, 0, 23, "...");
 
               if ($mais_sabores == 'Sim') {
-                $link_cat = $url_site . "/categoria-sabores-" . $url;
+                $link_cat = "categoria-sabores-" . $url;
               } else {
-                $link_cat = $url_site . "/categoria-" . $url;
+                $link_cat = "categoria-" . $url;
               }
 
 
@@ -595,7 +596,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   continue;
                 } else {
 
-                  $url_produto = $url_site . '/produto-' . $url;
+                  $url_produto = 'produto-' . $url;
                 }
 
 
@@ -609,13 +610,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = $url_site . '/adicionais-' . $url;
+                    $url_produto = 'adicionais-' . $url;
                   }
                 } else {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = $url_site . '/observacoes-' . $url;
+                    $url_produto = 'observacoes-' . $url;
                   }
                 }
 
@@ -741,9 +742,9 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                 $descricaoF = mb_strimwidth($descricao, 0, 50, "...");
 
                 if ($mais_sabores == 'Sim') {
-                  $link_cat = $url_site . "/categoria-sabores-" . $url;
+                  $link_cat = "categoria-sabores-" . $url;
                 } else {
-                  $link_cat = $url_site . "/categoria-" . $url;
+                  $link_cat = "categoria-" . $url;
                 }
 
 
@@ -848,7 +849,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   continue;
                 } else {
 
-                  $url_produto = $url_site . '/produto-' . $url;
+                  $url_produto = 'produto-' . $url;
                 }
 
 
@@ -861,13 +862,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = $url_site . '/adicionais-' . $url;
+                    $url_produto = 'adicionais-' . $url;
                   }
                 } else {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = $url_site . '/observacoes-' . $url;
+                    $url_produto = 'observacoes-' . $url;
                   }
                 }
 
@@ -986,7 +987,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   continue;
                 } else {
 
-                  $url_produto = $url_site . '/produto-' . $url;
+                  $url_produto = 'produto-' . $url;
                 }
 
 
@@ -1000,13 +1001,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = $url_site . '/adicionais-' . $url;
+                    $url_produto = 'adicionais-' . $url;
                   }
                 } else {
                   if ($tem_estoque == 'Sim' and $estoque <= 0) {
                     $url_produto = '#';
                   } else {
-                    $url_produto = $url_site . '/observacoes-' . $url;
+                    $url_produto = 'observacoes-' . $url;
                   }
                 }
 
@@ -1209,7 +1210,7 @@ if ($img_rodape == "aberto.png" and $mostrar_aberto != "Sim") {
           if (worker) {
             worker.postMessage({
               type: 'CACHE_START_URL',
-              url: <?php echo json_encode($url_sistema . $url_site) ?>
+              url: <?php echo json_encode($url_sistema) ?>
             });
           }
           console.log('Service Worker registrado:', reg.scope);

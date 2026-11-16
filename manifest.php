@@ -38,7 +38,7 @@ if (!is_file(__DIR__ . '/sistema/img/' . $arquivo_512)) {
     $arquivo_512 = 'icone_512.png';
 }
 
-$start_url = $base_path . rawurlencode($url_site_empresa);
+$start_url = $base_path;
 
 $manifest = [
     'id' => $base_path . 'pwa/' . $id_empresa,

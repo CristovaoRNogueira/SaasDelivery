@@ -19,6 +19,37 @@ if ($url[1] == 'localhost/') {
 	$url_sistema = "http://$_SERVER[HTTP_HOST]/";
 }
 
+if (!function_exists('resolverSubdominioTenant')) {
+	/**
+	 * Extrai o identificador do tenant (slug) a partir do HTTP_HOST.
+	 */
+	function resolverSubdominioTenant($permitir_fallback_local = false)
+	{
+		$host = strtolower(trim(explode(':', $_SERVER['HTTP_HOST'] ?? '')[0]));
+		$tenant = '';
+
+		if ($host !== '' && $host !== 'naregiao.com.br' && $host !== 'www.naregiao.com.br') {
+			$sufixo = '.naregiao.com.br';
+			if (substr($host, -strlen($sufixo)) === $sufixo) {
+				$tenant = substr($host, 0, -strlen($sufixo));
+			} elseif ($host !== 'localhost' && !filter_var($host, FILTER_VALIDATE_IP)) {
+				$partes_host = explode('.', $host);
+				if (count($partes_host) >= 2 && $partes_host[0] !== 'www') {
+					$tenant = $partes_host[0];
+				}
+			} elseif ($permitir_fallback_local) {
+				// Fallback apenas para ambiente local sem subdomínio (localhost / IP)
+				$tenant = trim((string) ($_GET['url'] ?? $_SESSION['url_site'] ?? ''));
+			}
+		}
+
+		return $tenant;
+	}
+}
+
+$host = strtolower(trim(explode(':', $_SERVER['HTTP_HOST'] ?? '')[0]));
+$subdominio_ativo = resolverSubdominioTenant(false);
+
 
 
 try {

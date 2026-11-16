@@ -1,8 +1,5 @@
 <?php
 @session_start();
-if (!empty($_GET['url_empresa'])) {
-  $_SESSION['url_site'] = $_GET['url_empresa'];
-}
 require_once("cabecalho.php");
 require_once("js/ajax/ApiConfig.php");
 
@@ -21,7 +18,7 @@ $total_reg = @count($res);
 
 
 if ($total_reg == 0) {
-  echo "<script>window.location='{$url_site}'</script>";
+  echo "<script>window.location='index'</script>";
   exit();
 } else {
   for ($i = 0; $i < $total_reg; $i++) {
@@ -253,7 +250,7 @@ if($somente_pix_delivery == 'Sim'){
 
   <nav class="navbar bg-white fixed-top" style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
     <div class="container-fluid" style="max-width: 720px;">
-      <a class="navbar-brand d-flex align-items-center gap-2 text-dark text-decoration-none" href="<?php echo $url_site ?>/carrinho">
+      <a class="navbar-brand d-flex align-items-center gap-2 text-dark text-decoration-none" href="carrinho">
         <i class="bi bi-arrow-left" style="font-size: 20px;"></i>
         <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="40px" height="40px" style="object-fit: contain; border-radius: 8px;" class="d-inline-block align-text-top">
         <span class="fw-bold" style="font-size: 15px;">Finalizar Pedido</span>
@@ -295,7 +292,7 @@ if($somente_pix_delivery == 'Sim'){
 
             <div class="row g-2 mt-1">
               <div class="col-6">
-                <a href="<?php echo $url_site ?>" class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold">
+                <a href="index" class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold">
                   <i class="bi bi-arrow-left me-1"></i> Voltar
                 </a>
               </div>
@@ -1262,7 +1259,7 @@ if($somente_pix_delivery == 'Sim'){
               var idCodificado = encodeId(id);
 
               setTimeout(() => {
-                window.location = '<?= $url_site ?>/pedido/' + idCodificado;
+                window.location = 'pedido/' + idCodificado;
               }, 2000);
 
 

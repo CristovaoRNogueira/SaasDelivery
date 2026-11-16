@@ -1,8 +1,5 @@
 <?php
 @session_start();
-if (!empty($_GET['url_empresa'])) {
-    $_SESSION['url_site'] = $_GET['url_empresa'];
-}
 $id_usuario = @$_SESSION['id'];
 
 require_once("cabecalho.php");
@@ -37,7 +34,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                 confirmButtonText: 'OK'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -61,7 +58,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -98,7 +95,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -141,7 +138,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -167,7 +164,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = '".$url_site."';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -240,7 +237,7 @@ if ($total_reg > 0) {
         <div class="container-fluid">
             <div class="navbar-brand">
 
-                <a href="<?php echo $url_site ?>/categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+                <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
 
                 <span style="margin-left: 15px; font-size:14px"><?php echo $nome ?> - <?php echo $nome_mesa ?></span>
             </div>
@@ -454,7 +451,7 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
 
     if ($status_estabelecimento == "Fechado") {
         echo "<script>window.alert('$texto_fechamento')</script>";
-        echo "<script>window.location='".$url_site."'</script>";
+        echo "<script>window.location='index'</script>";
         exit();
     }
 
@@ -470,7 +467,7 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     if (@count($res) > 0) {
         echo "<script>window.alert('Estamos Fechados! Não funcionamos Hoje!')</script>";
-        echo "<script>window.location='".$url_site."'</script>";
+        echo "<script>window.location='index'</script>";
         exit();
     }
 
@@ -491,13 +488,13 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
                 if ($now < $end) {
                 } else {
                     echo "<script>window.alert('$texto_fechamento_horario')</script>";
-                    echo "<script>window.location='".$url_site."'</script>";
+                    echo "<script>window.location='index'</script>";
                     exit();
                 }
             }
         } else {
             echo "<script>window.alert('$texto_fechamento_horario')</script>";
-            echo "<script>window.location='".$url_site."'</script>";
+            echo "<script>window.location='index'</script>";
             exit();
         }
     }
@@ -780,7 +777,7 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
 
             success: function(mensagem) {
                 if (mensagem.trim() == "Inserido com Sucesso") {
-                    window.location = '<?php echo $url_site ?>/carrinho';
+                    window.location = 'carrinho';
                 } else {
                     alert(mensagem)
                 }
