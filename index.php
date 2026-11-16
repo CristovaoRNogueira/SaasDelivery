@@ -44,37 +44,85 @@ $data_atual = date('Y-m-d');
 $id_empresa = 0;
 $empresa = 0;
 
-// Buscar configurações opcionais da tabela site (empresa = 0)
+// Buscar configurações da tabela site (empresa = 0) configuradas no painel SaaS
 $query = $pdo->query("SELECT * FROM site WHERE empresa = '$id_empresa'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$res = $query ? $query->fetchAll(PDO::FETCH_ASSOC) : [];
 $logo = @$res[0]['logo'];
+$titulo = @$res[0]['titulo'];
+$subtitulo = @$res[0]['subtitulo'];
+$botao1 = @$res[0]['botao1'];
+$botao2 = @$res[0]['botao2'];
+$botao3 = @$res[0]['botao3'];
+$item1 = @$res[0]['item1'];
+$item2 = @$res[0]['item2'];
+$item3 = @$res[0]['item3'];
+$titulo_recursos = @$res[0]['titulo_recursos'];
+$titulo_perguntas = @$res[0]['titulo_perguntas'];
+$titulo_rodape = @$res[0]['titulo_rodape'];
+$link_rodape = @$res[0]['link_rodape'];
+$descricao_rodape = @$res[0]['descricao_rodape'];
+$botao_rodape = @$res[0]['botao_rodape'];
+$logo_topo = @$res[0]['logo_topo'];
+$fundo_topo = @$res[0]['fundo_topo'];
+$fundo_topo_mobile = @$res[0]['fundo_topo_mobile'];
+
 if ($logo == "") {
   $logo = 'sem-foto.png';
 }
 
-// Buscar planos ativos do banco para manter integração funcional com assinar.php
-$query_planos = $pdo->query("SELECT * FROM planos WHERE ativo = 'Sim' ORDER BY valor ASC");
-$planos_db = $query_planos ? $query_planos->fetchAll(PDO::FETCH_ASSOC) : [];
-$id_plano_mensal = $planos_db[0]['id'] ?? 1;
-$valor_plano_mensal = isset($planos_db[0]['valor']) && $planos_db[0]['valor'] > 0
-  ? number_format((float) $planos_db[0]['valor'], 2, ',', '.')
-  : '120,00';
+$tem_logo_site = ($logo != 'sem-foto.png' && $logo_topo != 'Não' && is_file(__DIR__ . '/sistema/img/logos/' . $logo));
+$caminho_logo_site = $tem_logo_site
+  ? ($url_sistema . 'sistema/img/logos/' . $logo)
+  : (!empty($logo_sistema) && $logo_sistema != 'sem-foto.png' ? ($url_sistema . 'sistema/img/' . $logo_sistema) : '');
 
-$ultimo_idx = count($planos_db) > 1 ? count($planos_db) - 1 : 0;
-$id_plano_anual = $planos_db[$ultimo_idx]['id'] ?? $id_plano_mensal;
-$valor_base_anual = isset($planos_db[0]['valor']) && $planos_db[0]['valor'] > 0
-  ? ((float) $planos_db[0]['valor'] * 0.8)
-  : 96.00;
-$valor_plano_anual = number_format($valor_base_anual, 2, ',', '.');
+$nome_exibicao = !empty($nome_sistema) ? $nome_sistema : 'Na Região';
 
-$link_painel = '/sistema';
-$whats_limpo = preg_replace('/[^0-9]/', '', (string) ($telefone_sistema ?? ''));
-if ($whats_limpo !== '' && strlen($whats_limpo) <= 11) {
-  $whats_limpo = '55' . $whats_limpo;
+if ($id_empresa == 0) {
+  $link_painel = 'sistema';
+} else {
+  $link_painel = '../acesso';
 }
-$url_whats_suporte = $whats_limpo !== ''
-  ? "https://api.whatsapp.com/send?phone={$whats_limpo}&text=" . rawurlencode("Olá! Quero criar minha loja de delivery no Na Região.")
+
+// WhatsApp e Redes Sociais vindos de conexao.php ($tel_whats, $telefone_sistema, $instagram_sistema, $email_sistema)
+$whats_numero = !empty($tel_whats) ? preg_replace('/[^0-9]/', '', (string) $tel_whats) : preg_replace('/[^0-9]/', '', (string) ($telefone_sistema ?? ''));
+if ($whats_numero !== '' && strlen($whats_numero) <= 11) {
+  $whats_numero = '55' . $whats_numero;
+}
+$url_whats_suporte = $whats_numero !== ''
+  ? "https://api.whatsapp.com/send?1=pt_BR&phone={$whats_numero}&text=" . rawurlencode("Olá! Gostaria de falar com um consultor sobre o {$nome_exibicao}.")
   : "#planos";
+
+$url_instagram_rodape = '';
+if (!empty($instagram_sistema)) {
+  if (strpos($instagram_sistema, 'http') === 0) {
+    $url_instagram_rodape = $instagram_sistema;
+  } else {
+    $url_instagram_rodape = 'https://www.instagram.com/' . trim($instagram_sistema, '@/') . '/';
+  }
+}
+
+// Buscar planos ativos cadastrados no painel SaaS
+$query_planos = $pdo->query("SELECT * FROM planos WHERE ativo = 'Sim' ORDER BY id ASC");
+$planos_ativos = $query_planos ? $query_planos->fetchAll(PDO::FETCH_ASSOC) : [];
+$total_planos = count($planos_ativos);
+
+// Identificar o plano mais completo (com mais itens) para aplicar o destaque visual
+$id_plano_destaque = 0;
+$total_itens_max = 0;
+if ($total_planos > 0) {
+  $query_destaque = $pdo->query("
+    SELECT planos.id, COUNT(planos_itens.id) as total_itens
+    FROM planos
+    LEFT JOIN planos_itens ON planos.id = planos_itens.plano
+    WHERE planos.ativo = 'Sim'
+    GROUP BY planos.id
+    ORDER BY total_itens DESC, planos.valor DESC
+    LIMIT 1
+  ");
+  $row_destaque = $query_destaque ? $query_destaque->fetch(PDO::FETCH_ASSOC) : null;
+  $id_plano_destaque = (int) ($row_destaque['id'] ?? $planos_ativos[$total_planos - 1]['id']);
+  $total_itens_max = (int) ($row_destaque['total_itens'] ?? 0);
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
@@ -82,12 +130,12 @@ $url_whats_suporte = $whats_limpo !== ''
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="keywords" content="sistema de delivery, cardápio digital, delivery próprio, pedidos no whatsapp, qr code na mesa, na região, saas delivery" />
-  <meta name="description" content="Crie o Delivery Perfeito para o seu Negócio em Minutos. Sem comissões por venda, pedidos direto no WhatsApp, domínio próprio sualoja.naregiao.com.br e gestão completa." />
+  <meta name="keywords" content="sistema de delivery, cardápio digital, delivery próprio, <?php echo htmlspecialchars($nome_exibicao) ?>, pedidos no whatsapp, qr code na mesa, saas delivery" />
+  <meta name="description" content="<?php echo htmlspecialchars(!empty($meta_descricao) ? $meta_descricao : "Crie o Delivery Perfeito para o seu Negócio em Minutos com {$nome_exibicao}.") ?>" />
   <meta name="author" content="CRN Sistemas" />
-  <title>Na Região — Crie o Delivery Perfeito para o seu Negócio</title>
+  <title><?php echo htmlspecialchars($nome_exibicao) ?> — Crie o Delivery Perfeito para o seu Negócio</title>
 
-  <!-- Favicon -->
+  <!-- Favicon Dinâmico -->
   <link rel="icon" href="sistema/img/<?php echo htmlspecialchars($icone_sistema ?? 'icone.png') ?>" type="image/x-icon" />
 
   <!-- Font Awesome Icons -->
@@ -158,14 +206,18 @@ $url_whats_suporte = $whats_limpo !== ''
   <header class="fixed top-0 left-0 right-0 z-50 glass-nav">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
-        <!-- Logo Na Região -->
+        <!-- Logo e Nome do Sistema Dinâmicos -->
         <a href="#" class="flex items-center gap-3 group">
-          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-accent-500 flex items-center justify-center shadow-lg shadow-brand-600/30 group-hover:scale-105 transition-transform">
-            <i class="fas fa-utensils text-white text-lg"></i>
-          </div>
+          <?php if ($caminho_logo_site !== '') { ?>
+            <img src="<?php echo htmlspecialchars($caminho_logo_site) ?>" alt="<?php echo htmlspecialchars($nome_exibicao) ?>" class="h-11 w-auto object-contain rounded-xl" />
+          <?php } else { ?>
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-accent-500 flex items-center justify-center shadow-lg shadow-brand-600/30 group-hover:scale-105 transition-transform">
+              <i class="fas fa-utensils text-white text-lg"></i>
+            </div>
+          <?php } ?>
           <div class="flex flex-col">
             <span class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
-              Na Região
+              <?php echo htmlspecialchars($nome_exibicao) ?>
               <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             </span>
             <span class="text-[11px] font-medium text-slate-400 -mt-1 tracking-wider uppercase">Delivery SaaS</span>
@@ -182,7 +234,7 @@ $url_whats_suporte = $whats_limpo !== ''
 
         <!-- Action Buttons -->
         <div class="hidden md:flex items-center gap-3">
-          <a href="<?php echo $link_painel ?>" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-200 hover:text-white bg-slate-800/70 hover:bg-slate-800 border border-slate-700/80 transition-all">
+          <a href="/<?php echo ltrim($link_painel, '/') ?>" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-200 hover:text-white bg-slate-800/70 hover:bg-slate-800 border border-slate-700/80 transition-all">
             <i class="fas fa-sign-in-alt text-brand-500"></i>
             Entrar
           </a>
@@ -208,7 +260,7 @@ $url_whats_suporte = $whats_limpo !== ''
       <a href="#planos" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800/60">Planos</a>
       <a href="#contato" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800/60">Contato</a>
       <div class="pt-3 border-t border-slate-800 grid grid-cols-2 gap-3">
-        <a href="<?php echo $link_painel ?>" class="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-slate-200 bg-slate-800 border border-slate-700">
+        <a href="/<?php echo ltrim($link_painel, '/') ?>" class="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-slate-200 bg-slate-800 border border-slate-700">
           <i class="fas fa-sign-in-alt text-brand-500"></i> Entrar
         </a>
         <a href="#planos" onclick="toggleMobileMenu()" class="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 to-accent-500">
@@ -227,7 +279,7 @@ $url_whats_suporte = $whats_limpo !== ''
         <div class="lg:col-span-7 text-center lg:text-left">
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-500 text-xs sm:text-sm font-bold mb-6">
             <span class="flex h-2 w-2 rounded-full bg-brand-500 animate-ping"></span>
-            PLATAFORMA COMPLETA DE DELIVERY E GESTÃO
+            <?php echo htmlspecialchars($nome_exibicao) ?> • PLATAFORMA DE DELIVERY E GESTÃO
           </div>
 
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12] mb-6">
@@ -256,7 +308,7 @@ $url_whats_suporte = $whats_limpo !== ''
           <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
             <a href="#planos" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-base font-extrabold text-white bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/25 hover:-translate-y-0.5 transition-all">
               <i class="fas fa-rocket"></i>
-              Teste Grátis Agora
+              <?php echo htmlspecialchars(!empty($botao1) ? $botao1 : 'Teste Grátis Agora') ?>
             </a>
             <a href="<?php echo htmlspecialchars($url_whats_suporte) ?>" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl text-base font-bold text-slate-200 hover:text-white glass-card hover:bg-slate-800/60 transition-all">
               <i class="fab fa-whatsapp text-emerald-400 text-xl"></i>
@@ -264,19 +316,19 @@ $url_whats_suporte = $whats_limpo !== ''
             </a>
           </div>
 
-          <!-- Trust Pills -->
+          <!-- Trust Pills Dinâmicos / Destaques -->
           <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80 max-w-lg mx-auto lg:mx-0 text-left">
             <div>
               <div class="text-2xl font-extrabold text-white">0%</div>
-              <div class="text-xs text-slate-400">Taxa por pedido</div>
+              <div class="text-xs text-slate-400"><?php echo htmlspecialchars(!empty($item1) ? $item1 : 'Taxa por pedido') ?></div>
             </div>
             <div>
               <div class="text-2xl font-extrabold text-emerald-400">100%</div>
-              <div class="text-xs text-slate-400">Integrado ao WhatsApp</div>
+              <div class="text-xs text-slate-400"><?php echo htmlspecialchars(!empty($item2) ? $item2 : 'Integrado ao WhatsApp') ?></div>
             </div>
             <div>
-              <div class="text-2xl font-extrabold text-amber-400">5 min</div>
-              <div class="text-xs text-slate-400">Para colocar no ar</div>
+              <div class="text-2xl font-extrabold text-amber-400">24/7</div>
+              <div class="text-xs text-slate-400"><?php echo htmlspecialchars(!empty($item3) ? $item3 : 'Suporte dedicado') ?></div>
             </div>
           </div>
         </div>
@@ -309,7 +361,7 @@ $url_whats_suporte = $whats_limpo !== ''
                     🍕
                   </div>
                   <div>
-                    <div class="font-bold text-white text-sm">Pizzaria & Burger Na Região</div>
+                    <div class="font-bold text-white text-sm">Pizzaria & Burger <?php echo htmlspecialchars($nome_exibicao) ?></div>
                     <div class="text-xs text-slate-400 flex items-center gap-2">
                       <span><i class="fas fa-clock text-brand-400 mr-1"></i>30-45 min</span>
                       <span>•</span>
@@ -418,7 +470,7 @@ $url_whats_suporte = $whats_limpo !== ''
             </div>
             <h3 class="text-xl font-bold text-white mb-3">Zero Taxas por Venda</h3>
             <p class="text-slate-400 text-sm leading-relaxed">
-              Chega de pagar até 27% de comissão para aplicativos terceiros. No <strong class="text-slate-200">Na Região</strong> você paga apenas uma mensalidade fixa e 100% do lucro é seu.
+              Chega de pagar até 27% de comissão para aplicativos terceiros. No <strong class="text-slate-200"><?php echo htmlspecialchars($nome_exibicao) ?></strong> você paga apenas uma mensalidade fixa e 100% do lucro é seu.
             </p>
           </div>
           <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center text-xs font-bold text-emerald-400">
@@ -512,7 +564,7 @@ $url_whats_suporte = $whats_limpo !== ''
           <span class="text-5xl font-black text-slate-800 absolute top-6 right-6">01</span>
           <div class="w-12 h-12 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-lg mb-5">1</div>
           <h3 class="text-xl font-bold text-white mb-2">Cadastre sua Loja</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">Escolha seu plano e defina o nome do seu subdomínio exclusivo (<span class="text-slate-200">sualoja.naregiao.com.br</span>).</p>
+          <p class="text-sm text-slate-400 leading-relaxed">Escolha seu plano abaixo e defina o nome do seu subdomínio exclusivo (<span class="text-slate-200">sualoja.naregiao.com.br</span>).</p>
         </div>
 
         <div class="glass-card rounded-3xl p-8 relative">
@@ -532,7 +584,7 @@ $url_whats_suporte = $whats_limpo !== ''
     </div>
   </section>
 
-  <!-- ==================== PRICING SECTION (PLANOS) ==================== -->
+  <!-- ==================== PRICING SECTION (PLANOS DINÂMICOS DO BANCO) ==================== -->
   <section id="planos" class="py-20 lg:py-28 bg-slate-950/70 border-t border-slate-800/80">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-16">
@@ -540,168 +592,189 @@ $url_whats_suporte = $whats_limpo !== ''
           PLANOS E PREÇOS TRANSPARENTES
         </span>
         <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-4 mb-4">
-          Invista no Crescimento do seu Delivery
+          Escolha o Plano Ideal para o seu Negócio
         </h2>
         <p class="text-slate-400 text-base sm:text-lg">
-          Sem taxa de adesão, sem comissão sobre vendas e com todos os recursos liberados para você escalar.
+          Sem taxa de adesão, 0% de comissão sobre vendas e com recursos pensados para cada fase do seu delivery.
         </p>
+        <?php if (@$modo_teste == 'Sim') { ?>
+          <p class="mt-3 text-xs font-semibold text-amber-400">(PLANOS DEMONSTRATIVOS — AMBIENTE DE TESTE)</p>
+        <?php } ?>
       </div>
 
-      <!-- Featured Plans Grid (Plano Mensal & Plano Anual) -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <?php if ($total_planos > 0) {
+        $grid_cols_class = 'lg:grid-cols-3';
+        if ($total_planos === 1) {
+          $grid_cols_class = 'lg:grid-cols-1 max-w-lg';
+        } elseif ($total_planos === 2) {
+          $grid_cols_class = 'lg:grid-cols-2 max-w-5xl';
+        } elseif ($total_planos >= 4) {
+          $grid_cols_class = 'lg:grid-cols-4';
+        }
+      ?>
+      <!-- Loop Dinâmico dos Planos Cadastrados no Painel SaaS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 <?php echo $grid_cols_class ?> gap-8 mx-auto" id="plans-container">
+        <?php
+        $stmt_itens = $pdo->prepare("SELECT * FROM planos_itens WHERE plano = :plano ORDER BY id ASC");
 
-        <!-- Card 1: Plano Mensal -->
-        <div class="glass-card rounded-3xl p-8 sm:p-10 flex flex-col justify-between border border-slate-700/80">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <div>
-                <h3 class="text-2xl font-extrabold text-white">Plano Mensal</h3>
-                <p class="text-sm text-slate-400">Ideal para começar sem fidelidade</p>
-              </div>
-              <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">
-                Sem Fidelidade
-              </span>
-            </div>
+        foreach ($planos_ativos as $plano) {
+          $id_item = (int) ($plano['id'] ?? 0);
+          $nome_do_plano = $plano['nome'] ?? 'Plano';
+          $valor_plano = (float) ($plano['valor'] ?? 0);
+          $valorF = number_format($valor_plano, 2, ',', '.');
+          $frequencia_plano = !empty($plano['frequencia']) ? $plano['frequencia'] : 'mês';
+          $descricao_plano = !empty($plano['descricao'])
+            ? $plano['descricao']
+            : 'Sem fidelidade • 0% de comissão sobre pedidos';
 
-            <div class="my-6 pb-6 border-b border-slate-800">
-              <div class="flex items-baseline gap-1">
-                <span class="text-lg font-bold text-slate-400">R$</span>
-                <span class="text-5xl font-extrabold text-white"><?php echo $valor_plano_mensal ?></span>
-                <span class="text-slate-400 font-medium">/mês</span>
-              </div>
-              <p class="text-xs text-slate-400 mt-2">Cancele quando quiser • 0% de taxa por pedido</p>
-            </div>
+          $dispositivos_plano = (int) ($plano['dispositivos'] ?? 0);
+          $usuarios_plano = (int) ($plano['usuarios'] ?? 0);
 
-            <ul class="space-y-3.5 text-sm text-slate-300 mb-8">
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-emerald-400 text-base"></i>
-                <span>Site exclusivo <strong>sualoja.naregiao.com.br</strong> com SSL</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-emerald-400 text-base"></i>
-                <span>Pedidos ilimitados no Delivery, Balcão e WhatsApp</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-emerald-400 text-base"></i>
-                <span>Cardápio Digital na Mesa via <strong>QR Code</strong></span>
-              </li>
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-emerald-400 text-base"></i>
-                <span>Painel Administrativo, PDV e Impressão Automática</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-emerald-400 text-base"></i>
-                <span>Controle Financeiro, Estoque e Relatórios</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-emerald-400 text-base"></i>
-                <span>Suporte técnico via WhatsApp</span>
-              </li>
-            </ul>
-          </div>
+          $is_destaque = ($id_item === $id_plano_destaque && $total_planos > 1);
 
-          <form action="assinar.php" method="POST">
-            <input type="hidden" name="id_item" value="<?php echo (int) $id_plano_mensal ?>">
-            <button type="submit" class="w-full py-4 px-6 rounded-2xl font-extrabold text-base text-white bg-slate-800 hover:bg-slate-700 border border-slate-600 transition-all flex items-center justify-center gap-2">
-              Começar no Plano Mensal <i class="fas fa-arrow-right"></i>
-            </button>
-          </form>
-        </div>
+          // Buscar as características/itens deste plano na tabela planos_itens
+          $stmt_itens->execute([':plano' => $id_item]);
+          $itens_do_plano = $stmt_itens->fetchAll(PDO::FETCH_ASSOC);
+        ?>
 
-        <!-- Card 2: Plano Anual (Destaque) -->
-        <div class="relative rounded-3xl p-8 sm:p-10 flex flex-col justify-between bg-gradient-to-b from-slate-900 via-slate-900 to-brand-950/40 border-2 border-brand-500 shadow-2xl shadow-brand-600/20">
+        <?php if ($is_destaque) { ?>
+        <!-- Card Dinâmico em Destaque (Mais Completo) -->
+        <div class="relative rounded-3xl p-8 sm:p-10 flex flex-col justify-between bg-gradient-to-b from-slate-900 via-slate-900 to-brand-950/40 border-2 border-brand-500 shadow-2xl shadow-brand-600/20 transition-all duration-300 hover:-translate-y-1.5">
           <div class="absolute -top-4 right-6 px-4 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-gradient-to-r from-brand-600 to-accent-500 text-white shadow-lg">
-            🔥 Mais Escolhido • Economize 20%
+            🔥 Mais Completo
           </div>
+        <?php } else { ?>
+        <!-- Card Dinâmico Padrão -->
+        <div class="glass-card rounded-3xl p-8 sm:p-10 flex flex-col justify-between border border-slate-700/80 transition-all duration-300 hover:-translate-y-1.5">
+        <?php } ?>
 
           <div>
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4 gap-2">
               <div>
-                <h3 class="text-2xl font-extrabold text-white">Plano Anual</h3>
-                <p class="text-sm text-rose-200/80">Máxima economia e implantação VIP inclusa</p>
+                <h3 class="text-2xl font-extrabold text-white"><?php echo htmlspecialchars($nome_do_plano) ?></h3>
+                <p class="text-xs <?php echo $is_destaque ? 'text-rose-200/80' : 'text-slate-400' ?> mt-1">
+                  <?php echo htmlspecialchars($descricao_plano) ?>
+                </p>
               </div>
-              <span class="px-3 py-1 rounded-full text-xs font-bold bg-brand-500/20 text-brand-300 border border-brand-500/30">
-                VIP
+              <span class="px-3 py-1 rounded-full text-xs font-bold shrink-0 <?php echo $is_destaque ? 'bg-brand-500/20 text-brand-300 border border-brand-500/30' : 'bg-slate-800 text-slate-300 border border-slate-700' ?>">
+                <?php echo $is_destaque ? 'Destaque' : 'Ativo' ?>
               </span>
             </div>
 
             <div class="my-6 pb-6 border-b border-slate-800">
               <div class="flex items-baseline gap-1">
                 <span class="text-lg font-bold text-slate-400">R$</span>
-                <span class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-rose-200"><?php echo $valor_plano_anual ?></span>
-                <span class="text-slate-400 font-medium">/mês*</span>
+                <span class="text-5xl font-extrabold <?php echo $is_destaque ? 'text-transparent bg-clip-text bg-gradient-to-r from-white to-rose-200' : 'text-white' ?>">
+                  <?php echo $valorF ?>
+                </span>
+                <span class="text-slate-400 font-medium">/<?php echo htmlspecialchars($frequencia_plano) ?></span>
               </div>
               <p class="text-xs text-emerald-400 font-semibold mt-2">
-                <i class="fas fa-bolt mr-1"></i> Desconto especial no ciclo anual + Teste Grátis
+                <i class="fas fa-check-circle mr-1"></i> Subdomínio exclusivo .naregiao.com.br incluso
               </p>
             </div>
 
-            <ul class="space-y-3.5 text-sm text-slate-200 mb-8">
+            <ul class="space-y-3.5 text-sm <?php echo $is_destaque ? 'text-slate-200' : 'text-slate-300' ?> mb-8">
+              <?php if (count($itens_do_plano) > 0) {
+                foreach ($itens_do_plano as $carac) {
+                  $nome_carac = trim((string) ($carac['nome'] ?? ''));
+                  if ($nome_carac === '') continue;
+              ?>
               <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-brand-500 text-base"></i>
-                <span><strong>Tudo do Plano Mensal</strong> + Prioridade no Servidor</span>
+                <i class="fas fa-check-circle <?php echo $is_destaque ? 'text-brand-500' : 'text-emerald-400' ?> text-base shrink-0"></i>
+                <span><?php echo htmlspecialchars($nome_carac) ?></span>
+              </li>
+              <?php }
+              } else { ?>
+              <li class="flex items-center gap-3">
+                <i class="fas fa-check-circle text-emerald-400 text-base shrink-0"></i>
+                <span>Cardápio Digital e Pedidos Online Ilimitados</span>
               </li>
               <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-brand-500 text-base"></i>
-                <span>Subdomínio exclusivo <strong>sualoja.naregiao.com.br</strong></span>
+                <i class="fas fa-check-circle text-emerald-400 text-base shrink-0"></i>
+                <span>Painel Administrativo Completo</span>
               </li>
+              <?php } ?>
+
+              <?php if ($dispositivos_plano > 0) { ?>
               <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-brand-500 text-base"></i>
-                <span><strong>Chatbot e Notificações WhatsApp</strong> automáticas</span>
+                <i class="fas fa-check-circle <?php echo $is_destaque ? 'text-brand-500' : 'text-emerald-400' ?> text-base shrink-0"></i>
+                <span>Até <strong><?php echo $dispositivos_plano ?></strong> dispositivo(s) WhatsApp</span>
               </li>
+              <?php } ?>
+
+              <?php if ($usuarios_plano > 0) { ?>
               <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-brand-500 text-base"></i>
-                <span>QR Code de Mesas + App para Garçons e Entregadores</span>
+                <i class="fas fa-check-circle <?php echo $is_destaque ? 'text-brand-500' : 'text-emerald-400' ?> text-base shrink-0"></i>
+                <span>Até <strong><?php echo $usuarios_plano ?></strong> usuário(s) no painel</span>
               </li>
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-brand-500 text-base"></i>
-                <span>Cartão Fidelidade, Cupons de Desconto e Pixel</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-brand-500 text-base"></i>
-                <span><strong>Suporte VIP Prioritário</strong> e auxílio na configuração</span>
-              </li>
+              <?php } ?>
             </ul>
           </div>
 
           <form action="assinar.php" method="POST">
-            <input type="hidden" name="id_item" value="<?php echo (int) $id_plano_anual ?>">
-            <button type="submit" class="w-full py-4 px-6 rounded-2xl font-extrabold text-base text-white bg-gradient-to-r from-brand-600 to-accent-500 hover:from-brand-500 hover:to-accent-600 shadow-xl shadow-brand-600/30 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
-              <i class="fas fa-rocket"></i> Criar Minha Loja Agora
+            <input type="hidden" name="id_item" value="<?php echo $id_item ?>">
+            <button type="submit" class="w-full py-4 px-6 rounded-2xl font-extrabold text-base text-white transition-all flex items-center justify-center gap-2 <?php echo $is_destaque ? 'bg-gradient-to-r from-brand-600 to-accent-500 hover:from-brand-500 hover:to-accent-600 shadow-xl shadow-brand-600/30 hover:-translate-y-0.5' : 'bg-slate-800 hover:bg-brand-600 border border-slate-600 hover:border-brand-500' ?>">
+              <i class="fas fa-rocket"></i> Assinar <?php echo htmlspecialchars($nome_do_plano) ?>
             </button>
           </form>
         </div>
-
+        <?php } ?>
       </div>
 
-      <?php if (count($planos_db) > 2) { ?>
-      <!-- Demais opções de planos cadastrados no sistema -->
-      <div class="mt-14 max-w-5xl mx-auto">
-        <p class="text-center text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">Outras modalidades disponíveis</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <?php foreach ($planos_db as $p) {
-            $p_id = (int) $p['id'];
-            $p_nome = htmlspecialchars($p['nome'] ?? 'Plano');
-            $p_val = number_format((float) ($p['valor'] ?? 0), 2, ',', '.');
-          ?>
-          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between border border-slate-800">
-            <div>
-              <div class="text-base font-bold text-white mb-1"><?php echo $p_nome ?></div>
-              <div class="text-2xl font-extrabold text-emerald-400 mb-4">R$ <?php echo $p_val ?><span class="text-xs text-slate-400 font-normal">/mês</span></div>
-            </div>
-            <form action="assinar.php" method="POST">
-              <input type="hidden" name="id_item" value="<?php echo $p_id ?>">
-              <button type="submit" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-brand-600 transition-colors">
-                Selecionar <?php echo $p_nome ?>
-              </button>
-            </form>
-          </div>
-          <?php } ?>
+      <?php } else { ?>
+      <!-- Fallback seguro caso o banco retorne zero planos temporariamente -->
+      <div class="max-w-2xl mx-auto glass-card rounded-3xl p-10 text-center border border-slate-700/80">
+        <div class="w-16 h-16 rounded-2xl bg-brand-500/15 border border-brand-500/30 flex items-center justify-center text-brand-400 text-2xl mx-auto mb-4">
+          <i class="fas fa-store"></i>
         </div>
+        <h3 class="text-2xl font-extrabold text-white mb-2">Planos Sob Medida para o seu Delivery</h3>
+        <p class="text-slate-400 text-sm mb-6">
+          Nossos planos estão sendo atualizados. Fale agora mesmo com um consultor no WhatsApp para liberar o acesso imediato da sua loja!
+        </p>
+        <a href="<?php echo htmlspecialchars($url_whats_suporte) ?>" target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-extrabold text-base text-white bg-gradient-to-r from-brand-600 to-accent-500 hover:from-brand-500 hover:to-accent-600 shadow-xl shadow-brand-600/30 transition-all">
+          <i class="fab fa-whatsapp text-xl"></i> Solicitar Liberação no WhatsApp
+        </a>
       </div>
       <?php } ?>
+
     </div>
   </section>
+
+  <?php
+  // Seção de Perguntas Frequentes (FAQ) dinâmica caso existam perguntas cadastradas no painel SaaS
+  $query_faq = $pdo->query("SELECT * FROM perguntas_site WHERE empresa = '$id_empresa' ORDER BY posicao_pergunta ASC");
+  $perguntas_db = $query_faq ? $query_faq->fetchAll(PDO::FETCH_ASSOC) : [];
+  if (count($perguntas_db) > 0) {
+  ?>
+  <!-- ==================== FAQ DINÂMICO ==================== -->
+  <section id="faq" class="py-20 border-t border-slate-800/80">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-extrabold text-white">
+          <?php echo htmlspecialchars(!empty($titulo_perguntas) ? $titulo_perguntas : 'Perguntas Frequentes') ?>
+        </h2>
+      </div>
+      <div class="space-y-4">
+        <?php foreach ($perguntas_db as $perg) {
+          $id_perg = (int) ($perg['id'] ?? 0);
+          $tit_perg = $perg['titulo_pergunta'] ?? '';
+          $desc_perg = $perg['descricao_pergunta'] ?? '';
+        ?>
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+          <button type="button" onclick="toggleFaq('faq-<?php echo $id_perg ?>')" class="w-full flex items-center justify-between p-5 text-left font-bold text-white hover:text-brand-400 transition-colors">
+            <span><?php echo htmlspecialchars($tit_perg) ?></span>
+            <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300" id="icon-faq-<?php echo $id_perg ?>"></i>
+          </button>
+          <div id="faq-<?php echo $id_perg ?>" class="hidden px-5 pb-5 text-sm text-slate-300 border-t border-slate-800/60 pt-4 leading-relaxed">
+            <?php echo nl2br(htmlspecialchars($desc_perg)) ?>
+          </div>
+        </div>
+        <?php } ?>
+      </div>
+    </div>
+  </section>
+  <?php } ?>
 
   <!-- ==================== CTA & CONTATO SECTION ==================== -->
   <section id="contato" class="py-20">
@@ -710,18 +783,18 @@ $url_whats_suporte = $whats_limpo !== ''
         <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 text-center lg:text-left">
           <div class="max-w-2xl">
             <h2 class="text-3xl sm:text-4xl font-extrabold mb-3">
-              Pronto para Ter o Seu Próprio Aplicativo de Delivery?
+              <?php echo htmlspecialchars(!empty($titulo_rodape) ? $titulo_rodape : 'Pronto para Ter o Seu Próprio Aplicativo de Delivery?') ?>
             </h2>
             <p class="text-rose-100 text-base sm:text-lg">
-              Crie sua loja em poucos cliques ou fale agora com nosso time de suporte para tirar todas as suas dúvidas.
+              <?php echo htmlspecialchars(!empty($descricao_rodape) ? strip_tags($descricao_rodape) : 'Crie sua loja em poucos cliques ou fale agora com nosso time de consultores no WhatsApp.') ?>
             </p>
           </div>
           <div class="flex flex-col sm:flex-row gap-4 shrink-0 w-full sm:w-auto">
-            <a href="#planos" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl text-base font-extrabold bg-white text-brand-700 hover:bg-rose-50 shadow-xl transition-all">
-              <i class="fas fa-store"></i> Criar Loja Grátis
+            <a href="<?php echo htmlspecialchars(!empty($link_rodape) ? $link_rodape : '#planos') ?>" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl text-base font-extrabold bg-white text-brand-700 hover:bg-rose-50 shadow-xl transition-all">
+              <i class="fas fa-store"></i> <?php echo htmlspecialchars(!empty($botao_rodape) ? $botao_rodape : 'Criar Minha Loja') ?>
             </a>
             <a href="<?php echo htmlspecialchars($url_whats_suporte) ?>" target="_blank" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl text-base font-bold bg-slate-950/40 hover:bg-slate-950/60 text-white border border-white/20 transition-all">
-              <i class="fab fa-whatsapp text-emerald-300 text-xl"></i> Suporte WhatsApp
+              <i class="fab fa-whatsapp text-emerald-300 text-xl"></i> Falar com Consultor
             </a>
           </div>
         </div>
@@ -734,34 +807,41 @@ $url_whats_suporte = $whats_limpo !== ''
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-slate-800/80">
 
-        <!-- Brand Info -->
+        <!-- Brand Info Dinâmica -->
         <div class="md:col-span-2">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-accent-500 flex items-center justify-center text-white">
-              <i class="fas fa-utensils"></i>
-            </div>
-            <span class="text-xl font-extrabold text-white">Na Região</span>
+            <?php if ($caminho_logo_site !== '') { ?>
+              <img src="<?php echo htmlspecialchars($caminho_logo_site) ?>" alt="<?php echo htmlspecialchars($nome_exibicao) ?>" class="h-10 w-auto object-contain rounded-xl" />
+            <?php } else { ?>
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-accent-500 flex items-center justify-center text-white">
+                <i class="fas fa-utensils"></i>
+              </div>
+            <?php } ?>
+            <span class="text-xl font-extrabold text-white"><?php echo htmlspecialchars($nome_exibicao) ?></span>
           </div>
           <p class="text-sm text-slate-400 max-w-md leading-relaxed mb-6">
             Plataforma SaaS completa para gestão de Delivery, Cardápio Digital, Pedidos via WhatsApp e Autoatendimento em Mesas por QR Code.
           </p>
-          <!-- Redes Sociais -->
+          <!-- Links Dinâmicos das Redes Sociais -->
           <div class="flex items-center gap-3">
-            <?php if (!empty($instagram_sistema)) { ?>
-            <a href="https://www.instagram.com/<?php echo htmlspecialchars(trim($instagram_sistema, '@/')) ?>/" target="_blank" aria-label="Instagram"
-              class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-brand-600 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center transition-colors">
-              <i class="fab fa-instagram text-lg"></i>
-            </a>
-            <?php } else { ?>
-            <a href="#contato" aria-label="Instagram"
+            <?php if ($url_instagram_rodape !== '') { ?>
+            <a href="<?php echo htmlspecialchars($url_instagram_rodape) ?>" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
               class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-brand-600 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center transition-colors">
               <i class="fab fa-instagram text-lg"></i>
             </a>
             <?php } ?>
-            <a href="<?php echo htmlspecialchars($url_whats_suporte) ?>" target="_blank" aria-label="WhatsApp"
+            <?php if ($whats_numero !== '') { ?>
+            <a href="<?php echo htmlspecialchars($url_whats_suporte) ?>" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
               class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-emerald-600 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center transition-colors">
               <i class="fab fa-whatsapp text-lg"></i>
             </a>
+            <?php } ?>
+            <?php if (!empty($email_sistema)) { ?>
+            <a href="mailto:<?php echo htmlspecialchars($email_sistema) ?>" aria-label="E-mail"
+              class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-sky-600 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center transition-colors">
+              <i class="far fa-envelope text-lg"></i>
+            </a>
+            <?php } ?>
           </div>
         </div>
 
@@ -772,27 +852,38 @@ $url_whats_suporte = $whats_limpo !== ''
             <li><a href="#recursos" class="hover:text-white transition-colors">Recursos e Diferenciais</a></li>
             <li><a href="#como-funciona" class="hover:text-white transition-colors">Como Funciona</a></li>
             <li><a href="#planos" class="hover:text-white transition-colors">Planos e Preços</a></li>
-            <li><a href="<?php echo $link_painel ?>" class="hover:text-white transition-colors">Área do Lojista (Entrar)</a></li>
+            <li><a href="/<?php echo ltrim($link_painel, '/') ?>" class="hover:text-white transition-colors">Área do Lojista (Entrar)</a></li>
           </ul>
         </div>
 
-        <!-- Suporte e Contato -->
+        <!-- Suporte e Contato Dinâmicos -->
         <div>
           <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Suporte & Contato</h4>
           <ul class="space-y-2.5 text-sm">
+            <?php if (!empty($telefone_sistema)) { ?>
             <li>
-              <a href="<?php echo htmlspecialchars($url_whats_suporte) ?>" target="_blank" class="hover:text-white transition-colors flex items-center gap-2">
-                <i class="fab fa-whatsapp text-emerald-400"></i> Central de Suporte
+              <a href="<?php echo htmlspecialchars($url_whats_suporte) ?>" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-center gap-2">
+                <i class="fab fa-whatsapp text-emerald-400"></i>
+                <span><?php echo htmlspecialchars($telefone_sistema) ?></span>
               </a>
             </li>
+            <?php } ?>
             <?php if (!empty($email_sistema)) { ?>
             <li class="flex items-center gap-2 text-slate-400">
               <i class="far fa-envelope text-brand-400"></i>
-              <span><?php echo htmlspecialchars($email_sistema) ?></span>
+              <a href="mailto:<?php echo htmlspecialchars($email_sistema) ?>" class="hover:text-white transition-colors">
+                <?php echo htmlspecialchars($email_sistema) ?>
+              </a>
+            </li>
+            <?php } ?>
+            <?php if (!empty($endereco_sistema)) { ?>
+            <li class="flex items-start gap-2 text-slate-400 text-xs">
+              <i class="fas fa-map-marker-alt text-amber-400 mt-1"></i>
+              <span><?php echo htmlspecialchars($endereco_sistema) ?></span>
             </li>
             <?php } ?>
             <li>
-              <a href="<?php echo $link_painel ?>" class="hover:text-white transition-colors flex items-center gap-2">
+              <a href="/<?php echo ltrim($link_painel, '/') ?>" class="hover:text-white transition-colors flex items-center gap-2">
                 <i class="fas fa-lock text-slate-500"></i> Acesso ao Painel (/sistema)
               </a>
             </li>
@@ -801,21 +892,24 @@ $url_whats_suporte = $whats_limpo !== ''
 
       </div>
 
-      <!-- Copyright CRN Sistemas -->
+      <!-- Copyright Dinâmico + CRN Sistemas -->
       <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-        <p>&copy; <?php echo date('Y'); ?> <strong class="text-slate-300">Na Região</strong>. Todos os direitos reservados.</p>
+        <p>&copy; <?php echo date('Y'); ?> <strong class="text-slate-300"><?php echo htmlspecialchars($nome_exibicao) ?></strong>. Todos os direitos reservados.</p>
         <p>Desenvolvido por <strong class="text-slate-300">CRN Sistemas</strong> — Tecnologia para Delivery e Gestão.</p>
       </div>
     </div>
   </footer>
 
   <!-- Botão Flutuante do WhatsApp -->
-  <?php if ($whats_limpo !== '') { ?>
-  <a title="Falar com Suporte no WhatsApp" target="_blank" href="<?php echo htmlspecialchars($url_whats_suporte) ?>"
+  <?php if ($whats_numero !== '') { ?>
+  <a title="Falar com Consultor no WhatsApp" target="_blank" rel="noopener noreferrer" href="<?php echo htmlspecialchars($url_whats_suporte) ?>"
     class="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/40 hover:scale-105 transition-transform">
     <i class="fab fa-whatsapp text-3xl"></i>
   </a>
   <?php } ?>
+
+  <script src="assets/js/lgpd-cookie.js" type="module"></script>
+  <Lgpd-cookie text="Não capturamos nenhuma informação de dados sensíveis, somente cookies para melhor performance de nosso website!" />
 
   <script>
     function toggleMobileMenu() {
@@ -829,6 +923,19 @@ $url_whats_suporte = $whats_limpo !== ''
         menu.classList.add('hidden');
         icon.classList.remove('fa-times');
         icon.classList.add('fa-bars');
+      }
+    }
+
+    function toggleFaq(id) {
+      const content = document.getElementById(id);
+      const icon = document.getElementById('icon-' + id);
+      if (!content) return;
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        if (icon) icon.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        if (icon) icon.classList.remove('rotate-180');
       }
     }
 
