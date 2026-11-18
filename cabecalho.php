@@ -32,21 +32,79 @@ if (@$_SESSION['sessao_usuario'] == "") {
 require_once("sistema/painel/buscar_config.php");
 $url_empresa = $url_site;
 
+// Resolução do ícone da loja para Favicon e PWA / iOS (Safari)
+$candidatos_icone = array_filter([
+	"icone_192_{$id_empresa}.png",
+	$icone_sistema ?? '',
+	"icone_{$id_empresa}.png",
+	($logo_sistema ?? '') !== 'sem-foto.png' ? ($logo_sistema ?? '') : '',
+	'icone_192.png',
+	'icone.png'
+]);
+
+$arquivo_icone_loja = 'icone.png';
+foreach ($candidatos_icone as $candidato) {
+	if ($candidato !== 'sem-foto.png' && is_file(__DIR__ . '/sistema/img/' . $candidato)) {
+		$arquivo_icone_loja = $candidato;
+		break;
+	}
+}
+
+// Garantir um ícone 180x180 em PNG sem transparência (exigência do Safari/iOS para apple-touch-icon)
+$arquivo_apple_touch = $arquivo_icone_loja;
+$caminho_origem_icone = __DIR__ . '/sistema/img/' . $arquivo_icone_loja;
+$nome_apple_180 = "icone_180_{$id_empresa}.png";
+$caminho_apple_180 = __DIR__ . '/sistema/img/' . $nome_apple_180;
+
+if (is_file($caminho_origem_icone)) {
+	$precisa_gerar_180 = !is_file($caminho_apple_180) || (@filemtime($caminho_origem_icone) > @filemtime($caminho_apple_180));
+	if ($precisa_gerar_180 && function_exists('imagecreatetruecolor')) {
+		$dados_img = @file_get_contents($caminho_origem_icone);
+		$img_origem = $dados_img ? @imagecreatefromstring($dados_img) : false;
+		if ($img_origem) {
+			$largura_orig = imagesx($img_origem);
+			$altura_orig = imagesy($img_origem);
+			$img_180 = imagecreatetruecolor(180, 180);
+			// Fundo branco sólido para evitar fundo preto do iOS em PNGs transparentes
+			$fundo_branco = imagecolorallocate($img_180, 255, 255, 255);
+			imagefilledrectangle($img_180, 0, 0, 180, 180, $fundo_branco);
+			imagealphablending($img_180, true);
+			imagecopyresampled($img_180, $img_origem, 0, 0, 0, 0, 180, 180, $largura_orig, $altura_orig);
+			@imagepng($img_180, $caminho_apple_180);
+			imagedestroy($img_180);
+			imagedestroy($img_origem);
+		}
+	}
+	if (is_file($caminho_apple_180)) {
+		$arquivo_apple_touch = $nome_apple_180;
+	}
+}
+
+$base_url_loja = rtrim($url_sistema, '/');
+$versao_icone = @filemtime(__DIR__ . '/sistema/img/' . $arquivo_icone_loja) ?: time();
+$versao_apple = @filemtime(__DIR__ . '/sistema/img/' . $arquivo_apple_touch) ?: $versao_icone;
+$url_icone_loja = $base_url_loja . '/sistema/img/' . $arquivo_icone_loja . '?v=' . $versao_icone;
+$url_apple_touch_icon = $base_url_loja . '/sistema/img/' . $arquivo_apple_touch . '?v=' . $versao_apple;
+$url_logo_og = ($logo_sistema != '' && $logo_sistema != 'sem-foto.png' && is_file(__DIR__ . '/sistema/img/' . $logo_sistema))
+	? ($base_url_loja . '/sistema/img/' . $logo_sistema)
+	: $url_apple_touch_icon;
+$cor_tema_loja = '#ffffff';
+
 
 ?>
 <!DOCTYPE html>
 <html>
 
 <head>
-	<title><?php echo $nome_sistema ?></title>
+	<title><?php echo htmlspecialchars($nome_sistema) ?></title>
 
 	<base href="<?php echo $url_sistema ?>">
 
-	 <meta property="og:description" content="<?php echo $nome_sistema ?>" />
-  	<meta property="og:image" content="sistema/img/logo.png">
-    <meta property="og:image:type" content="image/jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630"> 
+	<meta property="og:description" content="<?php echo htmlspecialchars($nome_sistema) ?>" />
+	<meta property="og:image" content="<?php echo htmlspecialchars($url_logo_og) ?>">
+	<meta property="og:image:type" content="image/png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
 
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -54,12 +112,22 @@ $url_empresa = $url_site;
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<!-- Site Metas -->
 	<meta name="keywords" content="delivery interativo, pedir sanduíche" />
-	<meta name="description" content="Temos sanduíches de qualidade.." />
+	<meta name="description" content="<?php echo htmlspecialchars(!empty($meta_descricao) ? $meta_descricao : 'Temos sanduíches de qualidade..') ?>" />
 	<meta name="author" content="Hugo Vasconcelos" />
 
+	<!-- PWA / iOS (Safari) & Theme Metas -->
+	<meta name="theme-color" content="<?php echo $cor_tema_loja ?>">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<meta name="apple-mobile-web-app-title" content="<?php echo htmlspecialchars($nome_sistema) ?>">
+
 	<link rel="canonical" href="<?php echo $url_sistema ?>">
-	<link rel="shortcut icon" href="sistema/img/<?php echo $icone_sistema ?>" type="image/x-icon">
-	<link rel="manifest" href="manifest.php?empresa=<?php echo (int) $id_empresa ?>">
+	<link rel="shortcut icon" href="<?php echo htmlspecialchars($url_icone_loja) ?>" type="image/png">
+	<link rel="icon" type="image/png" sizes="192x192" href="<?php echo htmlspecialchars($url_icone_loja) ?>">
+	<link rel="apple-touch-icon" href="<?php echo htmlspecialchars($url_apple_touch_icon) ?>">
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo htmlspecialchars($url_apple_touch_icon) ?>">
+	<link rel="manifest" href="<?php echo $base_url_loja ?>/manifest.php?empresa=<?php echo (int) $id_empresa ?>">
 
 
 	<!-- CSS here -->
