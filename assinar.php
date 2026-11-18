@@ -196,6 +196,22 @@ if ($logo == "") {
               </div>
             </div>
 
+            <div>
+              <label for="url_site" class="block text-sm font-medium text-gray-700 mb-1.5">
+                Endereço da sua loja (Subdomínio) <span class="text-brand-600">*</span>
+              </label>
+              <div class="flex items-center gap-2">
+                <div class="relative flex-1">
+                  <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none">
+                    <i class="fas fa-globe"></i>
+                  </span>
+                  <input type="text" id="url_site" name="url_site" placeholder="minhaloja" required
+                    class="w-full pl-10 p-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors" />
+                </div>
+                <span class="text-sm font-medium text-gray-500 select-none shrink-0">.naregiao.com.br</span>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
               <div>
                 <label for="tipo_pessoa" class="block text-sm font-medium text-gray-700 mb-1.5">
