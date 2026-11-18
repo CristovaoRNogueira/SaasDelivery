@@ -802,7 +802,7 @@ if ($total_planos > 0) {
       <!-- Copyright Dinâmico + CRN Sistemas -->
       <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
         <p>&copy; <?php echo date('Y'); ?> <strong class="text-gray-700"><?php echo htmlspecialchars($nome_exibicao) ?></strong>. Todos os direitos reservados.</p>
-        <p>Desenvolvido por <strong class="text-gray-700">CRN Sistemas</strong>.</p>
+        <p>Desenvolvido por <a href="https://crnsistemas.com.br/" target="_blank" rel="noopener noreferrer" class="font-bold text-gray-700 hover:text-brand-600 hover:underline transition-colors">CRN Sistemas</a>.</p>
       </div>
     </div>
   </footer>
