@@ -362,7 +362,7 @@ if ($entrega == 'Consumir Local') {
 			if ($total_reg8 > 0) {
 				$nome_borda = $res8[0]['nome'];
 			} else {
-				$nome_borda = 'Borda Catupiry';
+				$nome_borda = 'Sem borda';
 			}
 		}
 
@@ -399,7 +399,7 @@ if ($entrega == 'Consumir Local') {
 				echo '<div style="margin-left: 15px; padding-top: 2px;"><small><b>Atenção: </b>' . $sabores . ' Sabores</small></div>';
 			}
 
-			if ($nome_borda != '' && mb_strtolower(trim($nome_borda)) !== 'sem borda') {
+			if ($nome_borda != '') {
 				echo '<div style="margin-left: 15px; padding-top: 2px;"><small><b>Borda: </b>' . $nome_borda . '</small></div>';
 			}
 
