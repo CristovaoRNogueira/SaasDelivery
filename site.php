@@ -1062,6 +1062,61 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 <?php if($id_mesa == ""){ ?>
 <button id="botao-instalar" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 20px; background: #007bff; color: #fff; border: none; border-radius: 8px; z-index: 9999;">Instalar App</button>
+
+<!-- Modal de Instruções PWA para iOS (Safari / Chrome) -->
+<div id="modal-pwa-ios" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); z-index: 10000; align-items: center; justify-content: center; padding: 16px;">
+  <div id="modal-pwa-ios-card" style="background: #ffffff; width: 100%; max-width: 360px; border-radius: 16px; padding: 24px 20px 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); position: relative; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1f2937;">
+    <button type="button" id="fechar-modal-pwa-ios" aria-label="Fechar" style="position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border: none; background: #f3f4f6; color: #4b5563; border-radius: 50%; font-size: 18px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer;">&times;</button>
+
+    <div style="text-align: center; margin-bottom: 18px;">
+      <img src="<?php echo htmlspecialchars($url_apple_touch_icon ?? ('sistema/img/' . ($logo_sistema ?: 'icone.png'))) ?>" alt="<?php echo htmlspecialchars($nome_sistema ?? 'App') ?>" style="width: 60px; height: 60px; border-radius: 14px; object-fit: contain; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); margin-bottom: 10px; background: #fff; padding: 4px; border: 1px solid #e5e7eb;">
+      <h4 id="titulo-modal-pwa-ios" style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #111827;">Instalar o App no Safari</h4>
+      <p style="margin: 0; font-size: 13px; color: #6b7280;">Adicione <strong><?php echo htmlspecialchars($nome_sistema ?? 'nossa loja') ?></strong> à sua Tela de Início para acesso rápido.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+      <!-- Passo 1 -->
+      <div style="display: flex; align-items: center; gap: 12px; background: #f9fafb; padding: 10px 12px; border-radius: 12px; border: 1px solid #f3f4f6;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; color: #007bff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"></path>
+            <polyline points="16 6 12 2 8 6"></polyline>
+            <line x1="12" y1="2" x2="12" y2="15"></line>
+          </svg>
+        </div>
+        <div style="font-size: 13px; line-height: 1.4; color: #374151;">
+          <strong>1.</strong> Toque no ícone de <strong>Compartilhar</strong> <span id="posicao-compartilhar-ios">(na barra inferior do Safari)</span>.
+        </div>
+      </div>
+
+      <!-- Passo 2 -->
+      <div style="display: flex; align-items: center; gap: 12px; background: #f9fafb; padding: 10px 12px; border-radius: 12px; border: 1px solid #f3f4f6;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; color: #007bff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+        </div>
+        <div style="font-size: 13px; line-height: 1.4; color: #374151;">
+          <strong>2.</strong> Role e toque em <strong>"Adicionar à Tela de Início"</strong>.
+        </div>
+      </div>
+
+      <!-- Passo 3 -->
+      <div style="display: flex; align-items: center; gap: 12px; background: #f9fafb; padding: 10px 12px; border-radius: 12px; border: 1px solid #f3f4f6;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; color: #007bff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 13px;">
+          3
+        </div>
+        <div style="font-size: 13px; line-height: 1.4; color: #374151;">
+          Toque em <strong>"Adicionar"</strong> no canto superior direito para concluir.
+        </div>
+      </div>
+    </div>
+
+    <button type="button" id="entendi-modal-pwa-ios" style="width: 100%; padding: 12px; background: #007bff; color: #ffffff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;">Entendi</button>
+  </div>
+</div>
 <?php } ?>
 
 <!-- Font Awesome -->
@@ -1218,7 +1273,7 @@ if ($img_rodape == "aberto.png" and $mostrar_aberto != "Sim") {
         .catch(err => console.error('❌ Erro ao registrar SW:', err));
     }
 
-    // Gerenciar instalação do PWA
+    // Gerenciar instalação do PWA (Android / Desktop via beforeinstallprompt)
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -1241,6 +1296,54 @@ if ($img_rodape == "aberto.png" and $mostrar_aberto != "Sim") {
     window.addEventListener('appinstalled', () => {
       console.log('✅ App instalado!');
     });
+
+    // Gerenciar botão 'Instalar App' e modal de instruções no iOS (iPhone, iPad, iPod)
+    const ua = window.navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+    const isStandalone = (window.navigator.standalone === true) || window.matchMedia('(display-mode: standalone)').matches;
+
+    if (isIOS && !isStandalone) {
+      const btnIos = document.getElementById('botao-instalar');
+      const modalIos = document.getElementById('modal-pwa-ios');
+      const btnFecharIos = document.getElementById('fechar-modal-pwa-ios');
+      const btnEntendiIos = document.getElementById('entendi-modal-pwa-ios');
+      const tituloModalIos = document.getElementById('titulo-modal-pwa-ios');
+      const posicaoCompartilharIos = document.getElementById('posicao-compartilhar-ios');
+
+      const isChromeIOS = /CriOS/i.test(ua);
+      if (tituloModalIos) {
+        tituloModalIos.textContent = isChromeIOS ? 'Instalar o App no Chrome' : 'Instalar o App no Safari';
+      }
+      if (posicaoCompartilharIos) {
+        posicaoCompartilharIos.textContent = isChromeIOS
+          ? '(no topo direito da barra de endereço do Chrome)'
+          : '(na barra inferior do Safari)';
+      }
+
+      if (btnIos && modalIos) {
+        btnIos.style.display = 'block';
+
+        btnIos.addEventListener('click', function () {
+          modalIos.style.display = 'flex';
+        });
+
+        const fecharModal = function () {
+          modalIos.style.display = 'none';
+        };
+
+        if (btnFecharIos) {
+          btnFecharIos.addEventListener('click', fecharModal);
+        }
+        if (btnEntendiIos) {
+          btnEntendiIos.addEventListener('click', fecharModal);
+        }
+        modalIos.addEventListener('click', function (event) {
+          if (event.target === modalIos) {
+            fecharModal();
+          }
+        });
+      }
+    }
   });
 </script>
 
