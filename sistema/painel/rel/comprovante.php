@@ -362,7 +362,7 @@ if ($entrega == 'Consumir Local') {
 			if ($total_reg8 > 0) {
 				$nome_borda = $res8[0]['nome'];
 			} else {
-				$nome_borda = 'Sem borda';
+				$nome_borda = 'Borda Catupiry';
 			}
 		}
 
